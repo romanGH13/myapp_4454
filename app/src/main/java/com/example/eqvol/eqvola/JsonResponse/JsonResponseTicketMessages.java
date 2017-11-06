@@ -1,0 +1,26 @@
+package com.example.eqvol.eqvola.JsonResponse;
+
+import com.example.eqvol.eqvola.Classes.Group;
+import com.example.eqvol.eqvola.Classes.Message;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
+
+import java.util.List;
+
+/**
+ * Created by eqvol on 06.11.2017.
+ */
+
+public class JsonResponseTicketMessages {
+    public String status;
+    public List<Message> data;
+    public static List<Message> getMessages(String json)
+    {
+        Gson gson = new Gson();
+        JsonElement element = new JsonParser().parse(json);
+        JsonResponseTicketMessages response = gson.fromJson(element, JsonResponseTicketMessages.class);
+
+        return response.data;
+    }
+}

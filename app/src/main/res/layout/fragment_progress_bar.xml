@@ -1,0 +1,9 @@
+<ProgressBar android:id="@+id/progress_bar"
+    style="?android:attr/progressBarStyleLarge"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="8dp"
+    android:visibility="visible"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    tools:context="com.example.eqvol.eqvola.fragments.MyProgressBar"
+    xmlns:tools="http://schemas.android.com/tools" />

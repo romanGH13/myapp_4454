@@ -1,0 +1,48 @@
+<resources>
+    <string name="app_name">Eqvola</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password</string>
+    <string name="prompt_confirm_password">Confirm password</string>
+    <string name="action_sign_in">Sign in</string>
+    <string name="action_registration">Registration</string>
+
+    <string name="error_invalid_email">This email address is invalid</string>
+    <string name="error_invalid_password">The password must contain upper and lower case letters and numbers.</string>
+    <string name="error_incorrect_data">This email or password is incorrect</string>
+    <string name="error_field_required">This field is required</string>
+
+    <string name="permission_rationale">"Contacts permissions are needed for providing email
+        completions."
+    </string>
+    <string name="url">http://api.cabinet.eqvola.org/account/login</string>
+    <string name="action_registr">Registr</string>
+    <string name="cancel_registration">Cancel</string>
+    <string name="title_activity_menu">MenuActivity</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+    <string name="save_changes">Save</string>
+    <string name="create_account">Create</string>
+
+    <string name="user_page_name">Name</string>
+    <string name="user_page_city">City</string>
+    <string name="user_page_street">Street</string>
+    <string name="user_page_state">State</string>
+    <string name="user_page_phone_number">Phone number</string>
+    <string name="user_page_phone_code">Phone code</string>
+    <string name="user_page_postal_code">Postal code</string>
+    <string name="user_page_birth_date">Birth date</string>
+
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="support_create_ticket_subject">Subject</string>
+    <string name="support_create_ticket_text">Text</string>
+    <string name="support_create_ticket_send">Send</string>
+
+    <string name="support_chat_message_send">Send</string>
+
+</resources>

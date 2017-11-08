@@ -4,12 +4,14 @@ import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
-import android.util.Base64;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.Toast;
 
+import com.example.eqvol.eqvola.Adapters.MessagesAdapter;
 import com.example.eqvol.eqvola.Adapters.SupportFragmentPagerAdapter;
+import com.example.eqvol.eqvola.ChatActivity;
 import com.example.eqvol.eqvola.JsonResponse.JsonResponceCountries;
 import com.example.eqvol.eqvola.JsonResponse.JsonResponseAccounts;
 import com.example.eqvol.eqvola.JsonResponse.JsonResponseCategories;
@@ -20,12 +22,8 @@ import com.example.eqvol.eqvola.JsonResponse.JsonResponseUser;
 import com.example.eqvol.eqvola.LoginActivity;
 import com.example.eqvol.eqvola.MenuActivity;
 import com.example.eqvol.eqvola.R;
-import com.example.eqvol.eqvola.fragments.CreateAccount;
-import com.example.eqvol.eqvola.fragments.MyAccounts;
 import com.example.eqvol.eqvola.fragments.Support;
 import com.example.eqvol.eqvola.fragments.SupportChat;
-import com.example.eqvol.eqvola.fragments.SupportCreateTicket;
-import com.example.eqvol.eqvola.fragments.UserPageFragment;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.internal.LinkedTreeMap;
@@ -142,11 +140,20 @@ public class AsyncHttpTask extends AsyncTask<Void, Void, String> {
         }
         else if (methodName == AsyncMethodNames.GET_DATA_FROM_TICKETS)
         {
-            Api.getDataFromTickets(act);
+            SupportChat.checkUsersInTickets(act);
+            //Api.getDataFromTickets(act);
         }
         else if (methodName == AsyncMethodNames.GET_TICKET_MESSAGES)
         {
             response = Api.getTicketMessages(parametrs);
+        }
+        else if (methodName == AsyncMethodNames.GET_NEW_MESSAGE)
+        {
+            response = Api.getTicketMessages(parametrs);
+        }
+        else if (methodName == AsyncMethodNames.WAIT_AVATAR_LOADING)
+        {
+            ((ChatActivity)act).isDataLoading();
         }
         return response;
     }
@@ -175,7 +182,7 @@ public class AsyncHttpTask extends AsyncTask<Void, Void, String> {
                                 parametrs.put("userId", userId);
                                 parametrs.put("token", Api.getToken());
                                 AsyncHttpTask getUserTask = new AsyncHttpTask(parametrs, AsyncMethodNames.GET_USER, act);
-                                getUserTask.execute();
+                                getUserTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                             }
                         }
                     }
@@ -234,7 +241,7 @@ public class AsyncHttpTask extends AsyncTask<Void, Void, String> {
                 HashMap<String, Object> parametrs = new HashMap<String, Object>();
                 parametrs.put("token", token);
                 AsyncHttpTask ckeckTokenTask = new AsyncHttpTask(parametrs, AsyncMethodNames.CHECK_TOKEN, act);
-                ckeckTokenTask.execute();
+                ckeckTokenTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             }
             else if(errorCode != -1 && errorDescription != null){
                 ((LoginActivity)act).mLabelView.setText(errorDescription);
@@ -308,6 +315,8 @@ public class AsyncHttpTask extends AsyncTask<Void, Void, String> {
                             int currentTicketId = Api.user.getCurrentTicketId();
                             Ticket ticket = Api.user.getTicket(currentTicketId);
                             ticket.setId((int)((double)dataEntry.getValue()));
+                            Api.user.tickets.remove(Api.user.getCurrentTicketId());
+                            Api.user.setCurrentTicketId(0);
 
                             HashMap<String, Object> mapUserId = new HashMap<String, Object>();
                             mapUserId.put("user_id", Api.user.getId());
@@ -322,7 +331,11 @@ public class AsyncHttpTask extends AsyncTask<Void, Void, String> {
                             params.put("data", json);
 
                             AsyncHttpTask sendMessageTask = new AsyncHttpTask(params, AsyncMethodNames.SEND_MESSAGE, act);
-                            sendMessageTask.execute();
+                            sendMessageTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+
+                            Toast toast = Toast.makeText(act.getApplicationContext(),
+                                    "Ticket was created!", Toast.LENGTH_SHORT);
+                            toast.show();
                         }
                     }
                 }
@@ -335,7 +348,7 @@ public class AsyncHttpTask extends AsyncTask<Void, Void, String> {
 
                     if (response.getValue().toString().contentEquals("success")) {
                         Toast toast = Toast.makeText(act.getApplicationContext(),
-                                "Ticket was created!", Toast.LENGTH_SHORT);
+                                "Message was send!", Toast.LENGTH_SHORT);
                         toast.show();
                     }
 
@@ -343,18 +356,19 @@ public class AsyncHttpTask extends AsyncTask<Void, Void, String> {
             }
         }
         else if (methodName == AsyncMethodNames.GET_TICKETS) {
-            //Map<String, Object> map = Api.jsonToMap(success);
+            Map<String, Object> map = Api.jsonToMap(success);
 
             JsonResponseTickets jrt = new JsonResponseTickets(success);
-            Api.user.tickets = jrt.getTickets();
+            //Api.user.tickets = jrt.getTickets();
+            SupportChat.tickets = jrt.getTickets();
             int countLastMessages = jrt.getLastMessages();
 
             AsyncHttpTask getDataFromTickets = new AsyncHttpTask(null, AsyncMethodNames.GET_DATA_FROM_TICKETS, act);
-            getDataFromTickets.execute();
+            getDataFromTickets.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
         }
         else if (methodName == AsyncMethodNames.GET_DATA_FROM_TICKETS) {
-            int count = Api.users.size();
+            /*int count = Api.users.size();
             //TODO: добавить лоадер
             while(count!=0) {
                 count = Api.users.size();
@@ -367,13 +381,48 @@ public class AsyncHttpTask extends AsyncTask<Void, Void, String> {
             int itempos = adapter.getItemPosition(Api.chatLoader.getProgressBar());
             adapter.replaceFragment(itempos, Api.chatLoader.fragment);
             adapter.notifyDataSetChanged();
-            Support.mViewPager.setAdapter(adapter);
+            Support.mViewPager.setAdapter(adapter);*/
         }
         else if (methodName == AsyncMethodNames.GET_TICKET_MESSAGES) {
-            Map<String, Object> map = Api.jsonToMap(success);
+            //Map<String, Object> map = Api.jsonToMap(success);
             Api.currentChatMessages = JsonResponseTicketMessages.getMessages(success);
             SupportChat.goToChatActivity();
 
+        }
+
+        else if (methodName == AsyncMethodNames.GET_NEW_MESSAGE) {
+            Map<String, Object> map = Api.jsonToMap(success);
+            List<Message>newMessages =null;
+            for (Map.Entry<String, Object> response : map.entrySet()) {
+                if (response.getKey().contentEquals("status")) {
+
+                    if (response.getValue().toString().contentEquals("success")) {
+                        newMessages = JsonResponseTicketMessages.getMessages(success);
+
+                    }
+
+                }
+            }
+            if(newMessages != null){
+                SupportChat.newMessages(newMessages);
+                //SupportChat
+
+                /*((ChatActivity)act).last_message_id = newMessages.get(newMessages.size()-1).getId();
+                ListView lvMessages = (ListView) (((ChatActivity)act).findViewById(R.id.list_of_messages));
+                MessagesAdapter adapter = (MessagesAdapter)lvMessages.getAdapter();
+                //((ChatActivity)act).messages.addAll(newMessages);
+                adapter.addMessages(newMessages);
+                adapter.notifyDataSetChanged();*/
+            }
+            if(!act.isFinishing()) {
+                SupportChat.newMessagesHandler();
+                //((ChatActivity) act).newMessagesHandler();
+            }
+            //AsyncHttpTask getNewMessages = new AsyncHttpTask(parametrs, methodName, act);
+            //getNewMessages.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        }
+        else if (methodName == AsyncMethodNames.WAIT_AVATAR_LOADING) {
+            ((ChatActivity) act).setMessages();
         }
 
     }

@@ -7,6 +7,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 
 import java.lang.reflect.Type;
+import java.util.List;
 
 /**
  * Created by eqvol on 31.10.2017.
@@ -21,6 +22,8 @@ public class Ticket{
     private Category category;
     private Message last_message;
     private int not_showed;
+
+    private List<Message> messages;
 
     public Ticket()
     {

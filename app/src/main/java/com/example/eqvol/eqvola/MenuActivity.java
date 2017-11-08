@@ -1,6 +1,7 @@
 package com.example.eqvol.eqvola;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -91,7 +92,7 @@ public class MenuActivity extends AppCompatActivity
         HashMap<String, Object> parametrs = new HashMap<String, Object>();
         parametrs.put("user", Api.user);
         AsyncHttpTask getUserTask = new AsyncHttpTask(parametrs, AsyncMethodNames.GET_USER_AVATAR, this);
-        getUserTask.execute();
+        getUserTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     @Override
@@ -152,7 +153,7 @@ public class MenuActivity extends AppCompatActivity
             params.put("token", Api.getToken());
 
             AsyncHttpTask userLoginTask = new AsyncHttpTask(params, AsyncMethodNames.USER_LOGOUT, this);
-            userLoginTask.execute();
+            userLoginTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             deleteFileToken();
 
             Api.setToken(null);

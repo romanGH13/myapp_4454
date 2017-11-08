@@ -76,7 +76,7 @@ public class User{
         }
         this.tickets.add(ticket);
         for(int i = 0; i < this.tickets.size(); i++) {
-            if(this.tickets.equals(ticket)) {
+            if(this.tickets.get(i).equals(ticket)) {
                 this.currentTicketId = i;
             }
         }

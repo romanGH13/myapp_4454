@@ -4,6 +4,7 @@ package com.example.eqvol.eqvola.fragments;
  * Created by eqvol on 19.10.2017.
  */
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -110,7 +111,7 @@ public class UserPageFragment extends Fragment {
                 params.put("data", json);
 
                 AsyncHttpTask userLoginTask = new AsyncHttpTask(params, AsyncMethodNames.SET_USER, getActivity());
-                userLoginTask.execute();
+                userLoginTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             }
         });
         return  mView;

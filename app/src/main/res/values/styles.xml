@@ -17,6 +17,12 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
+<style name="ChatMessage">
+    <item name="android:textColor">@color/colorMessageText</item>
+    <item name="android:textSize">@dimen/chat_message_text</item>
+    <item name="android:background">@color/colorMessageBackground</item>
+    <item name="android:typeface">monospace</item>
+</style>
 
 
 

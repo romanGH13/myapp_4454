@@ -5,6 +5,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -115,7 +116,7 @@ public class LoginActivity extends AppCompatActivity implements TextView.OnEdito
                 HashMap<String, Object> parametrs = new HashMap<String, Object>();
                 parametrs.put("token", token);
                 AsyncHttpTask ckeckTokenTask = new AsyncHttpTask(parametrs, AsyncMethodNames.CHECK_TOKEN, this);
-                ckeckTokenTask.execute();
+                ckeckTokenTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             }
         }
     }
@@ -227,7 +228,7 @@ public class LoginActivity extends AppCompatActivity implements TextView.OnEdito
             parametrs.put("password", password);
 
             AsyncHttpTask userLoginTask = new AsyncHttpTask(parametrs, AsyncMethodNames.USER_LOGIN, this);
-            userLoginTask.execute();
+            userLoginTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
     }
 

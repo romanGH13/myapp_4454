@@ -1,12 +1,14 @@
 package com.example.eqvol.eqvola.Classes;
 
 import android.app.Activity;
+import android.os.AsyncTask;
 import android.util.Log;
 
 
 import com.example.eqvol.eqvola.Adapters.SupportFragmentPagerAdapter;
 import com.example.eqvol.eqvola.LoginActivity;
 import com.example.eqvol.eqvola.fragments.Support;
+import com.example.eqvol.eqvola.fragments.SupportChat;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
@@ -54,7 +56,7 @@ public class Api extends LoginActivity {
     public static final String FILENAME = "eqvolaUserToken";
     public static List<Message> currentChatMessages;
 
-    public static List<User> users = new ArrayList<User>();
+
 
     public static FragmentLoader chatLoader = null;
 
@@ -86,11 +88,10 @@ public class Api extends LoginActivity {
     }
 
     public static String getTicketMessages(Map<String, Object> params)
-
     {
-        String str = performPostCall(params, siteUrl+"support/message/get");
-        return str;
+        return performPostCall(params, siteUrl+"support/message/get");
     }
+
 
     public static String sendMessage(Map<String, Object> params)
     {
@@ -226,8 +227,8 @@ public class Api extends LoginActivity {
         try {
             URL url = new URL(strUrl);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setReadTimeout(15000);
-            conn.setConnectTimeout(15000);
+            conn.setReadTimeout(30000);
+            conn.setConnectTimeout(30000);
             conn.setRequestMethod("POST");
 
             conn.setDoInput(true);
@@ -352,27 +353,25 @@ public class Api extends LoginActivity {
     }
 
 
-    public static void getDataFromTickets(Activity act)
+    /*public static void getDataFromTickets(Activity act)
     {
         users.add(Api.user);
 
-        List<Ticket> tickets = Api.user.tickets;
+        List<Ticket> tickets = SupportChat.tickets;
         for(Ticket ticket: tickets) {
 
             if(!isUserContains(ticket.getMessage().getUser().getId())){
                 User currentUser = ticket.getMessage().getUser();
                 users.add(currentUser);
-                //TODO: загрузку аватарки пользователя
+
                 HashMap<String, Object> parametrs = new HashMap<String, Object>();
                 parametrs.put("user", currentUser);
 
                 AsyncHttpTask getUserTask = new AsyncHttpTask(parametrs, AsyncMethodNames.GET_USER_AVATAR, act);
-                getUserTask.execute();
+                getUserTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             }
 
         }
-
-
 
     }
 
@@ -384,6 +383,6 @@ public class Api extends LoginActivity {
             }
         }
         return false;
-    }
+    }*/
 
 }

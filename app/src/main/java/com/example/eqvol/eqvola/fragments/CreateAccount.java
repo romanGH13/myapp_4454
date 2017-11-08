@@ -1,5 +1,6 @@
 package com.example.eqvol.eqvola.fragments;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -36,7 +37,7 @@ public class CreateAccount extends Fragment {
         params.put("token", Api.getToken());
 
         AsyncHttpTask userLoginTask = new AsyncHttpTask(params, AsyncMethodNames.GET_GROUPS, getActivity());
-        userLoginTask.execute();
+        userLoginTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
 
@@ -73,7 +74,7 @@ public class CreateAccount extends Fragment {
                 params.put("leverage_id", leverage_id);
 
                 AsyncHttpTask userLoginTask = new AsyncHttpTask(params, AsyncMethodNames.CREATE_ACCOUNT, getActivity());
-                userLoginTask.execute();
+                userLoginTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             }
         });
 

@@ -2,6 +2,7 @@ package com.example.eqvol.eqvola.fragments;
 
 import android.content.Context;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -41,7 +42,7 @@ public class MyAccounts extends Fragment {
         params.put("where", json);
 
         AsyncHttpTask userLoginTask = new AsyncHttpTask(params, AsyncMethodNames.GET_ACCOUNTS, getActivity());
-        userLoginTask.execute();
+        userLoginTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

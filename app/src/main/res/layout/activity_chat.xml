@@ -49,5 +49,6 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
         app:fabSize="mini"
-        android:layout_alignParentRight="true" />
+        android:layout_alignParentRight="true"
+        android:onClick="sendMessage"/>
 </RelativeLayout>

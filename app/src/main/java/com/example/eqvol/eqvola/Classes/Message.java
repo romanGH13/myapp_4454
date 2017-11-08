@@ -7,6 +7,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 
 import java.lang.reflect.Type;
+import java.util.List;
 
 /**
  * Created by eqvol on 31.10.2017.
@@ -20,6 +21,8 @@ public class Message{
     private int is_showed;
     private String date;
     private User user;
+    private Ticket ticket;
+    private List<Object> attachment;
 
     public Message(String message) {
         this.message = message;
@@ -88,6 +91,22 @@ public class Message{
 
     public void setIs_showed(int is_showed) {
         this.is_showed = is_showed;
+    }
+
+    public Ticket getTicket() {
+        return ticket;
+    }
+
+    public void setTicket(Ticket ticket) {
+        this.ticket = ticket;
+    }
+
+    public List<Object> getAttachment() {
+        return attachment;
+    }
+
+    public void setAttachment(List<Object> attachment) {
+        this.attachment = attachment;
     }
 
     /*public boolean isIs_ready() {

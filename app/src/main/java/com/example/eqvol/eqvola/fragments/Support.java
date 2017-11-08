@@ -2,6 +2,7 @@ package com.example.eqvol.eqvola.fragments;
 
 import android.app.Activity;
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -43,7 +44,7 @@ public class Support extends Fragment {
         HashMap<String, Object> parametrs2 = new HashMap<String, Object>();
         parametrs2.put("token", Api.getToken());
         AsyncHttpTask ckeckTokenTask = new AsyncHttpTask(parametrs2, AsyncMethodNames.GET_CATEGORIES, getActivity());
-        ckeckTokenTask.execute();
+        ckeckTokenTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         //mView = LayoutInflater.from(getContext()).inflate(R.layout.fragment_support, container, false);
 
     }
@@ -84,7 +85,7 @@ public class Support extends Fragment {
         parametrs.put("where", json);
 
         AsyncHttpTask getTicketsTask = new AsyncHttpTask(parametrs, AsyncMethodNames.GET_TICKETS, getActivity());
-        getTicketsTask.execute();
+        getTicketsTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
         return mView;
     }

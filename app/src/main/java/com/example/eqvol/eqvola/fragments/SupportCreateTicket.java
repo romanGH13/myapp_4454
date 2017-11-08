@@ -3,6 +3,7 @@ package com.example.eqvol.eqvola.fragments;
 import android.content.Context;
 import android.icu.util.ULocale;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -87,7 +88,7 @@ public class SupportCreateTicket extends Fragment {
                 params.put("token", Api.getToken());
                 params.put("data", json);
                 AsyncHttpTask userLoginTask = new AsyncHttpTask(params, AsyncMethodNames.CREATE_TICKET, getActivity());
-                userLoginTask.execute();
+                userLoginTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
 
                /* HashMap<String, Object> params2 = new HashMap<String, Object>();

@@ -44,5 +44,6 @@
     <string name="support_create_ticket_send">Send</string>
 
     <string name="support_chat_message_send">Send</string>
+    <string name="date_format">yyyy-MM-dd HH:mm:ss</string>
 
 </resources>

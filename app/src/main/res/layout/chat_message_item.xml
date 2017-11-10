@@ -18,5 +18,15 @@
         android:layout_toRightOf="@+id/message_image"
         android:theme="@style/ChatMessage"
         />
+    <ImageView
+        android:id="@+id/message_attachment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/message_image"
+        android:visibility="gone"
+        android:maxHeight="150dp"
+        android:maxWidth="150dp"
+        android:scaleType="center"/>
 
 </RelativeLayout>

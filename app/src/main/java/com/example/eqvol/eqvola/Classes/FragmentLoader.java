@@ -56,47 +56,7 @@ public class FragmentLoader implements LoaderManager.LoaderCallbacks<Cursor> {
     {
         this.fragmentManager = fm;
     }
-    /*public MyProgressBar newInstance(Class fragmentClass) throws java.lang.InstantiationException, IllegalAccessException {
-        MyProgressBar pb = new MyProgressBar();
-        fragment = (Fragment) fragmentClass.newInstance();
 
-        return pb;
-    }*/
-
-
-
-    /*//@TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
-    public void endLoad() throws IllegalAccessException, java.lang.InstantiationException {
-
-
-        // Вставляем фрагмент, заменяя текущий фрагмент
-
-        if(fragment.getClass() != SupportChat.class) {
-            FragmentManager fragmentManager = getFragmentManager();
-            fragmentManager.beginTransaction().replace(R.id.container, fragment).commit();
-        } else {
-            try {
-                FragmentManager fragmentManager = getFragmentManager();
-                String str = "";
-            }
-            catch(Exception e)
-            {
-                String str = e.getMessage();
-            }
-        }
-        // Выделяем выбранный пункт меню в шторке
-        //item.setChecked(true);
-        // Выводим выбранный пункт в заголовке
-        //setTitle(item.getTitle());
-        try {
-            mProgressView.setVisibility(show ? ProgressBar.VISIBLE : ProgressBar.INVISIBLE);
-            mFormView.setVisibility(show ? ProgressBar.INVISIBLE : ProgressBar.VISIBLE);
-        }
-        catch(Exception ex){
-            String str = ex.getMessage();
-        }
-        //}
-    }*/
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {

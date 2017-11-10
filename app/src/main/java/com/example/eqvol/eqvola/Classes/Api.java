@@ -21,6 +21,7 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -80,6 +81,32 @@ public class Api extends LoginActivity {
         HashMap<String, Object> params = new HashMap<String, Object>();
         params.put("token", token);
         return performPostCall(params, siteUrl+"account/check_token");
+    }
+    public static String setAttachment(Map<String, Object> params)
+    {
+        return performPostCall(params, siteUrl+"support/attachment/set");
+    }
+
+    public static String getAttachment(Map<String, Object> params)
+    {
+        Map<String, Object> mapUserId = new HashMap<String, Object>();
+        Attachment attachment = null;
+        try {
+
+            for (Map.Entry<String, Object> entry : params.entrySet()) {
+                if (entry.getKey().contentEquals("attachment")) {
+                    attachment = (Attachment)entry.getValue();
+                    mapUserId.put("attachment_id", Integer.toString(attachment.getId()));
+                }
+                else if (entry.getKey().contentEquals("token")) {
+                    mapUserId.put("token", entry.getValue());
+                }
+            }
+            attachment.setData(performGetCall(mapUserId, siteUrl+"support/attachment/get"));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return Integer.toString(attachment.getId());
     }
 
     public static String getTickets(Map<String, Object> params)
@@ -171,7 +198,7 @@ public class Api extends LoginActivity {
         OkHttpClient client = new OkHttpClient();
         Request request = null;
         Response response = null;
-        String image = null;
+        //String image = null;
         byte[] json = null;
         //Headers h = Headers.of(getDataParams);
         request = new Request.Builder()
@@ -182,6 +209,9 @@ public class Api extends LoginActivity {
             //image = response.body().bytes();
             //String  =  str2;
             json = response.body().bytes();
+            //InputStream str = response.body().byteStream();
+
+            //String str22 = null;
         } catch (IOException e) {
             e.printStackTrace();
         }

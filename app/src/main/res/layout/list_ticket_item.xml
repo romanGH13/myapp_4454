@@ -31,6 +31,7 @@
         android:layout_marginTop="2dip"
         android:layout_toRightOf="@+id/support_chat_ticket_image"
         />
+
 </RelativeLayout>
 
 

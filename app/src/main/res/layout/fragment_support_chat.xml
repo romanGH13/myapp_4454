@@ -5,11 +5,12 @@
     tools:context="com.example.eqvol.eqvola.fragments.SupportChat"
     android:id="@+id/support_chat_container">
 
-    <ListView
+    <android.support.v7.widget.RecyclerView
         android:id="@+id/support_chat_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        ></ListView>
+        android:gravity="center">
+
+    </android.support.v7.widget.RecyclerView>
 
 </RelativeLayout>

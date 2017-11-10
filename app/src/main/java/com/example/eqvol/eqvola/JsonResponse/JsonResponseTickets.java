@@ -26,6 +26,7 @@ public class JsonResponseTickets{
         try {
             JsonElement element = new JsonParser().parse(json);
             JsonObject obj = element.getAsJsonObject();
+
             response = gson.fromJson(obj, JsonResponseTickets.class);
 
         }

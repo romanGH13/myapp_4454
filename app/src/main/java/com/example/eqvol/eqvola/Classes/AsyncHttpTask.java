@@ -153,7 +153,26 @@ public class AsyncHttpTask extends AsyncTask<Void, Void, String> {
         }
         else if (methodName == AsyncMethodNames.WAIT_AVATAR_LOADING)
         {
-            ((ChatActivity)act).isDataLoading();
+            SupportChat.isDataLoading();
+        }
+        else if (methodName == AsyncMethodNames.GET_DATA_FROM_MESSAGES)
+        {
+
+            List<Message> list = null;
+            for (Map.Entry<String, Object> entry : parametrs.entrySet()) {
+                if (entry.getKey().contentEquals("newMessages")) {
+                    Object o = entry.getValue();
+                    list = (ArrayList<Message>)o;
+                }
+            }
+            SupportChat.checkNewMessages(list, act);
+        }
+        else if (methodName == AsyncMethodNames.GET_ATTACHMENT)
+        {
+            Api.getAttachment(parametrs);
+        }
+        else if (methodName == AsyncMethodNames.SET_ATTACHMENT) {
+            response = Api.setAttachment(parametrs);
         }
         return response;
     }
@@ -368,20 +387,10 @@ public class AsyncHttpTask extends AsyncTask<Void, Void, String> {
 
         }
         else if (methodName == AsyncMethodNames.GET_DATA_FROM_TICKETS) {
-            /*int count = Api.users.size();
-            //TODO: добавить лоадер
-            while(count!=0) {
-                count = Api.users.size();
-                for (int i = 0; i < Api.users.size(); i++) {
-                    if (Api.users.get(i).getAvatar() != null)
-                        count--;
-                }
-            }
-            SupportFragmentPagerAdapter adapter = (SupportFragmentPagerAdapter) Support.mViewPager.getAdapter();
-            int itempos = adapter.getItemPosition(Api.chatLoader.getProgressBar());
-            adapter.replaceFragment(itempos, Api.chatLoader.fragment);
-            adapter.notifyDataSetChanged();
-            Support.mViewPager.setAdapter(adapter);*/
+
+            AsyncHttpTask getUserTask = new AsyncHttpTask(null, AsyncMethodNames.WAIT_AVATAR_LOADING, act);
+            getUserTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            //SupportChat.updateTickets();
         }
         else if (methodName == AsyncMethodNames.GET_TICKET_MESSAGES) {
             //Map<String, Object> map = Api.jsonToMap(success);
@@ -398,23 +407,13 @@ public class AsyncHttpTask extends AsyncTask<Void, Void, String> {
 
                     if (response.getValue().toString().contentEquals("success")) {
                         newMessages = JsonResponseTicketMessages.getMessages(success);
-
                     }
-
                 }
             }
             if(newMessages != null){
-                SupportChat.newMessages(newMessages);
-                //SupportChat
-
-                /*((ChatActivity)act).last_message_id = newMessages.get(newMessages.size()-1).getId();
-                ListView lvMessages = (ListView) (((ChatActivity)act).findViewById(R.id.list_of_messages));
-                MessagesAdapter adapter = (MessagesAdapter)lvMessages.getAdapter();
-                //((ChatActivity)act).messages.addAll(newMessages);
-                adapter.addMessages(newMessages);
-                adapter.notifyDataSetChanged();*/
+                SupportChat.checkNewMessages(newMessages, act);
             }
-            if(!act.isFinishing()) {
+            else if(!act.isFinishing()) {
                 SupportChat.newMessagesHandler();
                 //((ChatActivity) act).newMessagesHandler();
             }
@@ -422,9 +421,37 @@ public class AsyncHttpTask extends AsyncTask<Void, Void, String> {
             //getNewMessages.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
         else if (methodName == AsyncMethodNames.WAIT_AVATAR_LOADING) {
-            ((ChatActivity) act).setMessages();
+            //((ChatActivity) act).setMessages();
+            Object o = act.getClass();
+            if(act.getClass() == ChatActivity.class)
+                ((ChatActivity) act).setMessages();
+            else
+                SupportChat.updateTickets();
         }
+        else if (methodName == AsyncMethodNames.GET_DATA_FROM_MESSAGES) {
+            SupportChat.newMessages();
 
+        }
+        else if (methodName == AsyncMethodNames.GET_ATTACHMENT) {
+            //int id = Integer.parseInt(success);
+            ((MessagesAdapter)ChatActivity.lvMessages.getAdapter()).notifyDataSetChanged();
+        }
+        else if (methodName == AsyncMethodNames.SET_ATTACHMENT) {
+            String str = success;
+            String str2 = str;
+            /*Map<String, Object> map = Api.jsonToMap(success);
+            for (Map.Entry<String, Object> response : map.entrySet()) {
+                if (response.getKey().contentEquals("status")) {
+
+                    if (response.getValue().toString().contentEquals("success")) {
+                        Toast toast = Toast.makeText(act.getApplicationContext(),
+                                "Attachment was send!", Toast.LENGTH_SHORT);
+                        toast.show();
+                    }
+
+                }
+            }*/
+        }
     }
 
 }

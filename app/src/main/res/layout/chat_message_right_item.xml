@@ -20,4 +20,12 @@
         android:layout_alignParentTop="true"
         android:layout_toLeftOf="@+id/message_image"
         android:theme="@style/ChatMessage"/>
+    <ImageView
+        android:id="@+id/message_attachment"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_alignParentTop="true"
+        android:layout_toLeftOf="@+id/message_image"
+        android:visibility="gone"
+        android:scaleType="centerInside"/>
 </RelativeLayout>

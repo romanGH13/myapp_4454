@@ -22,7 +22,7 @@ public class Message{
     private String date;
     private User user;
     private Ticket ticket;
-    private List<Object> attachment;
+    private Attachment attachment;
 
     public Message(String message) {
         this.message = message;
@@ -101,11 +101,11 @@ public class Message{
         this.ticket = ticket;
     }
 
-    public List<Object> getAttachment() {
+    public Attachment getAttachment() {
         return attachment;
     }
 
-    public void setAttachment(List<Object> attachment) {
+    public void setAttachment(Attachment attachment) {
         this.attachment = attachment;
     }
 

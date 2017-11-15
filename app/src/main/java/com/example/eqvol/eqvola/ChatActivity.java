@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -164,13 +165,20 @@ public class ChatActivity extends AppCompatActivity {
     ///
 
     public void loadGallery(View view) {
-        Intent intent = new Intent();//Intent.ACTION_PICK);
+        Intent intent = new Intent();
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(intent, REQUEST_GALLERY);// ошибка в этой строке
-        //(пробовал менять на context.startActivityForResult(intent, REQUEST_GALLERY) но подсвечивает изначально как ошибка)
+        startActivityForResult(intent, REQUEST_GALLERY);
     }
 
+    private String imageToString(Bitmap bitmap) {
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
+
+        // Получаем изображение из потока в виде байтов
+        byte[] bytes = byteArrayOutputStream.toByteArray();
+        return Base64.encodeToString(bytes, Base64.DEFAULT);
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -180,64 +188,29 @@ public class ChatActivity extends AppCompatActivity {
                 break;*/
             case REQUEST_GALLERY:
                 if (resultCode == RESULT_OK) {
+                    final Uri imageUri = data.getData();
                     try {
-                        final Uri imageUri = data.getData();
-                        final InputStream imageStream = getContentResolver().openInputStream(imageUri);
-                        try {
+                        Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
+                        String encodedData = imageToString(bitmap);
 
+                        StringBuilder stringBuilder = new StringBuilder();
+                        stringBuilder.append("data:");//
+                        stringBuilder.append("image/png");//getMimeType(imageUri));// image/jpeg;base64,");
+                        stringBuilder.append(";base64,");
+                        stringBuilder.append(encodedData);
 
-                            //TODO contentresolver android
-                            ContentResolver contentResolver = getContentResolver();
-                            InputStream istream = contentResolver.openInputStream(imageUri);
-                            byte[] fileData = getBytes(istream);
+                        Attachment attach = new Attachment(stringBuilder.toString(), getMimeType(imageUri));
+                        List<Attachment> attachments = new ArrayList<Attachment>();
+                        attachments.add(attach);
+                        sendAttachment(attachments);
 
-                            /////////////////////////
-                            String str123 = imageUri.toString();
-
-                            istream.read(fileData, 0, fileData.length);
-                            istream.close();
-                            String encodedData = Base64.encodeToString(fileData, Base64.DEFAULT);
-
-                            StringBuilder stringBuilder = new StringBuilder();
-                            stringBuilder.append("data:");//
-                            stringBuilder.append(getMimeType(imageUri));// image/jpeg;base64,");
-                            stringBuilder.append(";base64,");
-                            stringBuilder.append(encodedData);
-
-                            Attachment attach = new Attachment(encodedData, getMimeType(imageUri));
-                            List<Attachment> attachments = new ArrayList<Attachment>();
-                            attachments.add(attach);
-                            sendAttachment(attachments);
-
-                            /*Map<String, byte[]> attachment = new HashMap<String, byte[]>();
-                            attachment.put("attachment", fileData);//Base64.encodeToString(fileData, Base64.DEFAULT));
-                            attachment.put("type", data.getType());*/
-                            //List<Map<String, byte[]>> files = new ArrayList<Map<String, byte[]>>();
-                            //files.add(attachment);
-                            //sendAttachment(attachments);
-
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    } catch (FileNotFoundException e) {
-                        e.getMessage();
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
                 }
                 break;
         }
         super.onActivityResult(requestCode, resultCode, data);
-    }
-
-    public byte[] getBytes(InputStream inputStream) throws IOException {
-        ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
-        int bufferSize = 1024;
-        byte[] buffer = new byte[bufferSize];
-
-        int len = 0;
-        while ((len = inputStream.read(buffer)) != -1) {
-            byteBuffer.write(buffer, 0, len);
-        }
-        return byteBuffer.toByteArray();
     }
 
     public void sendAttachment(List<Attachment> files)

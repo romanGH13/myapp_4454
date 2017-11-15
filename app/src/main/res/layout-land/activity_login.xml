@@ -30,10 +30,8 @@
 
     <ImageView
         android:id="@+id/imageView2"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="30dp"
-        android:layout_marginStart="30dp"
         android:layout_marginTop="80dp"
         android:src="@drawable/eqvola_logo"
         app:layout_constraintEnd_toEndOf="parent"
@@ -55,16 +53,15 @@
         android:id="@+id/imageView3"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="25dp"
         android:layout_marginEnd="15dp"
         android:layout_marginStart="15dp"
+        android:layout_marginTop="25dp"
         android:src="@drawable/shape"
-        app:layout_constraintBottom_toTopOf="@+id/textComment1"
+        app:layout_constraintBottom_toBottomOf="@+id/btnLogin"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHeight_max="200dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView2"
-        app:layout_constraintWidth_max="400dp" />
+        app:layout_constraintTop_toBottomOf="@+id/imageView2" />
 
 
     <TextView
@@ -72,12 +69,13 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
 
-        android:layout_marginEnd="20dp"
-        android:layout_marginStart="20dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/widgetEmail"
         app:layout_constraintEnd_toEndOf="@+id/imageView3"
         app:layout_constraintStart_toStartOf="@+id/imageView3"
-        app:layout_constraintTop_toTopOf="@+id/imageView3" />
+        app:layout_constraintTop_toBottomOf="@+id/imageView2" />
 
     <android.support.design.widget.TextInputLayout
         android:id="@+id/widgetEmail"
@@ -85,11 +83,14 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="12dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginTop="4dp"
+        app:layout_constraintBottom_toTopOf="@+id/widgetPassword"
         app:layout_constraintEnd_toEndOf="@+id/textComment"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.428"
         app:layout_constraintStart_toStartOf="@+id/textComment"
-        app:layout_constraintTop_toBottomOf="@+id/textComment">
+        app:layout_constraintTop_toBottomOf="@+id/textComment"
+        app:layout_constraintVertical_bias="1.0">
 
         <AutoCompleteTextView
             android:id="@+id/email"
@@ -104,8 +105,11 @@
         android:id="@+id/widgetPassword"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/btnLogin"
         app:layout_constraintEnd_toEndOf="@+id/widgetEmail"
+        app:layout_constraintHorizontal_bias="0.533"
         app:layout_constraintStart_toStartOf="@+id/widgetEmail"
         app:layout_constraintTop_toBottomOf="@+id/widgetEmail">
 
@@ -132,7 +136,9 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="15dp"
+        android:layout_marginBottom="70dp"
+        android:layout_marginEnd="30dp"
+        android:layout_marginStart="30dp"
         android:layout_weight="2"
         android:background="@drawable/custom_button"
         android:fontFamily="Roboto"
@@ -141,11 +147,11 @@
         android:textColor="@color/colorWhite"
         android:textSize="@dimen/text_size"
         android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="@+id/widgetPassword"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="@+id/widgetPassword"
-        app:layout_constraintTop_toBottomOf="@+id/widgetPassword"
-        tools:ignore="MissingConstraints" />
+        app:layout_constraintBottom_toTopOf="@+id/textComment1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/widgetPassword" />
 
     <TextView
         android:id="@+id/textComment1"

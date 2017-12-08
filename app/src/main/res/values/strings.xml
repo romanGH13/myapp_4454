@@ -2,20 +2,47 @@
     <string name="app_name">Eqvola</string>
 
     <!-- Strings related to login -->
+    <string name="prompt_name">Name</string>
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
     <string name="prompt_confirm_password">Confirm password</string>
+    <string name="prompt_promo_code">Promo code</string>
+
+    <string name="prompt_city">City</string>
+    <string name="prompt_street">Street</string>
+    <string name="prompt_state">State</string>
+    <string name="prompt_phone_number">Phone number</string>
+    <string name="prompt_phone_code">Phone code</string>
+    <string name="prompt_postal_code">Postal code</string>
+    <string name="prompt_birth_date">Birth date</string>
+
+    <string name="account_was_created">Account was created.</string>
+    <string name="account_register_info">Thank you for registering. A confirmation letter has been sent to your email address.</string>
+
+    <string name="registation_error">Error</string>
+
+    <string name="label_next">Next</string>
+
+    <string name="action_log_in">Login</string>
+    <string name="action_prev">Prev</string>
+    <string name="action_next">Next</string>
     <string name="action_sign_in">Sign in</string>
     <string name="action_registration">Registration</string>
 
+
+    <string name="error_invalid_name">This name is invalid</string>
     <string name="error_invalid_email">This email address is invalid</string>
-    <string name="error_invalid_password">The password must contain upper and lower case letters and numbers.</string>
+    <string name="error_invalid_password">The password must contain upper and lower case letters and numbers.(Min length 8 characters)</string>
     <string name="error_incorrect_data">This email or password is incorrect</string>
     <string name="error_field_required">This field is required</string>
+    <string name="error_password_do_not_match">Passwords do not match</string>
+    <string name="error_email_already_use">This email is already use</string>
+    <string name="error_phone_number">Wrong phone number</string>
 
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
+
     <string name="url">http://api.cabinet.eqvola.org/account/login</string>
     <string name="action_registr">Registr</string>
     <string name="cancel_registration">Cancel</string>
@@ -37,13 +64,15 @@
     <string name="user_page_postal_code">Postal code</string>
     <string name="user_page_birth_date">Birth date</string>
 
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-
     <string name="support_create_ticket_subject">Subject</string>
     <string name="support_create_ticket_text">Text</string>
     <string name="support_create_ticket_send">Send</string>
 
     <string name="support_chat_message_send">Send</string>
     <string name="date_format">yyyy-MM-dd HH:mm:ss</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
 
 </resources>

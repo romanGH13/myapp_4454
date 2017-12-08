@@ -62,12 +62,6 @@ public class MessagesAdapter  extends BaseAdapter {
         }
         return null;
     }
-
-    /*public void setAttachment(int message_id)
-    {
-        Message message = getMessageById(message_id);
-    }*/
-
     @Override
     public int getCount() {
         return messages.size();

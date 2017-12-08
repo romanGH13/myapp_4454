@@ -89,14 +89,6 @@ public class SupportCreateTicket extends Fragment {
                 params.put("data", json);
                 AsyncHttpTask userLoginTask = new AsyncHttpTask(params, AsyncMethodNames.CREATE_TICKET, getActivity());
                 userLoginTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-
-
-               /* HashMap<String, Object> params2 = new HashMap<String, Object>();
-                params.put("token", Api.getToken());
-                params.put("message", message);
-
-                AsyncHttpTask userLoginTask2 = new AsyncHttpTask(params2, AsyncMethodNames.SEND_MESSAGE, getActivity());
-                userLoginTask2.execute();*/
             }
         });
 

@@ -43,14 +43,11 @@ public class ChatActivity extends AppCompatActivity {
     private EditText input = null;
     public static int ticket_id;
     public int last_message_id;
-    //public List<User> users;
     public static List<Message> messages;
     public static ListView lvMessages = null;
     public static boolean isActive = false;
 
     private static final int REQUEST_GALLERY = 2;
-
-    //public Map<Integer, Bitmap> images;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

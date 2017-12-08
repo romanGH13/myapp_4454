@@ -51,24 +51,6 @@ public class SupportFragmentPagerAdapter extends FragmentStatePagerAdapter {
     public Fragment getItem(int position) {
 
         return fragments.get(position);
-
-        /*if(position==0)
-            return SupportCreateTicket.newInstance();
-        else {
-            //return SupportChat.newInstance();
-            FragmentManager f1 = ((AppCompatActivity)context).getSupportFragmentManager();
-            Api.chatLoader = new FragmentLoader(SupportChat.class, f1, R.id.progress_bar, false);
-            //fl.startLoading();
-            return Api.chatLoader.getProgressBar();
-            /*try {
-                return SupportChat.newInstance();
-            } catch (InstantiationException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            }
-        //}
-        //return null;*/
     }
 
     @Override

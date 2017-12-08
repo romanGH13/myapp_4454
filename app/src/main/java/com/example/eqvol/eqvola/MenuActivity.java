@@ -1,5 +1,6 @@
 package com.example.eqvol.eqvola;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -7,6 +8,8 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -16,6 +19,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.eqvol.eqvola.Classes.Api;
@@ -23,6 +27,8 @@ import com.example.eqvol.eqvola.Classes.AsyncHttpTask;
 import com.example.eqvol.eqvola.Classes.AsyncMethodNames;
 import com.example.eqvol.eqvola.Classes.FragmentLoader;
 import com.example.eqvol.eqvola.fragments.CreateAccount;
+import com.example.eqvol.eqvola.fragments.FinanceHistoryFragment;
+import com.example.eqvol.eqvola.fragments.ModalAlert;
 import com.example.eqvol.eqvola.fragments.MyAccounts;
 import com.example.eqvol.eqvola.fragments.MyProgressBar;
 import com.example.eqvol.eqvola.fragments.Support;
@@ -35,9 +41,16 @@ import java.util.HashMap;
 public class MenuActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    public static AsyncHttpTask getNewMessagesTask;
     public static boolean isLoading = false;
     public static FragmentLoader currentLoader = null;
     //public static MyProgressBar fragment = null;
+
+    public void MenuActivity()
+    {
+        getNewMessagesTask = null;
+
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -45,27 +58,6 @@ public class MenuActivity extends AppCompatActivity
         setContentView(R.layout.activity_menu);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        /*Fragment fragment = null;
-        Class fragmentClass = null;
-        fragmentClass = UserPageFragment.class;
-        try {
-            fragment = (Fragment) fragmentClass.newInstance();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();*/
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -105,6 +97,20 @@ public class MenuActivity extends AppCompatActivity
         }
     }
 
+    public void onEditProfileClick(View view)
+    {
+        if(currentLoader != null)
+        {
+            //currentLoader.
+        }
+        String str = "";
+        FragmentLoader fl = new FragmentLoader(UserPageFragment.class, getSupportFragmentManager(), R.id.container, false);
+        fl.startLoading();
+        currentLoader = fl;
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -134,18 +140,14 @@ public class MenuActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-
-        //Fragment fragment = null;
         Class fragmentClass = null;
 
-        if (id == R.id.nav_user_page) {
-            fragmentClass = UserPageFragment.class;
-
-        } else if (id == R.id.nav_create_account) {
-            //tv.setText("user nav_share");
+        if (id == R.id.nav_create_account) {
             fragmentClass = CreateAccount.class;
         } else if (id == R.id.nav_my_accounts) {
             fragmentClass = MyAccounts.class;
+        } else if (id == R.id.nav_finance_history) {
+            fragmentClass = FinanceHistoryFragment.class;
         } else if (id == R.id.nav_support) {
             fragmentClass = Support.class;
         } else if (id == R.id.nav_logout) {
@@ -167,22 +169,10 @@ public class MenuActivity extends AppCompatActivity
                 FragmentLoader fl = new FragmentLoader(fragmentClass, getSupportFragmentManager(), R.id.container, false);
                 fl.startLoading();
                 currentLoader = fl;
-                /*fragment = MyProgressBar.newInstance(fragmentClass);
-                // Вставляем фрагмент, заменяя текущий фрагмент
-                FragmentManager fragmentManager = getSupportFragmentManager();
-                fragmentManager.beginTransaction().replace(R.id.container, fragment).commit();
-                isLoading = true;
-                // Выделяем выбранный пункт меню в шторке
-                item.setChecked(true);
-                // Выводим выбранный пункт в заголовке
-                //setTitle(item.getTitle());*/
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
@@ -200,4 +190,15 @@ public class MenuActivity extends AppCompatActivity
         startActivity(loginActivity);
         finish();
     }
+
+    public void showDialog(boolean status, String description)
+    {
+        ModalAlert myDialogFragment = new ModalAlert(status, description);
+
+        FragmentManager manager = getSupportFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+        myDialogFragment.show(transaction, "dialog");
+
+    }
+
 }

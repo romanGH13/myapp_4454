@@ -4,13 +4,17 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.GridLayout;
 import android.widget.GridView;
+import android.widget.LinearLayout;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TableLayout;
 
@@ -48,10 +52,7 @@ public class MyAccounts extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.fragment_my_accounts, container, false);
-
-
         createTable();
-
         return mView;
     }
 
@@ -59,6 +60,21 @@ public class MyAccounts extends Fragment {
     public void createTable() {
         List<Account> accounts = Api.user.accounts;
         ListView gl = (ListView) mView.findViewById(R.id.gridView1);
+        gl.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
+                                    long arg3) {
+                ConstraintLayout constraintLayout = (ConstraintLayout)arg1.findViewById(R.id.layoutDetail);
+                if(constraintLayout.getVisibility() == View.VISIBLE) {
+                    constraintLayout.setVisibility(View.GONE);
+                }
+                else {
+                    constraintLayout.setVisibility(View.VISIBLE);
+                }
+            }
+
+        });
         ArrayAdapter<Account> adapter = new AccountsAdapter(mView.getContext(), accounts);
         gl.setAdapter(adapter);
     }

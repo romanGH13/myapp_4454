@@ -1,11 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimary">#00B2F0</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
 
+    <color name="colorMenuBackground">#202334</color>
+
     <color name="colorMain">#00B2F0</color>
+    <color name="colorPrev">#1c61ae</color>
+    <color name="colorNext">#00bfbf</color>
+    <color name="colorRegister">#f78f00</color>
     <color name="colorWhite">#FFF</color>
+    <color name="colorBlack">#FF000000</color>
 
     <color name="colorItem">#348EF4</color>
     <color name="colorMessageText">#FF000000</color>

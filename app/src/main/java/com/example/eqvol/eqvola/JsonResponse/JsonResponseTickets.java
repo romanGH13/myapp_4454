@@ -6,7 +6,9 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.stream.JsonReader;
 
+import java.io.StringReader;
 import java.util.List;
 import java.util.Map;
 
@@ -21,7 +23,13 @@ public class JsonResponseTickets{
 
     public JsonResponseTickets(String json) {
 
-        Gson gson = new GsonBuilder().serializeNulls().setLenient().create();
+
+        Gson gson = new GsonBuilder().create();
+        JsonReader reader = new JsonReader(new StringReader(json));
+        reader.setLenient(true);
+        JsonResponseTickets response = gson.fromJson(reader, JsonResponseTickets.class);
+
+        /*Gson gson = new GsonBuilder().serializeNulls().setLenient().create();
         JsonResponseTickets response = null;
         try {
             JsonElement element = new JsonParser().parse(json);
@@ -33,7 +41,7 @@ public class JsonResponseTickets{
         catch(Exception ex)
         {
             String str1 = ex.getMessage();
-        }
+        }*/
         //String str = response.status;
         this.status = response.status;
         this.data = response.data;

@@ -53,14 +53,6 @@ public class Message{
         this.ticket_id = ticket_id;
     }
 
-    /*public boolean isIs_showed() {
-        return is_showed;
-    }
-
-    public void setIs_showed(boolean is_showed) {
-        this.is_showed = is_showed;
-    }
-*/
     public String getDate() {
         return date;
     }
@@ -108,12 +100,4 @@ public class Message{
     public void setAttachment(Attachment attachment) {
         this.attachment = attachment;
     }
-
-    /*public boolean isIs_ready() {
-        return is_ready;
-    }
-
-    public void setIs_ready(boolean is_ready) {
-        this.is_ready = is_ready;
-    }*/
 }

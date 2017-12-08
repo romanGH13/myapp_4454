@@ -36,10 +36,6 @@ public class CategoryAdapter extends ArrayAdapter<Category>
         TextView tv = ((TextView) convertView.findViewById(R.id.item));
         String name = category.getName();
         tv.setText(name);
-        /*if(Api.user.getCountry() == country.getName())
-        {
-            parent.dispatchSetSelected(true);
-        }*/
         return convertView;
     }
     @Override

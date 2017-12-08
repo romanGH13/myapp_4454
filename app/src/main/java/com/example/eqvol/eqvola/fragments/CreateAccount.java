@@ -1,8 +1,10 @@
 package com.example.eqvol.eqvola.fragments;
 
+import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +24,7 @@ import com.example.eqvol.eqvola.R;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -35,7 +38,6 @@ public class CreateAccount extends Fragment {
     {
         HashMap<String, Object> params = new HashMap<String, Object>();
         params.put("token", Api.getToken());
-
         AsyncHttpTask userLoginTask = new AsyncHttpTask(params, AsyncMethodNames.GET_GROUPS, getActivity());
         userLoginTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
@@ -54,24 +56,20 @@ public class CreateAccount extends Fragment {
 
         setSpinnerGroups();
 
-        /*HashMap<String, Object> params = new HashMap<String, Object>();
-        params.put("token", Api.getToken());
-
-        /*AsyncHttpTask userLoginTask = new AsyncHttpTask(params, AsyncMethodNames.GET_GROUPS, getActivity());
-        userLoginTask.execute();*/
-
         Button btn = (Button) mView.findViewById(R.id.btnCreateAccount);
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Spinner spinGroup = (Spinner) mView.findViewById(R.id.create_account_spinner_group);
                 Spinner spinLeverage = (Spinner) mView.findViewById(R.id.create_account_spinner_leverage);
-                int group_id = ((Leverage)(spinLeverage.getSelectedItem())).getGroup_id();
-                int leverage_id = ((Leverage)(spinLeverage.getSelectedItem())).getId();
+                String leverage = (String)(spinLeverage.getSelectedItem());
+                Group group = (Group)(spinGroup.getSelectedItem());
+                int group_id = group.getId();
 
                 HashMap<String, Object> params = new HashMap<String, Object>();
                 params.put("token", Api.getToken());
                 params.put("group_id", group_id);
-                params.put("leverage_id", leverage_id);
+                params.put("leverage", leverage);
 
                 AsyncHttpTask userLoginTask = new AsyncHttpTask(params, AsyncMethodNames.CREATE_ACCOUNT, getActivity());
                 userLoginTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
@@ -98,9 +96,22 @@ public class CreateAccount extends Fragment {
                                        int pos, long id) {
                 Group group = (Group)parent.getItemAtPosition(pos);
                 Spinner spinnerLeverages = (Spinner)mView.findViewById(R.id.create_account_spinner_leverage);
-                ArrayAdapter<Leverage> adapter = new LeverageAdapter(mView.getContext(), group.getLeverages());
-                adapter.setDropDownViewResource(R.layout.drop_down_item);
-                spinnerLeverages.setAdapter(adapter);
+                //ArrayList<Leverage> leverageList = new ArrayList<Leverage>();
+                //String leverageArray[] = group.getLeverages().split(", ");
+                /*for(String leverage: leverageArray)
+                {
+                    Leverage lev = new Leverage();
+                    lev.setLeverage(leverage);
+                    leverageList.add(lev);
+                }*/
+                try {
+                    ArrayAdapter<String> adapter = new LeverageAdapter(mView.getContext(), group.getLeverages());
+                    adapter.setDropDownViewResource(R.layout.drop_down_item);
+                    spinnerLeverages.setAdapter(adapter);
+                } catch(Exception ex)
+                {
+                    String str = ex.getMessage();
+                }
             }
 
             @Override
@@ -109,6 +120,8 @@ public class CreateAccount extends Fragment {
             }
         });
     }
+
+
 
 
 }

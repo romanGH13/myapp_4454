@@ -6,11 +6,9 @@ import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import com.example.eqvol.eqvola.Adapters.MessagesAdapter;
-import com.example.eqvol.eqvola.Adapters.SupportFragmentPagerAdapter;
 import com.example.eqvol.eqvola.ChatActivity;
 import com.example.eqvol.eqvola.JsonResponse.JsonResponceCountries;
 import com.example.eqvol.eqvola.JsonResponse.JsonResponseAccounts;
@@ -22,8 +20,12 @@ import com.example.eqvol.eqvola.JsonResponse.JsonResponseUser;
 import com.example.eqvol.eqvola.LoginActivity;
 import com.example.eqvol.eqvola.MenuActivity;
 import com.example.eqvol.eqvola.R;
+import com.example.eqvol.eqvola.RegistrationActivity;
+import com.example.eqvol.eqvola.fragments.CreateAccount;
+import com.example.eqvol.eqvola.fragments.MyAccounts;
 import com.example.eqvol.eqvola.fragments.Support;
 import com.example.eqvol.eqvola.fragments.SupportChat;
+import com.example.eqvol.eqvola.fragments.UserPageFragment;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.internal.LinkedTreeMap;
@@ -70,6 +72,12 @@ public class AsyncHttpTask extends AsyncTask<Void, Void, String> {
                 e.printStackTrace();
             }
         }
+        else if(methodName == AsyncMethodNames.USER_REGISTRATION){
+            response = Api.registration(parametrs);
+        }
+        else if (methodName == AsyncMethodNames.SET_USER_AVATAR) {
+            response = Api.setUserAvatar(parametrs);
+        }
         else if (methodName == AsyncMethodNames.CHECK_TOKEN) {
             //act.showProgress(true);
             String token = "";
@@ -78,6 +86,9 @@ public class AsyncHttpTask extends AsyncTask<Void, Void, String> {
                     token = (String) entry.getValue();
             }
             response = Api.checkToken(token);
+        }
+        else if (methodName == AsyncMethodNames.CHECK_EMAIL) {
+            response = Api.checkEmail(parametrs);
         }
         else if (methodName == AsyncMethodNames.GET_USER) {
             int id = 0;
@@ -141,6 +152,7 @@ public class AsyncHttpTask extends AsyncTask<Void, Void, String> {
         else if (methodName == AsyncMethodNames.GET_DATA_FROM_TICKETS)
         {
             SupportChat.checkUsersInTickets(act);
+            return null;
             //Api.getDataFromTickets(act);
         }
         else if (methodName == AsyncMethodNames.GET_TICKET_MESSAGES)
@@ -179,11 +191,25 @@ public class AsyncHttpTask extends AsyncTask<Void, Void, String> {
 
     @Override
     protected void onPostExecute(final String success) {
-        if(success == "")
-        {
-            Toast toast = Toast.makeText(act.getApplicationContext(),
-                    "Problems with connection!", Toast.LENGTH_SHORT);
-            toast.show();
+
+        if (methodName == AsyncMethodNames.USER_REGISTRATION) {
+            Map<String, Object> map = Api.jsonToMap(success);
+            for (Map.Entry<String, Object> response : map.entrySet()) {
+                if (response.getKey().contentEquals("status")) {
+                    if(response.getValue().toString().contentEquals("success")){
+                        ((RegistrationActivity)act).showAccessRegisterDialog();
+                    }
+                    else if(response.getValue().toString().contentEquals("error")) {
+                        for(Object list : (ArrayList<Object>)(response.getValue())){
+                            for (Map.Entry<String, Object> error : ((Map<String, Object>) list).entrySet()) {
+                                if (error.getKey().contentEquals("description")) {
+                                    ((RegistrationActivity)act).showErrorRegisterDialog((String) error.getValue());
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
         else if (methodName == AsyncMethodNames.CHECK_TOKEN) {
             Map<String, Object> map = Api.jsonToMap(success);
@@ -207,19 +233,62 @@ public class AsyncHttpTask extends AsyncTask<Void, Void, String> {
                     }
                 }
             }
+
+        } else if (methodName == AsyncMethodNames.CHECK_EMAIL) {
+            Map<String, Object> map = Api.jsonToMap(success);
+            for (Map.Entry<String, Object> response : map.entrySet()) {
+                if (response.getKey().contentEquals("status")) {
+                    boolean isAlreadyUse = true;
+                    if(response.getValue().toString().contentEquals("error")){
+                        isAlreadyUse = false;
+                    }
+                    ((RegistrationActivity)act).emailChecked(isAlreadyUse);
+                }
+            }
         } else if (methodName == AsyncMethodNames.GET_USER) {
             {
                 User user = JsonResponseUser.getUser(success);
-                Api.user = user;
-                ((LoginActivity)act).goToMenuActivity();
+
+                if(act.getClass() == LoginActivity.class) {
+                    Api.user = user;
+                    ((LoginActivity) act).goToMenuActivity();
+                }
+                else
+                {
+                    Api.user.updateMetaData(user);
+                }
             }
-        } else if(methodName == AsyncMethodNames.GET_USER_AVATAR){
+        }
+        else if(methodName == AsyncMethodNames.SET_USER_AVATAR){
+            Map<String, Object> map = Api.jsonToMap(success);
+            for (Map.Entry<String, Object> response : map.entrySet()) {
+                if (response.getKey().contentEquals("status")) {
+
+                    if (response.getValue().toString().contentEquals("success")) {
+                        Toast toast = Toast.makeText(act.getApplicationContext(),
+                                "Avatar was saved!", Toast.LENGTH_SHORT);
+                        toast.show();
+
+
+                        HashMap<String, Object> parametrs = new HashMap<String, Object>();
+                        parametrs.put("user", Api.user);
+                        AsyncHttpTask getUserTask = new AsyncHttpTask(parametrs, AsyncMethodNames.GET_USER_AVATAR, act);
+                        getUserTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+
+
+                    }
+
+                }
+            }
+        }
+        else if(methodName == AsyncMethodNames.GET_USER_AVATAR){
             if(Api.user.getId() == Integer.parseInt(success)) {
                 ImageView img = (ImageView) act.findViewById(R.id.imageView);
                 byte[] data = Api.user.getAvatar();
                 //byte[] decodedString = //Base64.decode(data, Base64.DEFAULT);
                 Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
                 img.setImageBitmap(bitmap);
+
             }
             else
             {
@@ -273,7 +342,17 @@ public class AsyncHttpTask extends AsyncTask<Void, Void, String> {
         else if(methodName == AsyncMethodNames.GET_COUNTRIES)
         {
             Api.countries = JsonResponceCountries.getCountries(success);
-            MenuActivity.currentLoader.endLoading();
+
+            if(act != null) {
+                if (act.getClass() == RegistrationActivity.class) {
+                    ((RegistrationActivity) act).setSpinner();
+                }
+            }
+            else {
+                if(MenuActivity.currentLoader.fragment.getClass() == UserPageFragment.class) {
+                    MenuActivity.currentLoader.endLoading();
+                }
+            }
         }
         else if (methodName == AsyncMethodNames.SET_USER)
         {
@@ -285,6 +364,12 @@ public class AsyncHttpTask extends AsyncTask<Void, Void, String> {
                         Toast toast = Toast.makeText(act.getApplicationContext(),
                                 "Data was saved!", Toast.LENGTH_SHORT);
                         toast.show();
+
+                        HashMap<String, Object> userData = new HashMap<String, Object>();
+                        userData.put("userId", Api.user.getId());
+                        userData.put("token", Api.getToken());
+                        AsyncHttpTask getUserTask = new AsyncHttpTask(userData, AsyncMethodNames.GET_USER, act);
+                        getUserTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                     }
 
                 }
@@ -293,7 +378,9 @@ public class AsyncHttpTask extends AsyncTask<Void, Void, String> {
         else if (methodName == AsyncMethodNames.GET_GROUPS)
         {
             Api.groups = JsonResponseGroups.getGroups(success);
-            MenuActivity.currentLoader.endLoading();
+            if(MenuActivity.currentLoader.fragment.getClass() == CreateAccount.class) {
+                MenuActivity.currentLoader.endLoading();
+            }
         }
         else if (methodName == AsyncMethodNames.CREATE_ACCOUNT)
         {
@@ -302,9 +389,27 @@ public class AsyncHttpTask extends AsyncTask<Void, Void, String> {
                 if (response.getKey().contentEquals("data")) {
                     for (Map.Entry<String, Object> dataEntry : ((Map<String, Object>) (response.getValue())).entrySet()) {
                         if (dataEntry.getKey().contentEquals("login")) {
-                            Toast toast = Toast.makeText(act.getApplicationContext(),
+                            /*Toast toast = Toast.makeText(act.getApplicationContext(),
                                     "Account was created with login: " + (int)(double)dataEntry.getValue(), Toast.LENGTH_SHORT);
-                            toast.show();
+                            toast.show();*/
+                            ((MenuActivity)act).showDialog(true, "Account was created with login: " + (int)(double)dataEntry.getValue());
+                        }
+                    }
+                }
+                if (response.getKey().contentEquals("errors")) {
+                    Object tmp = response.getValue();
+                    ArrayList<Object> errorList = (ArrayList<Object>)response.getValue();
+                    for(Object error: errorList) {
+                        Map<String, Object> tmpMap = (Map<String, Object>) error;
+                        for (Map.Entry<String, Object> dataEntry : tmpMap.entrySet()) {
+                            if (dataEntry.getKey().contentEquals("description")) {
+                                String description = (String) dataEntry.getValue();
+                                /*Toast toast = Toast.makeText(act.getApplicationContext(),
+                                        description, Toast.LENGTH_SHORT);
+                                toast.show();*/
+                                ((MenuActivity)act).showDialog(false, description);
+
+                            }
                         }
                     }
                 }
@@ -314,13 +419,17 @@ public class AsyncHttpTask extends AsyncTask<Void, Void, String> {
         {
 
             Api.user.accounts = JsonResponseAccounts.getAccounts(success);
-            MenuActivity.currentLoader.endLoading();
+            if(MenuActivity.currentLoader.fragment.getClass() == MyAccounts.class) {
+                MenuActivity.currentLoader.endLoading();
+            }
 
         }
         else if (methodName == AsyncMethodNames.GET_CATEGORIES)
         {
             Api.categories = JsonResponseCategories.getCategories(success);
-            MenuActivity.currentLoader.endLoading();
+            if(MenuActivity.currentLoader.fragment.getClass() == Support.class) {
+                MenuActivity.currentLoader.endLoading();
+            }
         }
         else if (methodName == AsyncMethodNames.CREATE_TICKET)
         {
@@ -413,12 +522,9 @@ public class AsyncHttpTask extends AsyncTask<Void, Void, String> {
             if(newMessages != null){
                 SupportChat.checkNewMessages(newMessages, act);
             }
-            else if(!act.isFinishing()) {
+            else if(!act.isFinishing() && MenuActivity.getNewMessagesTask.equals(this)) {
                 SupportChat.newMessagesHandler();
-                //((ChatActivity) act).newMessagesHandler();
             }
-            //AsyncHttpTask getNewMessages = new AsyncHttpTask(parametrs, methodName, act);
-            //getNewMessages.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
         else if (methodName == AsyncMethodNames.WAIT_AVATAR_LOADING) {
             //((ChatActivity) act).setMessages();
@@ -433,7 +539,6 @@ public class AsyncHttpTask extends AsyncTask<Void, Void, String> {
 
         }
         else if (methodName == AsyncMethodNames.GET_ATTACHMENT) {
-            //int id = Integer.parseInt(success);
             ((MessagesAdapter)ChatActivity.lvMessages.getAdapter()).notifyDataSetChanged();
         }
         else if (methodName == AsyncMethodNames.SET_ATTACHMENT) {

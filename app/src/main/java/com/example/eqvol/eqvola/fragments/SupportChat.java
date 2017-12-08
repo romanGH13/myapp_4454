@@ -26,6 +26,7 @@ import com.example.eqvol.eqvola.Classes.FragmentLoader;
 import com.example.eqvol.eqvola.Classes.Message;
 import com.example.eqvol.eqvola.Classes.Ticket;
 import com.example.eqvol.eqvola.Classes.User;
+import com.example.eqvol.eqvola.MenuActivity;
 import com.example.eqvol.eqvola.R;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -38,16 +39,18 @@ import java.util.Map;
 
 public class SupportChat extends Fragment {
 
+
+
     private static View mView = null;
     private static FragmentLoader fl = null;
     private static int currentTicketId;
     private static int currentTicketLastMessageId;
-    private static boolean isFirstLoad = true;
+    private static boolean isFirstLoad;
 
-    public static List<Ticket> tickets = null;
-    public static List<User> users = new ArrayList<User>();
-    public static Map<Integer, Bitmap> images = new HashMap<Integer, Bitmap>();
-    public static List<Message> newMessages = null;
+    public static List<Ticket> tickets;
+    public static List<User> users;
+    public static Map<Integer, Bitmap> images;
+    public static List<Message> newMessages;
 
     private static RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
@@ -56,7 +59,11 @@ public class SupportChat extends Fragment {
 
     public SupportChat()
     {
-
+        isFirstLoad = true;
+        users = new ArrayList<User>();
+        images = new HashMap<Integer, Bitmap>();
+        newMessages = null;
+        tickets = null;
     }
 
     public static SupportChat newInstance() {
@@ -92,21 +99,27 @@ public class SupportChat extends Fragment {
 
     public static void checkUsersInTickets(Activity activity)
     {
-        users.add(Api.user);
-        for(Ticket t: tickets){
-            User u = t.getMessage().getUser();
-            if(!isUserContains(u.getId())){
-                users.add(u);
-
-                HashMap<String, Object> parametrs = new HashMap<String, Object>();
-                parametrs.put("user", u);
-
-                AsyncHttpTask getUserTask = new AsyncHttpTask(parametrs, AsyncMethodNames.GET_USER_AVATAR, activity);
-                getUserTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        try {
+            if(!users.contains(Api.user)){
+                users.add(Api.user);
             }
+
+            for (Ticket t : tickets) {
+                User u = t.getMessage().getUser();
+                if (!isUserContains(u.getId())) {
+                    users.add(u);
+
+                    HashMap<String, Object> parametrs = new HashMap<String, Object>();
+                    parametrs.put("user", u);
+
+                    AsyncHttpTask getUserTask = new AsyncHttpTask(parametrs, AsyncMethodNames.GET_USER_AVATAR, activity);
+                    getUserTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                }
+            }
+        } catch(Exception ex)
+        {
+            String str = ex.getMessage();
         }
-
-
     }
 
     public static void isDataLoading()
@@ -214,8 +227,12 @@ public class SupportChat extends Fragment {
         params.put("token", Api.getToken());
         params.put("where", json);
 
-        AsyncHttpTask getNewMessages = new AsyncHttpTask(params, AsyncMethodNames.GET_NEW_MESSAGE, (Activity)mView.getContext());
-        getNewMessages.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+
+        //todo перенести этот вызов в Menu activity
+        if(MenuActivity.getNewMessagesTask == null) {
+            MenuActivity.getNewMessagesTask = new AsyncHttpTask(params, AsyncMethodNames.GET_NEW_MESSAGE, (Activity) mView.getContext());
+            MenuActivity.getNewMessagesTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        }
     }
 
     public static void checkNewMessages(List<Message> newMessages, Activity activity){
@@ -289,8 +306,6 @@ public class SupportChat extends Fragment {
         intent.putExtra("ticket_id", currentTicketId);
         intent.putExtra("last_message_id", currentTicketLastMessageId);
         mView.getContext().startActivity(intent);
-
     }
-
 
 }

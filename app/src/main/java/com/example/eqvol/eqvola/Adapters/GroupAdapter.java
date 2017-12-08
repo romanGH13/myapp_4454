@@ -33,10 +33,6 @@ public class GroupAdapter extends ArrayAdapter<Group> {
         TextView tv = ((TextView) convertView.findViewById(R.id.item));
         String name = group.getName();
         tv.setText(name);
-        /*if(Api.user.getCountry() == country.getName())
-        {
-            parent.dispatchSetSelected(true);
-        }*/
         return convertView;
     }
     @Override

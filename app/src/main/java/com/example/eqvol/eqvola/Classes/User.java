@@ -1,25 +1,7 @@
 package com.example.eqvol.eqvola.Classes;
 
-import com.example.eqvol.eqvola.JsonResponse.JsonResponseTicketsData;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
-import com.google.gson.JsonParser;
-import com.google.gson.internal.LinkedTreeMap;
-
-import java.lang.reflect.Type;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by eqvol on 13.10.2017.
@@ -41,15 +23,18 @@ public class User{
     private String city;
     private String state;
     private String street;
-    private int postal_code;
+    private String postal_code;
+
     transient private byte[] avatar;
     public List<Ticket> tickets;
     public List<Account> accounts;
     private int currentTicketId;
 
+    public User(){}
+
 
     public User(int id, String name, String email, String birth_date, String country,
-                String state, String city, String street, int postal_code, int phone_code,
+                String state, String city, String street, String postal_code, int phone_code,
                 int phone_number, String date, String language, int is_approved, int rights)
     {
         this.id = id;
@@ -67,6 +52,19 @@ public class User{
         this.language = language;
         this.is_approved = is_approved;
         this.rights = rights;
+    }
+
+    public void updateMetaData(User user)
+    {
+        this.name = user.name;
+        this.birth_date = user.birth_date;
+        this.country = user.country;
+        this.state = user.state;
+        this.city = user.city;
+        this.street = user.street;
+        this.postal_code = user.postal_code;
+        this.phone_code = user.phone_code;
+        this.phone_number = user.phone_number;
     }
 
     public void addTicket(Ticket ticket)
@@ -146,11 +144,11 @@ public class User{
         this.street = street;
     }
 
-    public int getPostal_code() {
+    public String getPostal_code() {
         return postal_code;
     }
 
-    public void setPostal_code(int postal_code) {
+    public void setPostal_code(String postal_code) {
         this.postal_code = postal_code;
     }
 

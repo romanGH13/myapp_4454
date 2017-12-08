@@ -20,9 +20,6 @@ public class Country {
     private String code;
     private int phone_code;
 
-
-
-
     public int getId() {
         return id;
     }

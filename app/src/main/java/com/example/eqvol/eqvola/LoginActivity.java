@@ -82,7 +82,7 @@ public class LoginActivity extends AppCompatActivity implements TextView.OnEdito
         mPasswordView.setOnEditorActionListener(this);
         mPasswordView.setImeActionLabel("Sign In", EditorInfo.IME_ACTION_DONE);
 
-        //checkTokenInFile();
+        checkTokenInFile();
     }
 
     public void checkTokenInFile(){

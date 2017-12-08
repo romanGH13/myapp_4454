@@ -76,11 +76,19 @@ public class Api extends LoginActivity {
         return performPostCall(params, siteUrl+"account/login");
     }
 
+    public static String registration(Map<String, Object> params)
+    {
+        return performPostCall(params, siteUrl+"account/register");
+    }
     public static String checkToken(String token)
     {
         HashMap<String, Object> params = new HashMap<String, Object>();
         params.put("token", token);
         return performPostCall(params, siteUrl+"account/check_token");
+    }
+    public static String checkEmail(Map<String, Object> params)
+    {
+        return performPostCall(params, siteUrl+"account/check_email");
     }
     public static String setAttachment(Map<String, Object> params)
     {
@@ -175,6 +183,10 @@ public class Api extends LoginActivity {
         return performPostCall(params, siteUrl+"account/user/get");
     }
 
+    public static String setUserAvatar(Map<String, Object> params){
+        return performPostCall(params, siteUrl+"account/user/set");
+    }
+
     public static String getUserAvatar(Map<String, Object> params) throws UnsupportedEncodingException {
         Map<String, Object> mapUserId = new HashMap<String, Object>();
         User user = null;
@@ -198,20 +210,12 @@ public class Api extends LoginActivity {
         OkHttpClient client = new OkHttpClient();
         Request request = null;
         Response response = null;
-        //String image = null;
         byte[] json = null;
-        //Headers h = Headers.of(getDataParams);
         request = new Request.Builder()
                     .url(strUrl+"?"+getPostDataString(getDataParams)).build();//
         try {
             response = client.newCall(request).execute();
-            //String str = response.toString();
-            //image = response.body().bytes();
-            //String  =  str2;
             json = response.body().bytes();
-            //InputStream str = response.body().byteStream();
-
-            //String str22 = null;
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -338,7 +342,7 @@ public class Api extends LoginActivity {
                     {
                         map.put(keyName, (Integer)value);
                     }
-                    else if(value.getClass() == boolean.class)
+                    else if(value.getClass() == Boolean.class)
                     {
                         map.put(keyName, (boolean)value);
                     }
@@ -381,38 +385,5 @@ public class Api extends LoginActivity {
         Log.d("myTag", "test3");
         return map;
     }
-
-
-    /*public static void getDataFromTickets(Activity act)
-    {
-        users.add(Api.user);
-
-        List<Ticket> tickets = SupportChat.tickets;
-        for(Ticket ticket: tickets) {
-
-            if(!isUserContains(ticket.getMessage().getUser().getId())){
-                User currentUser = ticket.getMessage().getUser();
-                users.add(currentUser);
-
-                HashMap<String, Object> parametrs = new HashMap<String, Object>();
-                parametrs.put("user", currentUser);
-
-                AsyncHttpTask getUserTask = new AsyncHttpTask(parametrs, AsyncMethodNames.GET_USER_AVATAR, act);
-                getUserTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-            }
-
-        }
-
-    }
-
-    private static boolean isUserContains(int id){
-        for(User user: users){
-            if(user.getId() == id)
-            {
-                return true;
-            }
-        }
-        return false;
-    }*/
 
 }

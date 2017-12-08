@@ -14,9 +14,7 @@ import com.example.eqvol.eqvola.fragments.SupportChat;
  * Created by eqvol on 03.11.2017.
  */
 
-public class FragmentLoader implements LoaderManager.LoaderCallbacks<Cursor> {
-
-    private boolean isDataLoaded;
+public class FragmentLoader {
     public Fragment fragment = null;
     private MyProgressBar myProgressBar;
     private FragmentManager fragmentManager;
@@ -24,7 +22,6 @@ public class FragmentLoader implements LoaderManager.LoaderCallbacks<Cursor> {
 
     public FragmentLoader(Class fragmentClass, FragmentManager fm, int id, boolean isDataLoaded)
     {
-        this.isDataLoaded = isDataLoaded;
         this.fragmentContainerId = id;
         try {
             fragment = (Fragment) fragmentClass.newInstance();
@@ -42,6 +39,11 @@ public class FragmentLoader implements LoaderManager.LoaderCallbacks<Cursor> {
         fragmentManager.beginTransaction().replace(fragmentContainerId, myProgressBar).commit();
     }
 
+    public void closeLoading()
+    {
+        //this.myProgressBar.getFragmentManager()
+    }
+
     public void endLoading()
     {
         fragmentManager.beginTransaction().replace(fragmentContainerId, fragment).commit();
@@ -57,19 +59,4 @@ public class FragmentLoader implements LoaderManager.LoaderCallbacks<Cursor> {
         this.fragmentManager = fm;
     }
 
-
-    @Override
-    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return null;
-    }
-
-    @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-
-    }
-
-    @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
-
-    }
 }

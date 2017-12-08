@@ -52,11 +52,7 @@ public class Support extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //LayoutInflater inflater = LayoutInflater.from(getContext());//getLayoutInflater(savedInstanceState);
-       // inflater.inflate(R.layout.fragment_support, )
-    //mView = inflater.inflate;
-
-}
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

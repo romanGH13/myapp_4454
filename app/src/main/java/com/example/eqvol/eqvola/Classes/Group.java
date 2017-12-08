@@ -1,6 +1,8 @@
 package com.example.eqvol.eqvola.Classes;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by eqvol on 25.10.2017.
@@ -11,7 +13,13 @@ public class Group {
     private String name;
     private String code;
     private String date;
-    private List<Leverage> leverages;
+    private List<Leverage> leverages; // работает для получения групп в создании счета
+    //private String leverages; //для просмотра всех счетов
+    private int parent_group_id;
+    private int is_cent;
+    private int is_micro;
+    private int is_active;
+
 
     public String getName() {
         return name;
@@ -37,10 +45,27 @@ public class Group {
         this.date = date;
     }
 
-    public List<Leverage> getLeverages() {
+    public List<String> getLeverages() {
+        List<String> leverages = new ArrayList<>();
+
+        for(Leverage l: this.leverages)
+        {
+            leverages.add(l.getLeverage());
+        }
+
+        //my account
+        /*String arrayLeverages[] = this.leverages.split(", ");
+        for(String l: arrayLeverages)
+        {
+            leverages.add(l.trim());
+        }*/
+
         return leverages;
     }
 
+    /*public void setLeverages(String leverages) {
+        this.leverages = leverages;
+    }*/
     public void setLeverages(List<Leverage> leverages) {
         this.leverages = leverages;
     }

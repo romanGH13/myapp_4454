@@ -3,39 +3,24 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_user_page"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="Edit" />
-        <item
-            android:id="@+id/nav_create_account"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="Create account" />
-        <item
             android:id="@+id/nav_my_accounts"
-            android:icon="@drawable/ic_menu_manage"
+            android:icon="@drawable/ic_menu_archive"
             android:title="My accounts" />
         <item
+            android:id="@+id/nav_create_account"
+            android:icon="@drawable/ic_menu_add_account"
+            android:title="Create account" />
+        <item
+            android:id="@+id/nav_finance_history"
+            android:icon="@drawable/ic_menu_wallet"
+            android:title="Finance history" />
+        <item
             android:id="@+id/nav_support"
-            android:icon="@drawable/ic_menu_manage"
+            android:icon="@drawable/ic_menu_help"
             android:title="Support" />
         <item
             android:id="@+id/nav_logout"
-            android:icon="@drawable/side_nav_bar"
+            android:icon="@drawable/ic_menu_logout"
             android:title="Logout" />
-
-</group>
-
-    <item android:title="Communicate">
-        <menu>
-            <item
-                android:id="@+id/nav_share"
-                android:icon="@drawable/ic_menu_share"
-                android:title="Share" />
-            <item
-                android:id="@+id/nav_send"
-                android:icon="@drawable/ic_menu_send"
-                android:title="Send" />
-        </menu>
-    </item>
-
+    </group>
 </menu>

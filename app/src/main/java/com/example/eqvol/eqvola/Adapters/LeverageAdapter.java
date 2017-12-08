@@ -18,32 +18,28 @@ import java.util.List;
  * Created by eqvol on 25.10.2017.
  */
 
-public class LeverageAdapter extends ArrayAdapter<Leverage> {
-    public LeverageAdapter(@NonNull Context context, List<Leverage> leverages) {
+public class LeverageAdapter extends ArrayAdapter<String> {
+    public LeverageAdapter(@NonNull Context context, List<String> leverages) {
         super(context, R.layout.spinner_leverage_item, leverages);
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        Leverage leverage = getItem(position);
+        String leverage = getItem(position);
 
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext())
                     .inflate(R.layout.spinner_group_item, null);
         }
         TextView tv = ((TextView) convertView.findViewById(R.id.item));
-        String name = leverage.getLeverage();
+        String name = leverage;
         tv.setText("1:"+name);
-        /*if(Api.user.getCountry() == country.getName())
-        {
-            parent.dispatchSetSelected(true);
-        }*/
         return convertView;
     }
     @Override
     public View getDropDownView(int position, View convertView,
                                 ViewGroup parent) {
-        Leverage leverage = getItem(position);
+        String leverage = getItem(position);
 
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext())
@@ -51,8 +47,8 @@ public class LeverageAdapter extends ArrayAdapter<Leverage> {
         }
         TextView tv = ((TextView) convertView.findViewById(R.id.drop_down_item));
 
-        String name = leverage.getLeverage();
-        tv.setText(name);
+        String name = leverage;
+        tv.setText("1:"+name);
         return convertView;
     }
 }

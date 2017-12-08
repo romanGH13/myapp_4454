@@ -69,13 +69,7 @@ public class Ticket{
         this.last_message = message;
     }
 
-    /*public boolean isStatus() {
-        return status;
-    }
 
-    public void setStatus(boolean status) {
-        this.status = status;
-    }*/
 
     public String getDate() {
         return date;
@@ -109,13 +103,6 @@ public class Ticket{
         this.not_showed = not_showed;
     }
 
-    /*public boolean isNot_showed() {
-        return not_showed;
-    }
-
-    public void setNot_showed(boolean not_showed) {
-        this.not_showed = not_showed;
-    }*/
 
 
 }

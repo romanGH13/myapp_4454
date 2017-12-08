@@ -34,10 +34,6 @@ public class CountryAdapter extends ArrayAdapter<Country>
         TextView tv = ((TextView) convertView.findViewById(R.id.item));
         String name = country.getName();
         tv.setText(name);
-        /*if(Api.user.getCountry() == country.getName())
-        {
-            parent.dispatchSetSelected(true);
-        }*/
         return convertView;
     }
     @Override

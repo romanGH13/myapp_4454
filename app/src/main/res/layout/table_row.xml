@@ -1,28 +1,113 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
 
     <TextView
-        android:id="@+id/table_row_account"
-        android:text="Account#"
+        android:id="@+id/account"
+        android:text="Account "
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_margin="15dp"
         android:layout_weight="2"
         android:layout_gravity="left"
         android:textAppearance="?android:attr/textAppearanceLarge"/>
 
-    <TextView
-        android:id="@+id/table_row_balance"
-        android:text="Balance"
-        android:layout_weight="3"
-        android:layout_width="wrap_content"
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/layoutDetail"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="right"
+        android:visibility="gone">
 
-        android:textAppearance="?android:attr/textAppearanceLarge"/>
+        <TextView
+            android:id="@+id/labelBalance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Balance"
+            app:layout_constraintHorizontal_chainStyle="spread"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/labelAccountType"
+            app:layout_constraintTop_toTopOf="parent"
+            />
+
+        <TextView
+            android:id="@+id/balance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            app:layout_constraintStart_toStartOf="@+id/labelBalance"
+            app:layout_constraintEnd_toStartOf="@+id/labelBalance"
+            app:layout_constraintTop_toBottomOf="@+id/labelBalance"
+            />
+
+        <TextView
+            android:id="@+id/labelAccountType"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Account type"
+            app:layout_constraintStart_toEndOf="@+id/labelBalance"
+            app:layout_constraintEnd_toStartOf="@+id/labelLeverage"
+            app:layout_constraintTop_toTopOf="parent"
+            />
+
+        <TextView
+            android:id="@+id/accountType"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            app:layout_constraintStart_toStartOf="@+id/labelAccountType"
+            app:layout_constraintEnd_toStartOf="@+id/labelAccountType"
+            app:layout_constraintTop_toBottomOf="@+id/labelAccountType"
+            />
+
+        <TextView
+            android:id="@+id/labelLeverage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Leverage"
+            app:layout_constraintStart_toEndOf="@+id/labelAccountType"
+            app:layout_constraintEnd_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            />
+
+        <TextView
+            android:id="@+id/leverage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            app:layout_constraintStart_toStartOf="@+id/labelLeverage"
+            app:layout_constraintEnd_toStartOf="@+id/labelLeverage"
+            app:layout_constraintTop_toBottomOf="@+id/labelLeverage"
+            />
+
+        <TextView
+            android:id="@+id/labelRegistrationDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Registration date"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/balance"
+            />
+
+        <TextView
+            android:id="@+id/registrationDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/labelRegistrationDate"
+            />
+
+        <android.support.constraint.Group
+            android:id="@+id/groupStep1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:constraint_referenced_ids="labelBalance, balance, labelAccountType, accountType, labelLeverage,
+        leverage, labelRegistrationDate, registrationDate" />
+    </android.support.constraint.ConstraintLayout>
+
 
 </LinearLayout>

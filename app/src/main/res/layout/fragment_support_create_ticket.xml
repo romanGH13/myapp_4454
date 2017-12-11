@@ -1,4 +1,127 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context="com.example.eqvol.eqvola.fragments.SupportCreateTicket"
+    android:id="@+id/support_create_ticket_form">
+
+    <TextView
+        android:id="@+id/labelCategory"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="10dp"
+        android:gravity="left"
+        android:text="Category"
+        android:textAppearance="@style/MyTextAppearance"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/support_create_ticket_spinner"
+        app:layout_constraintBottom_toBottomOf="@+id/support_create_ticket_spinner" />
+
+    <Spinner
+        android:id="@+id/support_create_ticket_spinner"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="10dp"
+        android:layout_marginTop="15dp"
+        style="@android:style/Widget.Holo.Light.Spinner"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/space"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/labelSubject"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="10dp"
+        android:gravity="left"
+        android:text="Subject"
+        android:textAppearance="@style/MyTextAppearance"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/support_create_ticket_subject"
+        app:layout_constraintBottom_toBottomOf="@+id/support_create_ticket_subject" />
+
+    <EditText
+        android:id="@+id/support_create_ticket_subject"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="10dp"
+        android:layout_marginTop="15dp"
+        android:hint="@string/support_create_ticket_subject"
+        android:imeOptions="actionGo"
+        android:inputType="text"
+        android:maxLines="1"
+
+        android:textAppearance="@style/MyTextAppearance"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/space"
+        app:layout_constraintTop_toBottomOf="@+id/support_create_ticket_spinner" />
+
+
+    <TextView
+        android:id="@+id/labelText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="25dp"
+        android:text="Describe your problem"
+
+        android:textAppearance="@style/MyTextAppearance.gray"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/support_create_ticket_subject" />
+
+    <EditText
+        android:id="@+id/support_create_ticket_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="15dp"
+        android:maxLines="5"
+        android:hint="@string/support_create_ticket_text"
+        android:textAppearance="@style/MyTextAppearance"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/labelText" />
+
+    <Button
+        android:id="@+id/support_create_ticket_btnSend"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="30dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="30dp"
+        android:textColor="@color/colorWhite"
+        android:fontFamily="Roboto"
+        android:textSize="@dimen/text_size"
+        android:textStyle="bold"
+        android:background="@drawable/custom_button_next"
+        android:text="@string/support_create_ticket_send"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/support_create_ticket_text" />
+
+    <Space
+        android:id="@+id/space"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.25"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</android.support.constraint.ConstraintLayout>
+<!--<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -47,4 +170,4 @@
     </ScrollView>
 
 
-</FrameLayout>
+</FrameLayout>-->

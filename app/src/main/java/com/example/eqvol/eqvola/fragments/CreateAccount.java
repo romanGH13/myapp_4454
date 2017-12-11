@@ -1,10 +1,8 @@
 package com.example.eqvol.eqvola.fragments;
 
-import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,12 +17,8 @@ import com.example.eqvol.eqvola.Classes.AsyncHttpTask;
 import com.example.eqvol.eqvola.Classes.AsyncMethodNames;
 import com.example.eqvol.eqvola.Classes.Group;
 import com.example.eqvol.eqvola.Adapters.GroupAdapter;
-import com.example.eqvol.eqvola.Classes.Leverage;
 import com.example.eqvol.eqvola.R;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 

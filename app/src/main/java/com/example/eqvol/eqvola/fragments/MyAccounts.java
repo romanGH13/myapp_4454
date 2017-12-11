@@ -1,22 +1,16 @@
 package com.example.eqvol.eqvola.fragments;
 
-import android.content.Context;
-import android.net.Uri;
+
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.GridLayout;
-import android.widget.GridView;
-import android.widget.LinearLayout;
-import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.TableLayout;
 
 import com.example.eqvol.eqvola.Adapters.AccountsAdapter;
 import com.example.eqvol.eqvola.Classes.Account;
@@ -34,6 +28,7 @@ import java.util.List;
 public class MyAccounts extends Fragment {
 
     private static View mView = null;
+    private ListView listView = null;
 
     public MyAccounts()
     {
@@ -59,23 +54,27 @@ public class MyAccounts extends Fragment {
 
     public void createTable() {
         List<Account> accounts = Api.user.accounts;
-        ListView gl = (ListView) mView.findViewById(R.id.gridView1);
-        gl.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        listView = (ListView) mView.findViewById(R.id.gridView1);
+
+        ArrayAdapter<Account> adapter = new AccountsAdapter(mView.getContext(), accounts);
+        listView.setAdapter(adapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
                                     long arg3) {
-                ConstraintLayout constraintLayout = (ConstraintLayout)arg1.findViewById(R.id.layoutDetail);
-                if(constraintLayout.getVisibility() == View.VISIBLE) {
-                    constraintLayout.setVisibility(View.GONE);
+                Account account = (Account)arg0.getItemAtPosition(arg2);
+
+                if(account.isDetailOpen()) {
+                    account.setDetailOpen(false);
                 }
                 else {
-                    constraintLayout.setVisibility(View.VISIBLE);
+                    account.setDetailOpen(true);
                 }
+                AccountsAdapter adapter = (AccountsAdapter)listView.getAdapter();
+                adapter.notifyDataSetChanged();
             }
 
         });
-        ArrayAdapter<Account> adapter = new AccountsAdapter(mView.getContext(), accounts);
-        gl.setAdapter(adapter);
     }
 }

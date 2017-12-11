@@ -40,6 +40,8 @@ public class Account {
     private String LastDate;
     private String Timestamp;
 
+    private boolean isDetailOpen = false;
+
     public int getLogin() {
         return Login;
     }
@@ -201,5 +203,13 @@ public class Account {
 
     public void setBalance(String balance) {
         Balance = balance;
+    }
+
+    public boolean isDetailOpen() {
+        return isDetailOpen;
+    }
+
+    public void setDetailOpen(boolean detailOpen) {
+        isDetailOpen = detailOpen;
     }
 }

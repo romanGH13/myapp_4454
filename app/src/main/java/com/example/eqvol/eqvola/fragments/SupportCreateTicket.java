@@ -14,6 +14,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.example.eqvol.eqvola.Adapters.AccountsAdapter;
 import com.example.eqvol.eqvola.Adapters.CategoryAdapter;
@@ -72,7 +73,21 @@ public class SupportCreateTicket extends Fragment {
 
                 Category category = (Category)(spinCategory.getSelectedItem());
                 String subject = etSubject.getText().toString();
-                Message message = new Message(etMessage.getText().toString());
+                String messageText = etMessage.getText().toString();
+                if(subject.contentEquals("")) {
+                    Toast toast = Toast.makeText(mView.getContext(),
+                            "Subject can not be empty.", Toast.LENGTH_SHORT);
+                    toast.show();
+                    return;
+                }
+                if( messageText.contentEquals("")) {
+                    Toast toast = Toast.makeText(mView.getContext(),
+                            "Message can not be empty.", Toast.LENGTH_SHORT);
+                    toast.show();
+                    return;
+                }
+
+                Message message = new Message(messageText);
                 Ticket ticket = new Ticket(category, subject, message);
                 Api.user.addTicket(ticket);
 

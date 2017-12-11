@@ -2,8 +2,6 @@ package com.example.eqvol.eqvola.Adapters;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.support.annotation.ColorInt;
-import android.support.annotation.ColorRes;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.view.LayoutInflater;
@@ -47,7 +45,7 @@ public class AccountsAdapter extends ArrayAdapter<Account>
         TextView labelLeverageView = (TextView) convertView.findViewById(R.id.labelLeverage);
         TextView labelRegistrationDateView = (TextView) convertView.findViewById(R.id.labelRegistrationDate);
 
-        if(position%2==0) {
+        /*if(position%2==0) {
             convertView.setBackgroundColor(convertView.getResources().getColor(R.color.colorMenuBackground));
             accountView.setTextAppearance(getContext(), R.style.ThemeAccountDetailLight);
             balanceView.setTextAppearance(getContext(), R.style.ThemeAccountDetailLight);
@@ -61,17 +59,34 @@ public class AccountsAdapter extends ArrayAdapter<Account>
             labelRegistrationDateView.setTextAppearance(getContext(), R.style.ThemeAccountDetailLight);
 
         }
-        else {
+        else {*/
             convertView.setBackgroundColor(Color.WHITE);
-        }
+            accountView.setTextAppearance(getContext(), R.style.ThemeAccountDetailDark);
+            balanceView.setTextAppearance(getContext(), R.style.ThemeAccountDetailGreen);
+            accountTypeView.setTextAppearance(getContext(), R.style.ThemeAccountDetailBlue);
+            leverageView.setTextAppearance(getContext(), R.style.ThemeAccountDetailOrange);
+            registrationDateView.setTextAppearance(getContext(), R.style.ThemeAccountDetailDark);
 
+            labelAccountTypeView.setTextAppearance(getContext(), R.style.ThemeAccountDetailDark);
+            labelBalanceView.setTextAppearance(getContext(), R.style.ThemeAccountDetailDark);
+            labelLeverageView.setTextAppearance(getContext(), R.style.ThemeAccountDetailDark);
+            labelRegistrationDateView.setTextAppearance(getContext(), R.style.ThemeAccountDetailDark);
+        //}
 
         accountView.setText("Account " + Integer.toString(account.getLogin()));
         balanceView.setText(account.getBalance());
         accountTypeView.setText(account.getGroup().getName());
-        leverageView.setText(Integer.toString(account.getLeverage()));
+        leverageView.setText("1:" + Integer.toString(account.getLeverage()));
         registrationDateView.setText(account.getRegisterDate());
 
+        if(account.isDetailOpen())
+        {
+            ((ConstraintLayout)convertView.findViewById(R.id.layoutDetail)).setVisibility(View.VISIBLE);
+        }
+        else
+        {
+            ((ConstraintLayout)convertView.findViewById(R.id.layoutDetail)).setVisibility(View.GONE);
+        }
         return convertView;
     }
 

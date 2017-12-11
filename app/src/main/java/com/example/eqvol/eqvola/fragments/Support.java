@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
@@ -69,6 +70,9 @@ public class Support extends Fragment {
         mViewPager = (ViewPager) mView.findViewById(R.id.support_pager);
         SupportFragmentPagerAdapter pagerAdapter = new SupportFragmentPagerAdapter(getChildFragmentManager(), fragments);
         mViewPager.setAdapter(pagerAdapter);
+
+        ((TabLayout)mView.findViewById(R.id.sliding_tabs)).setupWithViewPager(mViewPager);
+
 
         HashMap<String, Object> mapUserId = new HashMap<String, Object>();
         mapUserId.put("user_id", Api.user.getId());

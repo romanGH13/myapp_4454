@@ -461,9 +461,23 @@ public class AsyncHttpTask extends AsyncTask<Void, Void, String> {
                             AsyncHttpTask sendMessageTask = new AsyncHttpTask(params, AsyncMethodNames.SEND_MESSAGE, act);
                             sendMessageTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
-                            Toast toast = Toast.makeText(act.getApplicationContext(),
+                            /*Toast toast = Toast.makeText(act.getApplicationContext(),
                                     "Ticket was created!", Toast.LENGTH_SHORT);
-                            toast.show();
+                            toast.show();*/
+                            ((MenuActivity)act).showDialog(true, "Ticket was created!");
+                        }
+                    }
+                }
+                if (response.getKey().contentEquals("errors")) {
+                    ArrayList<Object> errorList = (ArrayList<Object>)response.getValue();
+                    for(Object error: errorList) {
+                        Map<String, Object> tmpMap = (Map<String, Object>) error;
+                        for (Map.Entry<String, Object> dataEntry : tmpMap.entrySet()) {
+                            if (dataEntry.getKey().contentEquals("description")) {
+                                String description = (String) dataEntry.getValue();
+                                ((MenuActivity)act).showDialog(false, description);
+
+                            }
                         }
                     }
                 }
@@ -475,9 +489,9 @@ public class AsyncHttpTask extends AsyncTask<Void, Void, String> {
                 if (response.getKey().contentEquals("status")) {
 
                     if (response.getValue().toString().contentEquals("success")) {
-                        Toast toast = Toast.makeText(act.getApplicationContext(),
+                        /*Toast toast = Toast.makeText(act.getApplicationContext(),
                                 "Message was send!", Toast.LENGTH_SHORT);
-                        toast.show();
+                        toast.show();*/
                     }
 
                 }

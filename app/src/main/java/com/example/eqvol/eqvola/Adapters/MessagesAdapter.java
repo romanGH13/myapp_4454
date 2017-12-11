@@ -117,22 +117,23 @@ public class MessagesAdapter  extends BaseAdapter {
         if(str.contentEquals("")){
 
             Attachment attachment = message.getAttachment();
-            byte[] attachmentData = attachment.getData();
-            if(attachmentData == null) {
+            if(attachment!=null) {
+                byte[] attachmentData = attachment.getData();
+                if (attachmentData == null) {
 
-                HashMap<String, Object> params = new HashMap<String, Object>();
-                params.put("token", Api.getToken());
-                params.put("attachment", attachment);
+                    HashMap<String, Object> params = new HashMap<String, Object>();
+                    params.put("token", Api.getToken());
+                    params.put("attachment", attachment);
 
-                AsyncHttpTask sendMessageTask = new AsyncHttpTask(params, AsyncMethodNames.GET_ATTACHMENT, (Activity) this.ctx);
-                sendMessageTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-            }
-            else{
-                Bitmap bitmapAttachment = null;
-                bitmapAttachment = BitmapFactory.decodeByteArray(attachmentData, 0, attachmentData.length);
-                imageAttachment.setImageBitmap(bitmapAttachment);
-                imageAttachment.setVisibility(View.VISIBLE);
-                messageText.setVisibility(View.GONE);
+                    AsyncHttpTask sendMessageTask = new AsyncHttpTask(params, AsyncMethodNames.GET_ATTACHMENT, (Activity) this.ctx);
+                    sendMessageTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                } else {
+                    Bitmap bitmapAttachment = null;
+                    bitmapAttachment = BitmapFactory.decodeByteArray(attachmentData, 0, attachmentData.length);
+                    imageAttachment.setImageBitmap(bitmapAttachment);
+                    imageAttachment.setVisibility(View.VISIBLE);
+                    messageText.setVisibility(View.GONE);
+                }
             }
         }
         else {

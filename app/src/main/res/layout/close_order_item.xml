@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layoutAccount"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/order"
+        android:text="Order #"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:layout_gravity="left"
+        android:textAppearance="@style/ThemeAccountDetail"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+    <RelativeLayout
+        android:id="@+id/account_line"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/colorGray"
+        android:layout_marginTop="10dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/order"/>
+
+    <Space
+        android:id="@+id/space"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="2"
+        android:layout_marginTop="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.44"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/account_line" />
+
+    <TextView
+        android:id="@+id/labelCurrencyPair"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Currency pair:"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="25dp"
+        android:layout_marginStart="25dp"
+        android:textAppearance="@style/ThemeAccountDetail"
+        app:layout_constraintHorizontal_chainStyle="spread_inside"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/account_line"
+        />
+
+    <TextView
+        android:id="@+id/currencyPair"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:textAppearance="@style/ThemeAccountDetail"
+        app:layout_constraintStart_toEndOf="@+id/space"
+        app:layout_constraintTop_toTopOf="@+id/labelCurrencyPair" />
+
+    <TextView
+        android:id="@+id/labelOpenPrice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Open price:"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="25dp"
+        android:layout_marginStart="25dp"
+        android:textAppearance="@style/ThemeAccountDetail"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/labelCurrencyPair" />
+
+    <TextView
+        android:id="@+id/openPrice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:textAppearance="@style/ThemeAccountDetail"
+        app:layout_constraintStart_toEndOf="@+id/space"
+        app:layout_constraintTop_toTopOf="@+id/labelOpenPrice" />
+
+    <TextView
+        android:id="@+id/labelCurrentPrice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Open price:"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="25dp"
+        android:layout_marginStart="25dp"
+        android:textAppearance="@style/ThemeAccountDetail"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/labelOpenPrice" />
+
+    <TextView
+        android:id="@+id/currentPrice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:textAppearance="@style/ThemeAccountDetail"
+        app:layout_constraintStart_toEndOf="@+id/space"
+        app:layout_constraintTop_toTopOf="@+id/labelCurrentPrice" />
+
+    <TextView
+        android:id="@+id/labelProfit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Open price:"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="25dp"
+        android:layout_marginStart="25dp"
+        android:textAppearance="@style/ThemeAccountDetail"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/labelCurrentPrice" />
+
+    <TextView
+        android:id="@+id/profit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:textAppearance="@style/ThemeAccountDetail"
+        app:layout_constraintStart_toEndOf="@+id/space"
+        app:layout_constraintTop_toTopOf="@+id/labelProfit" />
+
+
+    <Space
+        android:id="@+id/space2"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="10dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/labelProfit" />
+
+</android.support.constraint.ConstraintLayout>

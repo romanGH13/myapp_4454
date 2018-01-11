@@ -1,14 +1,11 @@
 package com.example.eqvol.eqvola.Classes;
 
-import android.app.Activity;
-import android.os.AsyncTask;
-import android.util.Log;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 
 
-import com.example.eqvol.eqvola.Adapters.SupportFragmentPagerAdapter;
 import com.example.eqvol.eqvola.LoginActivity;
-import com.example.eqvol.eqvola.fragments.Support;
-import com.example.eqvol.eqvola.fragments.SupportChat;
+import com.example.eqvol.eqvola.fragments.ModalAlert;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
@@ -21,7 +18,6 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -30,14 +26,12 @@ import java.net.HttpURLConnection;
 
 import java.net.URL;
 import java.net.URLEncoder;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.net.ssl.HttpsURLConnection;
 
-import okhttp3.Headers;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -56,11 +50,26 @@ public class Api extends LoginActivity {
     private static final String siteUrl = "http://api.eqvola.net/";
     public static final String FILENAME = "eqvolaUserToken";
     public static List<Message> currentChatMessages;
-
-
+    public static List<Withdrawal> withdrawals;
+    public static List<Withdrawal> deposits;
+    public static List<Transfer> transfers;
+    public static Withdrawal currentOperation;
+    public static Account account;
 
     public static FragmentLoader chatLoader = null;
 
+    public static void showDialog(FragmentManager manager, boolean status, String description)
+    {
+        ModalAlert myDialogFragment = new ModalAlert(status, description);
+        //FragmentManager manager = activity.getSupportFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+        myDialogFragment.show(transaction, "dialog");
+    }
+
+    public static String getUrl()
+    {
+        return siteUrl;
+    }
     public static String getToken() {
         return token;
     }
@@ -90,6 +99,36 @@ public class Api extends LoginActivity {
     {
         return performPostCall(params, siteUrl+"account/check_email");
     }
+
+    public static String getAccountHolderName(Map<String, Object> params)
+    {
+        return performPostCall(params, siteUrl+"mt4/account/get_name");
+    }
+
+    public static String getWithdrawal(Map<String, Object> params)
+    {
+        return performPostCall(params, siteUrl+"withdrawal/get");
+    }
+    public static String getPayments(Map<String, Object> params)
+    {
+        return performPostCall(params, siteUrl+"payment/history/get");
+    }
+
+    public static String getNotification(Map<String, Object> params)
+    {
+        return performPostCall(params, siteUrl+"notification/get");
+    }
+
+    public static String clearNotifications(Map<String, Object> params)
+    {
+        return performPostCall(params, siteUrl+"notification/clear");
+    }
+
+    public static String getAccountOrders(Map<String, Object> params)
+    {
+        return performPostCall(params, siteUrl+"mt4/trade/get");
+    }
+
     public static String setAttachment(Map<String, Object> params)
     {
         return performPostCall(params, siteUrl+"support/attachment/set");
@@ -115,6 +154,16 @@ public class Api extends LoginActivity {
             e.printStackTrace();
         }
         return Integer.toString(attachment.getId());
+    }
+
+    public static String requestTransfer(Map<String, Object> params)
+    {
+        return performPostCall(params, siteUrl+"transfer/do");
+    }
+
+    public static String getTransfers(Map<String, Object> params)
+    {
+        return performPostCall(params, siteUrl+"transfer/self");
     }
 
     public static String getTickets(Map<String, Object> params)
@@ -245,7 +294,7 @@ public class Api extends LoginActivity {
                 }
             }
             else {
-                response="";
+                response="Error with connection to Api";
 
             }
         } catch (Exception e) {
@@ -373,16 +422,13 @@ public class Api extends LoginActivity {
 
         JSONObject jObject;
         try {
-            Log.d("myTag", json);
 
             jObject = new JSONObject(json);//создаем json object из нашей json строки
             map = JSONArrayToMap(map, jObject); //вызываю метод, который вернет полный ассоциативный массив
-            Log.d("myTag", " " + map.size());
 
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        Log.d("myTag", "test3");
         return map;
     }
 

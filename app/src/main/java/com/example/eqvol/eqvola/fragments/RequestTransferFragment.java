@@ -1,109 +1,273 @@
 package com.example.eqvol.eqvola.fragments;
 
-import android.content.Context;
-import android.net.Uri;
+import android.app.Activity;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.TextView;
 
+import com.example.eqvol.eqvola.Adapters.RequestTransferAccountAdapter;
+import com.example.eqvol.eqvola.Classes.Account;
+import com.example.eqvol.eqvola.Classes.Api;
+import com.example.eqvol.eqvola.Classes.AsyncHttpTask;
+import com.example.eqvol.eqvola.Classes.AsyncMethodNames;
 import com.example.eqvol.eqvola.R;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link RequestTransferFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link RequestTransferFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
-public class RequestTransferFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+import java.util.HashMap;
+import java.util.List;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
 
-    private OnFragmentInteractionListener mListener;
+public class RequestTransferFragment extends Fragment implements TextView.OnEditorActionListener{
+
+    private static View mView = null;
+    private static EditText mBalance = null;
+    private static EditText mTargetAccount = null;
+    private static EditText mAmount = null;
+    private static Spinner mAccountsSpinner = null;
+
+    private static TextView mAccountHolderName = null;
+    private  static Button btn = null;
+
+    private static boolean isAccountExists;
+    private static boolean isRequestClick;
 
     public RequestTransferFragment() {
-        // Required empty public constructor
+        isAccountExists = false;
+        isRequestClick = false;
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment RequestTransferFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static RequestTransferFragment newInstance(String param1, String param2) {
+    public static RequestTransferFragment newInstance() {
         RequestTransferFragment fragment = new RequestTransferFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
         return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_request_transfer, container, false);
+
+        mView = inflater.inflate(R.layout.fragment_request_transfer, container, false);
+        mBalance = (EditText) mView.findViewById(R.id.request_transfer_account_balance);
+        mTargetAccount = (EditText) mView.findViewById(R.id.request_transfer_target_account);
+        mAmount = (EditText) mView.findViewById(R.id.request_transfer_amount);
+        mAccountHolderName = (TextView) mView.findViewById(R.id.request_transfer_account_holder_name);
+
+        mAmount.setOnEditorActionListener(this);
+        mTargetAccount.setOnEditorActionListener(this);
+
+        TextWatcher myTextWatcher = new TextWatcher(){
+            @Override
+            public void afterTextChanged(Editable s) {
+                isAccountExists = false;
+                isRequestClick = false;
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+        };
+
+        mTargetAccount.addTextChangedListener(myTextWatcher);
+        mAmount.addTextChangedListener(myTextWatcher);
+
+        mTargetAccount.setImeActionLabel("Next", EditorInfo.IME_ACTION_NEXT);
+        mTargetAccount.setNextFocusForwardId(R.id.request_transfer_amount);
+        mAmount.setImeActionLabel("Done", EditorInfo.IME_ACTION_SEND);
+
+        btn = (Button) mView.findViewById(R.id.btnSubmit);
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if(mTargetAccount.getText().length() == 0)
+                {
+                    mTargetAccount.setError("Recipient account can not be empty");
+                    return;
+                }
+                if(mAmount.getText().length() == 0)
+                {
+                    mAmount.setError("Amount can not be empty");
+                    return;
+                }
+
+                isRequestClick = true;
+
+                if(onEditorAction(mAmount, 0, null))
+                {
+                    if(!onEditorAction(mTargetAccount, 0, null))
+                    {
+                        getAccountHolderName();
+                    }
+                }
+            }
+        });
+        Drawable drawable = btn.getBackground();
+        drawable.setColorFilter(getResources().getColor(R.color.colorNext), PorterDuff.Mode.MULTIPLY);
+
+        setSpinner();
+        return mView;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
+    private static void requestTransfer(String sender, String recipient, double amount)
+    {
+        HashMap<String, Object> params = new HashMap<String, Object>();
+        params.put("token", Api.getToken());
+        params.put("sender", sender);
+        params.put("recipient", recipient);
+        params.put("amount", amount);
+
+        AsyncHttpTask requestTransferTask = new AsyncHttpTask(params, AsyncMethodNames.REQUEST_TRANSFER, (Activity) mView.getContext());
+        requestTransferTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+
+        Account account = (Account)mAccountsSpinner.getSelectedItem();
+        double accountBalance = Double.parseDouble(account.getBalance());
+        mTargetAccount.setText("");
+        mAccountHolderName.setText("");
+        mAmount.setText("");
+        account.setBalance(Double.toString(accountBalance - amount));
+        RequestTransferAccountAdapter adapter = (RequestTransferAccountAdapter)mAccountsSpinner.getAdapter();
+        adapter.notifyDataSetChanged();
+        mBalance.setText(account.getBalance());
+    }
+
+    private void setSpinner()
+    {
+        List<Account> accounts = Api.user.accounts;
+        mAccountsSpinner = (Spinner)mView.findViewById(R.id.request_transfer_spinner_accounts);
+        try {
+            RequestTransferAccountAdapter adapter = new RequestTransferAccountAdapter(mView.getContext(), accounts);
+            adapter.setDropDownViewResource(R.layout.drop_down_item);
+            mAccountsSpinner.setAdapter(adapter);
+            mAccountsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view,
+                                           int pos, long id) {
+                    Account account = (Account) parent.getItemAtPosition(pos);
+                    mBalance.setText(account.getBalance());
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> arg0) {
+
+                }
+            });
+        } catch(Exception ex)
+        {
+            String str = ex.getMessage();
         }
     }
 
+    private void getAccountHolderName()
+    {
+        String accountLogin = mTargetAccount.getText().toString();
+
+        HashMap<String, Object> params = new HashMap<String, Object>();
+        params.put("token", Api.getToken());
+        params.put("login", accountLogin);
+
+        AsyncHttpTask getAccountHolderNameTask = new AsyncHttpTask(params, AsyncMethodNames.GET_ACCOUNT_HOLDER_NAME, getActivity());
+        getAccountHolderNameTask.target = accountLogin;
+        getAccountHolderNameTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+    }
+
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
+    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+        if (v.getId() == R.id.request_transfer_target_account){
+            if(mTargetAccount.getText().length() > 0) {
+                getAccountHolderName();
+                mAmount.requestFocus();
+            }
+            return true;
+
+        }
+        else if (v.getId() == R.id.request_transfer_amount){
+            if(mAmount.getText().length() == 0)
+                return false;
+            double amount = Double.parseDouble(mAmount.getText().toString());
+
+            if(amount<0)
+            {
+                mAmount.setError("Amount can not be negative");
+                mAmount.requestFocus();
+                return false;
+            }
+
+            if(amount <= Double.parseDouble(mBalance.getText().toString()))
+            {
+                btn.requestFocus();
+                return true;
+            }
+            else
+            {
+                mAmount.setError("Not enough money on the account");
+                mAmount.requestFocus();
+                return false;
+            }
+        }
+        return false;
+    }
+
+    public static void setHolderName(String holderName, String login)
+    {
+        if(mAccountHolderName != null)
+        {
+            if(mTargetAccount != null)
+            {
+                String currentTargetAccount = mTargetAccount.getText().toString();
+                if(currentTargetAccount.contentEquals(login))
+                {
+                    mAccountHolderName.setText(holderName);
+                    mAccountHolderName.setError(null);
+                    isAccountExists = true;
+                    if(isRequestClick)
+                    {
+                        if(mAccountsSpinner != null && mAmount != null && mTargetAccount != null) {
+                            double amount = Double.parseDouble(mAmount.getText().toString());
+                            Account account = (Account) mAccountsSpinner.getSelectedItem();
+                            String recipient = mTargetAccount.getText().toString();
+                            String sender = Integer.toString(account.getLogin());
+                            requestTransfer(sender, recipient, amount);
+                        }
+                    }
+                }
+            }
         }
     }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+    public static void setError(String login)
+    {
+        if(mAccountHolderName != null)
+        {
+            if(mTargetAccount != null) {
+                if (mTargetAccount.getText().toString().contentEquals(login)) {
+                    mAccountHolderName.setTextColor(Color.BLACK);
+                    mAccountHolderName.setText("Account does not exist");
+                    mAccountHolderName.setError("");
+                    isAccountExists = false;
+                }
+            }
+        }
     }
 }

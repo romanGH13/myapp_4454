@@ -1,12 +1,10 @@
 package com.example.eqvol.eqvola.fragments;
 
-import android.content.Context;
-import android.icu.util.ULocale;
-import android.net.Uri;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,14 +14,11 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.example.eqvol.eqvola.Adapters.AccountsAdapter;
 import com.example.eqvol.eqvola.Adapters.CategoryAdapter;
-import com.example.eqvol.eqvola.Classes.Account;
 import com.example.eqvol.eqvola.Classes.Api;
 import com.example.eqvol.eqvola.Classes.AsyncHttpTask;
 import com.example.eqvol.eqvola.Classes.AsyncMethodNames;
 import com.example.eqvol.eqvola.Classes.Category;
-import com.example.eqvol.eqvola.Classes.Leverage;
 import com.example.eqvol.eqvola.Classes.Message;
 import com.example.eqvol.eqvola.Classes.Ticket;
 import com.example.eqvol.eqvola.R;
@@ -106,6 +101,9 @@ public class SupportCreateTicket extends Fragment {
                 userLoginTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             }
         });
+
+        Drawable drawable = btn.getBackground();
+        drawable.setColorFilter(getResources().getColor(R.color.colorNext), PorterDuff.Mode.MULTIPLY);
 
         return mView;
     }

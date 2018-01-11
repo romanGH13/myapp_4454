@@ -15,7 +15,6 @@ import java.util.List;
 
 public class Message{
     private int id;
-    private int ticket_id;
     private String message;
     private int is_ready;
     private int is_showed;
@@ -43,14 +42,6 @@ public class Message{
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public int getTicket_id() {
-        return ticket_id;
-    }
-
-    public void setTicket_id(int ticket_id) {
-        this.ticket_id = ticket_id;
     }
 
     public String getDate() {

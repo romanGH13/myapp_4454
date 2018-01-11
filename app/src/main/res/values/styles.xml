@@ -6,6 +6,13 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorMain</item>
         <item name="android:state_active">@color/colorMain</item>
+
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="BackgroundTintBlue" >
+        <item name="backgroundTint">@color/colorBlue</item>
     </style>
 
 
@@ -16,6 +23,10 @@
 
     <style name="AppTheme.ProgressBar">
         <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="testStyle" >
+        <item name="android:color">@color/colorBlack</item>
     </style>
 
 
@@ -30,6 +41,21 @@
         <item name="android:typeface">monospace</item>
     </style>
 
+    <style name="MyTextAppearance" parent="@android:style/TextAppearance">
+        <item name="android:textColor">@color/colorWhite</item>
+        <item name="android:textSize">19sp</item>
+        <item name="android:fontFamily">Roboto-Regular</item>
+    </style>
+
+    <style name="edit_text_style">
+        <item name="android:background">@drawable/edit_text_border</item>
+        <item name="android:layout_margin">10dp</item>
+        <item name="android:paddingLeft">8dp</item>
+        <item name="android:paddingRight">8dp</item>
+        <item name="android:paddingTop">4dp</item>
+        <item name="android:paddingBottom">4dp</item>
+        <item name="android:popupBackground">#fff</item>
+    </style>
 
     <style name="spinner_style">
         <item name="android:layout_width">match_parent</item>
@@ -43,16 +69,27 @@
         <item name="android:popupBackground">#DFFFFFFF</item>
     </style>
 
-    <style name="MyTextAppearance" parent="@android:style/TextAppearance">
+    <style name="MyTextAppearanceTitle" parent="@android:style/TextAppearance">
         <item name="android:textColor">@color/colorBlack</item>
         <item name="android:textSize">19sp</item>
         <item name="android:fontFamily">ROBOTO</item>
     </style>
+
+    <style name="MyTextAppearanceSmall" parent="@android:style/TextAppearance">
+        <item name="android:textColor">@color/colorDarkGray</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:fontFamily">ROBOTO</item>
+    </style>
+
+
+
     <style name="MyTextAppearance.gray" parent="MyTextAppearance">
         <item name="android:textColor">@color/colorGray</item>
         <item name="android:textSize">19sp</item>
         <item name="android:fontFamily">ROBOTO</item>
     </style>
+
+
 
     <style name="PagerTextAppearance" parent="@android:style/TextAppearance">
         <item name="android:textColor">@color/colorWhite</item>
@@ -66,23 +103,36 @@
     </style>
 
     <style name="ThemeAccountDetailDark">
+        <item name="android:textSize">19sp</item>
+        <item name="android:fontFamily">ROBOTO</item>
         <item name="android:textColor">@color/colorBlack</item>
     </style>
 
     <style name="ThemeAccountDetailLight">
+        <item name="android:textSize">19sp</item>
+        <item name="android:fontFamily">ROBOTO</item>
         <item name="android:textColor">@color/colorWhite</item>
     </style>
 
     <style name="ThemeAccountDetailGreen">
+        <item name="android:textSize">19sp</item>
+        <item name="android:fontFamily">ROBOTO</item>
         <item name="android:textColor">@color/colorGreenBalance</item>
     </style>
 
     <style name="ThemeAccountDetailBlue">
+        <item name="android:textSize">19sp</item>
+        <item name="android:fontFamily">ROBOTO</item>
         <item name="android:textColor">@color/colorBlueAccountType</item>
     </style>
     <style name="ThemeAccountDetailOrange">
+        <item name="android:textSize">19sp</item>
+        <item name="android:fontFamily">ROBOTO</item>
         <item name="android:textColor">@color/colorOrangeLeverage</item>
     </style>
 
+    <style name="holoSpinner" parent="Widget.AppCompat.Spinner.Underlined">
+        <item name="android:textSize">12sp</item>
+    </style>
 
 </resources>

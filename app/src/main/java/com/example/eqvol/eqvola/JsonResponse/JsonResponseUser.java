@@ -31,14 +31,6 @@ public class JsonResponseUser implements JsonDeserializer<JsonResponseUser> {
         reader.setLenient(true);
         JsonResponseUser response = gson.fromJson(reader, JsonResponseUser.class);
 
-        /*GsonBuilder gsonBuilder = new GsonBuilder();
-
-        JsonDeserializer<JsonResponseUser> deserializer = new JsonResponseUser() ; // will implement in a second
-        gsonBuilder.registerTypeAdapter(JsonResponseUser.class, deserializer);
-
-        Gson customGson = gsonBuilder.create();
-        JsonResponseUser response = customGson.fromJson(json, JsonResponseUser.class);*/
-
         for(User entry :response.data)
         {
             return entry;

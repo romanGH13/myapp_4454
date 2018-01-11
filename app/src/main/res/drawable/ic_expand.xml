@@ -1,4 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<selector xmlns:android="http://schemas.android.com/apk/res/android">
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="15dp"
+    android:height="10dp"
+    android:viewportWidth="12"
+    android:viewportHeight="8">
 
-</selector>
+    <path
+        android:fillColor="#fff"
+        android:fillType="evenOdd"
+        android:pathData="M10.6,8 L6,3.4 L1.4,8 L0,6.6 L6,0.6 L12,6.6 Z" />
+    <path
+        android:fillType="evenOdd"
+        android:pathData="M-6,-8 L18,-8 L18,16 L-6,16 Z" />
+</vector>

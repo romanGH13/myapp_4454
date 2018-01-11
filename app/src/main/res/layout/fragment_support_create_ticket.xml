@@ -1,9 +1,17 @@
+<LinearLayout
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="com.example.eqvol.eqvola.fragments.SupportCreateTicket"
+    android:background="@color/colorWhite"
     android:id="@+id/support_create_ticket_form">
 
     <TextView
@@ -12,9 +20,9 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="10dp"
-        android:gravity="left"
+        android:gravity="start"
         android:text="Category"
-        android:textAppearance="@style/MyTextAppearance"
+        android:textAppearance="@style/ThemeAccountDetailDark"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/support_create_ticket_spinner"
         app:layout_constraintBottom_toBottomOf="@+id/support_create_ticket_spinner" />
@@ -36,9 +44,9 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="10dp"
-        android:gravity="left"
+        android:gravity="start"
         android:text="Subject"
-        android:textAppearance="@style/MyTextAppearance"
+        android:textAppearance="@style/ThemeAccountDetailDark"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/support_create_ticket_subject"
         app:layout_constraintBottom_toBottomOf="@+id/support_create_ticket_subject" />
@@ -69,7 +77,7 @@
         android:layout_marginTop="25dp"
         android:text="Describe your problem"
 
-        android:textAppearance="@style/MyTextAppearance.gray"
+        android:textAppearance="@style/ThemeAccountDetailDark"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -93,14 +101,14 @@
         android:id="@+id/support_create_ticket_btnSend"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="30dp"
-        android:layout_marginStart="30dp"
+        android:layout_marginEnd="15dp"
+        android:layout_marginStart="15dp"
         android:layout_marginTop="30dp"
         android:textColor="@color/colorWhite"
         android:fontFamily="Roboto"
         android:textSize="@dimen/text_size"
         android:textStyle="bold"
-        android:background="@drawable/custom_button_next"
+        android:background="@drawable/rectangle"
         android:text="@string/support_create_ticket_send"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -121,53 +129,5 @@
         app:layout_constraintTop_toTopOf="parent" />
 
 </android.support.constraint.ConstraintLayout>
-<!--<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="com.example.eqvol.eqvola.fragments.SupportCreateTicket"
-    android:id="@+id/support_create_ticket_form">
-
-    <ScrollView
-
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-            <Spinner
-                android:id="@+id/support_create_ticket_spinner"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"></Spinner>
-            <android.support.design.widget.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <EditText
-                    android:id="@+id/support_create_ticket_subject"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/support_create_ticket_subject"
-                    android:maxLines="1"
-                    android:imeOptions="actionGo"
-                    android:inputType="text"/>
-            </android.support.design.widget.TextInputLayout>
-            <android.support.design.widget.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <EditText
-                    android:id="@+id/support_create_ticket_text"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/support_create_ticket_text"/>
-            </android.support.design.widget.TextInputLayout>
-            <Button
-                android:id="@+id/support_create_ticket_btnSend"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/support_create_ticket_send"/>
-        </LinearLayout>
     </ScrollView>
-
-
-</FrameLayout>-->
+</LinearLayout>

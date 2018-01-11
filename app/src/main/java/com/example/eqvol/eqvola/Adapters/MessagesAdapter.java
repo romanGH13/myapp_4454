@@ -1,11 +1,21 @@
 package com.example.eqvol.eqvola.Adapters;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.AsyncTask;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,6 +34,11 @@ import com.example.eqvol.eqvola.Classes.User;
 import com.example.eqvol.eqvola.R;
 import com.example.eqvol.eqvola.fragments.SupportChat;
 
+import java.io.ByteArrayOutputStream;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -78,11 +93,12 @@ public class MessagesAdapter  extends BaseAdapter {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(int position, View convertView, final ViewGroup parent) {
 
         Message message = getItem(position);
         ImageView image = null;
         TextView messageText = null;
+        TextView messageTime = null;
         Bitmap bitmap = null;
         byte[] avatar = null;
         User user = null;
@@ -111,6 +127,7 @@ public class MessagesAdapter  extends BaseAdapter {
 
         image = (ImageView)convertView.findViewById(R.id.message_image);
         messageText = ((TextView) convertView.findViewById(R.id.message_text));
+        messageTime = ((TextView) convertView.findViewById(R.id.message_time));
         ImageView imageAttachment = (ImageView) convertView.findViewById(R.id.message_attachment);
 
         String str = message.getMessage();
@@ -134,6 +151,23 @@ public class MessagesAdapter  extends BaseAdapter {
                     imageAttachment.setVisibility(View.VISIBLE);
                     messageText.setVisibility(View.GONE);
                 }
+
+                convertView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        try {
+
+
+                            ImageView mImageView = (ImageView) v.findViewById(R.id.message_attachment);
+                            Intent intent = new Intent();
+                            intent.setAction(Intent.ACTION_VIEW);
+                            Bitmap bmp = drawableToBitmap(mImageView.getDrawable());
+                            Uri uri = getImageUri(v.getContext(), bmp);
+                            intent.setDataAndType(uri, "image/*");
+                            parent.getContext().startActivity(intent);
+                        } catch(Exception ex){}
+                    }
+                });
             }
         }
         else {
@@ -141,6 +175,72 @@ public class MessagesAdapter  extends BaseAdapter {
         }
         image.setImageBitmap(bitmap);
 
+        //set time
+        String time = "";
+        SimpleDateFormat formatter = new SimpleDateFormat(ctx.getString(R.string.date_format));
+        Date date = null;
+        DateFormat dateFormat = null;
+        try {
+            date = formatter.parse(message.getDate());
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        if(date != null) {
+            long messageDays = timestampToDays(date.getTime());
+            long currentDays = timestampToDays(new Date().getTime());
+            if (currentDays - messageDays == 0) {
+                dateFormat = new SimpleDateFormat("h:mm a");
+            } else if (currentDays - messageDays < 365) {
+                dateFormat = new SimpleDateFormat("MMM dd");
+            } else {
+                dateFormat = new SimpleDateFormat("yyyy MMM");
+            }
+            time = dateFormat.format(date.getTime());
+        }
+        messageTime.setText(time);
+
         return convertView;
+    }
+
+
+    public static Bitmap drawableToBitmap (Drawable drawable) {
+        Bitmap bitmap = null;
+
+        if (drawable instanceof BitmapDrawable) {
+            BitmapDrawable bitmapDrawable = (BitmapDrawable) drawable;
+            if(bitmapDrawable.getBitmap() != null) {
+                return bitmapDrawable.getBitmap();
+            }
+        }
+
+        if(drawable.getIntrinsicWidth() <= 0 || drawable.getIntrinsicHeight() <= 0) {
+            bitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888); // Single color bitmap will be created of 1x1 pixel
+        } else {
+            bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        }
+
+        Canvas canvas = new Canvas(bitmap);
+        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+        drawable.draw(canvas);
+        return bitmap;
+    }
+
+    public Uri getImageUri(Context inContext, Bitmap inImage) {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
+        return Uri.parse(path);
+    }
+
+
+
+    private long timestampToDays(long timestamp)
+    {
+        long seconds = timestamp / 1000;
+        long minutes = seconds / 60;
+        long hours = minutes / 60;
+        long days = hours / 24;
+        return days;
     }
 }

@@ -1,127 +1,131 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layoutAccount"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical">
+    android:background="@color/colorWhite">
 
-    <TextView
-        android:id="@+id/account"
-        android:text="Account "
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="15dp"
-        android:layout_weight="2"
-        android:layout_gravity="left"
-        android:textAppearance="@style/ThemeAccountDetail"/>
+        <TextView
+            android:id="@+id/account"
+            android:text="Account "
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:layout_gravity="left"
+            android:textAppearance="@style/ThemeAccountDetailDark"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <android.support.constraint.ConstraintLayout
-        android:id="@+id/layoutDetail"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:visibility="gone">
+        <RelativeLayout
+            android:id="@+id/account_line"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/colorGray"
+            android:layout_marginTop="10dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/account"/>
+
+        <Space
+            android:id="@+id/space"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="2"
+            android:layout_marginTop="10dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/account_line" />
 
         <TextView
             android:id="@+id/labelBalance"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Balance"
-            android:textAppearance="@style/ThemeAccountDetail"
+            android:text="Balance:"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="25dp"
+            android:textAppearance="@style/ThemeAccountDetailDark"
             app:layout_constraintHorizontal_chainStyle="spread_inside"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/labelAccountType"
-            app:layout_constraintTop_toTopOf="parent"
-            />
+            app:layout_constraintTop_toBottomOf="@+id/account_line" />
 
         <TextView
             android:id="@+id/balance"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
             android:text=""
-            android:textAppearance="@style/ThemeAccountDetail"
-            app:layout_constraintStart_toStartOf="@+id/labelBalance"
-            app:layout_constraintEnd_toEndOf="@+id/labelBalance"
-            app:layout_constraintTop_toBottomOf="@+id/labelBalance"
-            />
+            android:textAppearance="@style/ThemeAccountDetailGreen"
+            app:layout_constraintStart_toEndOf="@+id/space"
+            app:layout_constraintTop_toTopOf="@+id/labelBalance" />
 
         <TextView
             android:id="@+id/labelAccountType"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Account type"
-            android:textAppearance="@style/ThemeAccountDetail"
-            app:layout_constraintStart_toEndOf="@+id/labelBalance"
-            app:layout_constraintEnd_toStartOf="@+id/labelLeverage"
-            app:layout_constraintTop_toTopOf="parent"
-            />
+            android:text="Account type:"
+            android:layout_marginTop="5dp"
+            android:layout_marginStart="25dp"
+            android:textAppearance="@style/ThemeAccountDetailDark"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/labelBalance" />
 
         <TextView
             android:id="@+id/accountType"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
             android:text=""
-            android:textAppearance="@style/ThemeAccountDetail"
-            app:layout_constraintStart_toStartOf="@+id/labelAccountType"
-            app:layout_constraintEnd_toEndOf="@+id/labelAccountType"
-            app:layout_constraintTop_toBottomOf="@+id/labelAccountType"
-            />
+            android:textAppearance="@style/ThemeAccountDetailBlue"
+            app:layout_constraintStart_toEndOf="@+id/space"
+            app:layout_constraintTop_toTopOf="@+id/labelAccountType" />
 
         <TextView
             android:id="@+id/labelLeverage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Leverage"
-            android:textAppearance="@style/ThemeAccountDetail"
-            app:layout_constraintStart_toEndOf="@+id/labelAccountType"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            />
+            android:text="Leverage:"
+            android:layout_marginTop="5dp"
+            android:layout_marginStart="25dp"
+            android:textAppearance="@style/ThemeAccountDetailDark"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/accountType" />
 
         <TextView
             android:id="@+id/leverage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
             android:text=""
-            android:textAppearance="@style/ThemeAccountDetail"
-            app:layout_constraintStart_toStartOf="@+id/labelLeverage"
-            app:layout_constraintEnd_toEndOf="@+id/labelLeverage"
-            app:layout_constraintTop_toBottomOf="@+id/labelLeverage"
-            />
+            android:textAppearance="@style/ThemeAccountDetailOrange"
+            app:layout_constraintStart_toEndOf="@+id/space"
+            app:layout_constraintTop_toTopOf="@+id/labelLeverage" />
 
         <TextView
             android:id="@+id/labelRegistrationDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:text="Registration date"
-            android:textAppearance="@style/ThemeAccountDetail"
+            android:layout_marginTop="5dp"
+            android:layout_marginStart="25dp"
+            android:text="Registration date:"
+            android:textAppearance="@style/ThemeAccountDetailDark"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/balance"
-            />
+            app:layout_constraintTop_toBottomOf="@+id/labelLeverage" />
 
         <TextView
             android:id="@+id/registrationDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
             android:text=""
             android:textAppearance="@style/ThemeAccountDetail"
+            app:layout_constraintStart_toEndOf="@+id/space"
+            app:layout_constraintTop_toTopOf="@+id/labelRegistrationDate" />
+
+        <Space
+            android:id="@+id/space2"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="10dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/labelRegistrationDate"
-            />
+            app:layout_constraintTop_toBottomOf="@+id/labelRegistrationDate" />
 
-        <android.support.constraint.Group
-            android:id="@+id/groupStep1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:constraint_referenced_ids="labelBalance, balance, labelAccountType, accountType, labelLeverage,
-        leverage, labelRegistrationDate, registrationDate" />
-    </android.support.constraint.ConstraintLayout>
-
-
-</LinearLayout>
+</android.support.constraint.ConstraintLayout>

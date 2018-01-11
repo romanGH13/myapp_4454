@@ -4,49 +4,40 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.content.Intent;
-import android.content.pm.PackageManager;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
-import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.app.LoaderManager.LoaderCallbacks;
-
-import android.content.CursorLoader;
-import android.content.Loader;
-import android.database.Cursor;
-import android.net.Uri;
 
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
-import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import com.example.eqvol.eqvola.Classes.Api;
 import com.example.eqvol.eqvola.Classes.AsyncHttpTask;
 import com.example.eqvol.eqvola.Classes.AsyncMethodNames;
+import com.example.eqvol.eqvola.fragments.ModalAlert;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static android.Manifest.permission.READ_CONTACTS;
 
 /**
  * A login screen that offers login via email/password.
  */
-public class LoginActivity extends AppCompatActivity implements TextView.OnEditorActionListener, LoaderCallbacks<Cursor>{
+public class LoginActivity extends AppCompatActivity implements TextView.OnEditorActionListener{//, LoaderCallbacks<Cursor>{
 
     /**
      * Id to identity READ_CONTACTS permission request.
@@ -63,15 +54,13 @@ public class LoginActivity extends AppCompatActivity implements TextView.OnEdito
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-
         super.onCreate(savedInstanceState);
-        //getSupportActionBar().hide();
         setContentView(R.layout.activity_login);
 
-        // Set up the login form.
-        mLabelView = (TextView) findViewById(R.id.textComment);
+        // получение всех графических элементов
+        //mLabelView = (TextView) findViewById(R.id.textComment);
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
-        populateAutoComplete();
+        //populateAutoComplete();
 
         mPasswordView = (EditText) findViewById(R.id.password);
         mLoginFormView = findViewById(R.id.login_form);
@@ -82,8 +71,15 @@ public class LoginActivity extends AppCompatActivity implements TextView.OnEdito
         mPasswordView.setOnEditorActionListener(this);
         mPasswordView.setImeActionLabel("Sign In", EditorInfo.IME_ACTION_DONE);
 
+        //замена цвета для кнопки, что бы не копировать лишний раз Drawable для каждой кнопки
+        Button btnLogin = (Button) findViewById(R.id.btnLogin);
+        Drawable drawable = btnLogin.getBackground();
+        drawable.setColorFilter(getResources().getColor(R.color.colorBlue), PorterDuff.Mode.MULTIPLY);
+
+        //проверка токена, если токен уже есть приложение само авторизирует пользователя.
         checkTokenInFile();
     }
+
 
     public void checkTokenInFile(){
 
@@ -121,6 +117,7 @@ public class LoginActivity extends AppCompatActivity implements TextView.OnEdito
         }
     }
 
+    //функция для сохранения токена при авторизации
     public void saveTokenInFile(String token){
 
         FileOutputStream fos = null;
@@ -129,37 +126,36 @@ public class LoginActivity extends AppCompatActivity implements TextView.OnEdito
             String str = "token:" + token;
             fos.write(str.getBytes());
         }
-        catch(IOException ex) {
-            //Toast.makeText(this, ex.getMessage(), Toast.LENGTH_SHORT).show();
-        }
+        catch(IOException ex) { }
         finally{
             try{
                 if(fos!=null)
                     fos.close();
             }
-            catch(IOException ex){
-                //Toast.makeText(this, ex.getMessage(), Toast.LENGTH_SHORT).show();
-            }
+            catch(IOException ex){ }
         }
     }
 
+    //переход на главный экран приложения
     public void goToMenuActivity()
     {
-        Intent MenuActivity = new Intent(getApplicationContext(), MenuActivity.class);
+        Intent MenuActivity = new Intent(getApplicationContext(), MainActivity.class);
         startActivity(MenuActivity);
+
+        //завершение работы текущего экрана
         finish();
     }
 
 
-    private void populateAutoComplete() {
+    /*private void populateAutoComplete() {
         if (!mayRequestContacts()) {
             return;
         }
 
         getLoaderManager().initLoader(0, null, this);
-    }
+    }*/
 
-    private boolean mayRequestContacts() {
+    /*private boolean mayRequestContacts() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             return true;
         }
@@ -179,12 +175,12 @@ public class LoginActivity extends AppCompatActivity implements TextView.OnEdito
             requestPermissions(new String[]{READ_CONTACTS}, REQUEST_READ_CONTACTS);
         }
         return false;
-    }
+    }*/
 
     /**
      * Callback received when a permissions request has been completed.
      */
-    @Override
+    /*@Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
         if (requestCode == REQUEST_READ_CONTACTS) {
@@ -192,13 +188,11 @@ public class LoginActivity extends AppCompatActivity implements TextView.OnEdito
                 populateAutoComplete();
             }
         }
-    }
+    }*/
 
 
     /**
-     * Attempts to sign in or register the account specified by the login form.
-     * If there are form errors (invalid email, missing fields, etc.), the
-     * errors are presented and no actual login attempt is made.
+     * Метод для авторизации пользователя в кабинете
      */
     public void attemptLogin(View view) {
         if (Api.user != null) {
@@ -232,6 +226,7 @@ public class LoginActivity extends AppCompatActivity implements TextView.OnEdito
         }
     }
 
+    //метод для перехода на экран регистрации
     public void toRegistr(View view) {
         Intent SecAct = new Intent(getApplicationContext(), RegistrationActivity.class);
         startActivity(SecAct);
@@ -282,14 +277,14 @@ public class LoginActivity extends AppCompatActivity implements TextView.OnEdito
         return isEmpty;
     }
     private boolean isEmailTextValid(String email) {
-        Pattern p = Pattern.compile("^[A-Za-z0-9-]+(\\-[A-Za-z0-9])*@"
+        Pattern p = Pattern.compile("^[A-Za-z0-9_\\.-]+(\\-[A-Za-z0-9_]-)*@"
                 + "[A-Za-z0-9-]+(\\.[A-Za-z0-9])");
         Matcher m = p.matcher(email);
         return m.find();
     }
 
     private boolean isPasswordTextValid(String password) {
-        Pattern p = Pattern.compile("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=\\S+$).{8,}$");
+        Pattern p = Pattern.compile("^(?=.*[0-9])(?=.*[a-z])(?=\\S+$).{8,}$");
         Matcher m = p.matcher(password);
         return m.find();
     }
@@ -331,7 +326,7 @@ public class LoginActivity extends AppCompatActivity implements TextView.OnEdito
         }
     }
 
-    @Override
+    /*@Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         return new CursorLoader(this,
                 // Retrieve data rows for the device user's 'profile' contact.
@@ -346,25 +341,24 @@ public class LoginActivity extends AppCompatActivity implements TextView.OnEdito
                 // Show primary email addresses first. Note that there won't be
                 // a primary email address if the user hasn't specified one.
                 ContactsContract.Contacts.Data.IS_PRIMARY + " DESC");
-    }
+    }*/
 
-    @Override
+    /*@Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
         List<String> emails = new ArrayList<>();
         cursor.moveToFirst();
-        while (!cursor.isAfterLast()) {
+        /*while (!cursor.isAfterLast()) {
             emails.add(cursor.getString(ProfileQuery.ADDRESS));
             cursor.moveToNext();
         }
 
         addEmailsToAutoComplete(emails);
-    }
+    }*/
 
-    @Override
+    /*@Override
     public void onLoaderReset(Loader<Cursor> cursorLoader) {
 
     }
-
     private void addEmailsToAutoComplete(List<String> emailAddressCollection) {
         //Create adapter to tell the AutoCompleteTextView what to show in its dropdown list.
         ArrayAdapter<String> adapter =
@@ -372,12 +366,11 @@ public class LoginActivity extends AppCompatActivity implements TextView.OnEdito
                         android.R.layout.simple_dropdown_item_1line, emailAddressCollection);
 
         mEmailView.setAdapter(adapter);
-    }
+    }*/
 
     @Override
     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
         if (v.getId() == R.id.email){
-
             String email = mEmailView.getText().toString();
             if(isEmailValid(email))
             {
@@ -402,13 +395,21 @@ public class LoginActivity extends AppCompatActivity implements TextView.OnEdito
     }
 
 
-    private interface ProfileQuery {
+    /*private interface ProfileQuery {
         String[] PROJECTION = {
                 ContactsContract.CommonDataKinds.Email.ADDRESS,
                 ContactsContract.CommonDataKinds.Email.IS_PRIMARY,
         };
         int ADDRESS = 0;
         int IS_PRIMARY = 1;
+    }*/
+
+    public void showDialog(boolean status, String description)
+    {
+        ModalAlert myDialogFragment = new ModalAlert(status, description);
+        FragmentManager manager = getSupportFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+        myDialogFragment.show(transaction, "dialog");
     }
 
 }

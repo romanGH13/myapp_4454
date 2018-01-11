@@ -7,6 +7,7 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import com.example.eqvol.eqvola.fragments.DepositsRecyclerFragment;
 import com.example.eqvol.eqvola.fragments.OpenOrdersFragment;
 import com.example.eqvol.eqvola.fragments.RequestTransferFragment;
+import com.example.eqvol.eqvola.fragments.SupportChat;
 import com.example.eqvol.eqvola.fragments.SupportCreateTicket;
 import com.example.eqvol.eqvola.fragments.TradingHistoryFragment;
 import com.example.eqvol.eqvola.fragments.TransfersHistoryFragment;
@@ -18,21 +19,16 @@ import java.util.List;
  * Created by eqvol on 18.12.2017.
  */
 
-public class AccountOrdersPagerAdapter extends FragmentStatePagerAdapter {
+public class MyPagerAdapter extends FragmentStatePagerAdapter {
 
 
     public FragmentManager fragmentManager;
     private List<Fragment> fragments;
 
-    public AccountOrdersPagerAdapter(FragmentManager fm, List<Fragment> fragments) {
+    public MyPagerAdapter(FragmentManager fm, List<Fragment> fragments) {
         super(fm);
         fragmentManager = fm;
         this.fragments = fragments;
-    }
-
-    public void replaceFragment(int position, Fragment newFragment)
-    {
-        fragments.set(position, newFragment);
     }
 
     @Override
@@ -83,6 +79,14 @@ public class AccountOrdersPagerAdapter extends FragmentStatePagerAdapter {
         else if(fragment.getClass() == TransfersHistoryFragment.class)
         {
             return "History";
+        }
+        else if(fragment.getClass() == SupportCreateTicket.class)
+        {
+            return "Create ticket";
+        }
+        else if(fragment.getClass() == SupportChat.class)
+        {
+            return "Chat";
         }
 
         return "";

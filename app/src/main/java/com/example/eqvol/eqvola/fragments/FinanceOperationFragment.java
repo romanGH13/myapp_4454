@@ -7,103 +7,84 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
+import com.example.eqvol.eqvola.Classes.Api;
+import com.example.eqvol.eqvola.Classes.Withdrawal;
+import com.example.eqvol.eqvola.MainActivity;
 import com.example.eqvol.eqvola.R;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link FinanceOperationFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link FinanceOperationFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class FinanceOperationFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    private OnFragmentInteractionListener mListener;
-
+    private View mView;
+    private Withdrawal order;
     public FinanceOperationFragment() {
+        order = Api.currentOperation;
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment FinanceOperationFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static FinanceOperationFragment newInstance(String param1, String param2) {
+    public static FinanceOperationFragment newInstance() {
         FinanceOperationFragment fragment = new FinanceOperationFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
         return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_finance_operation, container, false);
-    }
-
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
+        mView = inflater.inflate(R.layout.fragment_finance_operation, container, false);
+        if(order.getWallet() == null)
+        {
+            ((TextView)mView.findViewById(R.id.wallet)).setVisibility(View.GONE);
+            ((TextView)mView.findViewById(R.id.labelWallet)).setVisibility(View.GONE);
         }
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
+        if(order.getTransaction().contentEquals(""))
+        {
+            ((TextView)mView.findViewById(R.id.transactionId)).setVisibility(View.GONE);
+            ((TextView)mView.findViewById(R.id.labelTransactionId)).setVisibility(View.GONE);
         }
+        ((TextView)mView.findViewById(R.id.operation)).setText("Operation #" + Integer.toString(order.getId()));
+        ((TextView)mView.findViewById(R.id.login)).setText(Integer.toString(order.getLogin()));
+        ((TextView)mView.findViewById(R.id.amount)).setText(Double.toString(order.getAmount()));
+        ((TextView)mView.findViewById(R.id.commition)).setText(Double.toString(order.getCommission()));
+        ((TextView)mView.findViewById(R.id.paymentSystem)).setText(order.getPayment_setting().getCode());
+        ((TextView)mView.findViewById(R.id.wallet)).setText(order.getWallet());
+        ((TextView)mView.findViewById(R.id.transactionId)).setText(order.getTransaction());
+        ((TextView)mView.findViewById(R.id.comment)).setText(order.getComment());
+        ((TextView)mView.findViewById(R.id.date)).setText(order.getDate());
+        int status = order.getStatus();
+        TextView mStatusView = (TextView)mView.findViewById(R.id.status);
+        switch(status)
+        {
+            case 0:
+                mStatusView.setText("Pending");
+                mStatusView.setTextAppearance(getContext(), R.style.ThemeAccountDetailBlue);
+                break;
+            case 1:
+                mStatusView.setText("Confirmed");
+                mStatusView.setTextAppearance(getContext(), R.style.ThemeAccountDetailGreen);
+                break;
+            case 2:
+                mStatusView.setText("Canceled");
+                mStatusView.setTextAppearance(getContext(), R.style.ThemeAccountDetailOrange);
+                break;
+        }
+
+        LinearLayout header = (LinearLayout)mView.findViewById(R.id.header);
+        header.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MainActivity main = (MainActivity)getContext();
+                main.openFinanceHistory();
+            }
+        });
+
+        return mView;
     }
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
-    }
 }

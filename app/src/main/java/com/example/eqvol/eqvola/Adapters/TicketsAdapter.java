@@ -65,6 +65,7 @@ public class TicketsAdapter extends RecyclerView.Adapter<TicketsAdapter.TicketsV
         RecyclerView rv;
         TextView tvTitle;
         TextView tvMessage;
+        TextView tvTime;
         ImageView img ;
 
         public View container;
@@ -75,6 +76,7 @@ public class TicketsAdapter extends RecyclerView.Adapter<TicketsAdapter.TicketsV
             rv = (RecyclerView)itemView.findViewById(R.id.support_chat_list);
             tvTitle = ((TextView) itemView.findViewById(R.id.support_chat_title));
             tvMessage = ((TextView) itemView.findViewById(R.id.support_chat_last_message));
+            tvTime = ((TextView) itemView.findViewById(R.id.support_chat_time));
             img = (ImageView)itemView.findViewById(R.id.support_chat_ticket_image);
         }
 
@@ -87,10 +89,63 @@ public class TicketsAdapter extends RecyclerView.Adapter<TicketsAdapter.TicketsV
         return pvh;
     }
 
+    private long timestampToDays(long timestamp)
+    {
+        long seconds = timestamp / 1000;
+        long minutes = seconds / 60;
+        long hours = minutes / 60;
+        long days = hours / 24;
+        return days;
+    }
+
     @Override
     public void onBindViewHolder(TicketsViewHolder holder, final int position) {
-        holder.tvTitle.setText(tickets.get(position).getTitle());
-        holder.tvMessage.setText(tickets.get(position).getMessage().getMessage());
+
+        //set title
+        String title = tickets.get(position).getTitle();
+        if(title.length() > 20)
+        {
+            holder.tvTitle.setText(title.substring(0,20) + "...");
+        }
+        else
+        {
+            holder.tvTitle.setText(title);
+        }
+
+        //set message
+        String message = tickets.get(position).getMessage().getMessage();
+        if(message.contentEquals(""))
+        {
+            holder.tvMessage.setText("Attachment..");
+        }
+        else {
+            holder.tvMessage.setText(message);
+        }
+
+        //set time
+        String time = "";
+        SimpleDateFormat formatter = new SimpleDateFormat(ctx.getString(R.string.date_format));
+        Date date = null;
+        DateFormat dateFormat = null;
+        try {
+            date = formatter.parse(tickets.get(position).getMessage().getDate());
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        if(date != null) {
+            long messageDays = timestampToDays(date.getTime());
+            long currentDays = timestampToDays(new Date().getTime());
+            if (currentDays - messageDays == 0) {
+                dateFormat = new SimpleDateFormat("h:mm a");
+            } else if (currentDays - messageDays < 365) {
+                dateFormat = new SimpleDateFormat("MMM dd");
+            } else {
+                dateFormat = new SimpleDateFormat("yyyy MMM");
+            }
+            time = dateFormat.format(date.getTime());
+        }
+        holder.tvTime.setText(time);
         Bitmap bmp = null;
         for(Map.Entry<Integer, Bitmap> entry: SupportChat.images.entrySet())
         {

@@ -1,0 +1,59 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    tools:context="com.example.eqvol.eqvola.fragments.Registration.FirstStepFragment">
+
+    <EditText
+        android:id="@+id/street"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/rectangle"
+        android:hint="@string/prompt_street"
+        android:inputType="text"
+        android:maxLines="1"
+        android:textAppearance="@style/MyTextAppearance" />
+
+    <EditText
+        android:id="@+id/city"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/rectangle"
+        android:hint="@string/prompt_city"
+        android:inputType="text"
+        android:maxLines="1"
+        android:textAppearance="@style/MyTextAppearance" />
+    <EditText
+        android:id="@+id/state"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/rectangle"
+        android:hint="@string/prompt_state"
+        android:inputType="text"
+        android:maxLines="1"
+        android:textAppearance="@style/MyTextAppearance" />
+    <EditText
+        android:id="@+id/postalCode"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/rectangle"
+        android:hint="@string/prompt_postal_code"
+        android:inputType="text"
+        android:maxLines="1"
+        android:textAppearance="@style/MyTextAppearance" />
+
+</LinearLayout>

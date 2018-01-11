@@ -1,13 +1,76 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="com.example.eqvol.eqvola.fragments.FirstStepFragment">
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    tools:context="com.example.eqvol.eqvola.fragments.Registration.FirstStepFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+
+    <EditText
+        android:id="@+id/name"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/rectangle"
+        android:hint="@string/prompt_name"
+        android:inputType="textPersonName"
+        android:textAppearance="@style/MyTextAppearance"
+        android:maxLines="1" />
 
-</FrameLayout>
+    <AutoCompleteTextView
+        android:id="@+id/email"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/rectangle"
+        android:hint="@string/prompt_email"
+        android:inputType="textEmailAddress"
+        android:maxLines="1"
+        android:textAppearance="@style/MyTextAppearance"/>
+
+    <EditText
+        android:id="@+id/password"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/rectangle"
+        android:hint="@string/prompt_password"
+        android:inputType="textPassword"
+        android:maxLines="1"
+        android:textAppearance="@style/MyTextAppearance" />
+
+    <EditText
+        android:id="@+id/confirmPassword"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/rectangle"
+        android:hint="@string/prompt_confirm_password"
+        android:inputType="textPassword"
+        android:maxLines="1"
+        android:textAppearance="@style/MyTextAppearance" />
+
+    <EditText
+        android:id="@+id/partnerCode"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/rectangle"
+        android:hint="@string/prompt_promo_code"
+        android:inputType="text"
+        android:maxLines="1"
+        android:textAppearance="@style/MyTextAppearance"/>
+
+</LinearLayout>
+

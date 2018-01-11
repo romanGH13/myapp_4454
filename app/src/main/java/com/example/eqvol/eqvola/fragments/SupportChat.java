@@ -8,15 +8,15 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ListView;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 
-import com.example.eqvol.eqvola.Adapters.SupportFragmentPagerAdapter;
 import com.example.eqvol.eqvola.Adapters.TicketsAdapter;
 import com.example.eqvol.eqvola.ChatActivity;
 import com.example.eqvol.eqvola.Classes.Api;
@@ -24,9 +24,10 @@ import com.example.eqvol.eqvola.Classes.AsyncHttpTask;
 import com.example.eqvol.eqvola.Classes.AsyncMethodNames;
 import com.example.eqvol.eqvola.Classes.FragmentLoader;
 import com.example.eqvol.eqvola.Classes.Message;
+import com.example.eqvol.eqvola.Classes.NewMessagesHandler;
+import com.example.eqvol.eqvola.Classes.SpaceItemDecoration;
 import com.example.eqvol.eqvola.Classes.Ticket;
 import com.example.eqvol.eqvola.Classes.User;
-import com.example.eqvol.eqvola.MenuActivity;
 import com.example.eqvol.eqvola.R;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -52,9 +53,10 @@ public class SupportChat extends Fragment {
     public static Map<Integer, Bitmap> images;
     public static List<Message> newMessages;
 
+    private static ProgressBar mProgressBar;
     private static RecyclerView mRecyclerView;
-    private RecyclerView.Adapter mAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
+
+    public static NewMessagesHandler handler;
 
 
     public SupportChat()
@@ -64,6 +66,7 @@ public class SupportChat extends Fragment {
         images = new HashMap<Integer, Bitmap>();
         newMessages = null;
         tickets = null;
+        handler = null;
     }
 
     public static SupportChat newInstance() {
@@ -80,11 +83,17 @@ public class SupportChat extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         try {
+
             mView = inflater.inflate(R.layout.fragment_support_chat, container, false);
             mRecyclerView = (RecyclerView) mView.findViewById(R.id.support_chat_list);
             mRecyclerView.setHasFixedSize(true);
-            LinearLayoutManager llm = new LinearLayoutManager(getContext());
+            LinearLayoutManager llm = new LinearLayoutManager(mView.getContext());
+            llm.setItemPrefetchEnabled(false);
             mRecyclerView.setLayoutManager(llm);
+            mRecyclerView.addItemDecoration(new SpaceItemDecoration(10, getContext()));
+            mRecyclerView.addItemDecoration(new DividerItemDecoration(this.getActivity(), LinearLayout.VERTICAL));
+
+            mProgressBar = (ProgressBar)mView.findViewById(R.id.progress_bar);
         } catch(Exception ex){
             String str = ex.getMessage();
         }
@@ -97,24 +106,24 @@ public class SupportChat extends Fragment {
 
     }
 
+
     public static void checkUsersInTickets(Activity activity)
     {
         try {
-            if(!users.contains(Api.user)){
-                users.add(Api.user);
-            }
-
             for (Ticket t : tickets) {
                 User u = t.getMessage().getUser();
                 if (!isUserContains(u.getId())) {
                     users.add(u);
-
-                    HashMap<String, Object> parametrs = new HashMap<String, Object>();
-                    parametrs.put("user", u);
-
-                    AsyncHttpTask getUserTask = new AsyncHttpTask(parametrs, AsyncMethodNames.GET_USER_AVATAR, activity);
-                    getUserTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                 }
+            }
+
+            for(User u: users)
+            {
+                HashMap<String, Object> parametrs = new HashMap<String, Object>();
+                parametrs.put("user", u);
+
+                AsyncHttpTask getUserTask = new AsyncHttpTask(parametrs, AsyncMethodNames.GET_USER_AVATAR, activity);
+                getUserTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             }
         } catch(Exception ex)
         {
@@ -143,7 +152,7 @@ public class SupportChat extends Fragment {
                 if(!images.containsKey(u.getId())) {
                     byte[] image = avatar;
                     bitmap = BitmapFactory.decodeByteArray(image, 0, image.length);
-                    bitmap = bitmap.createScaledBitmap(bitmap, 70, 70, false);
+                    bitmap = bitmap.createScaledBitmap(bitmap, 150, 150, false);
                     images.put(u.getId(), bitmap);
                 }
             }
@@ -161,23 +170,20 @@ public class SupportChat extends Fragment {
     }
 
     public static void updateTickets(){
-        if(isFirstLoad) {
-            SupportFragmentPagerAdapter adapter = (SupportFragmentPagerAdapter) Support.mViewPager.getAdapter();
-            int itempos = adapter.getItemPosition(Api.chatLoader.getProgressBar());
-            adapter.replaceFragment(itempos, Api.chatLoader.fragment);
-            adapter.notifyDataSetChanged();
-            Support.mViewPager.setAdapter(adapter);
-
-            isFirstLoad = false;
-            SupportChat.setTickets();
-        } else {
-            newMessages();
+        try {
+            if (isFirstLoad) {
+                isFirstLoad = false;
+                SupportChat.setTickets();
+            } else {
+                newMessages();
+            }
+        }catch(Exception ex)
+        {
+            String str = ex.getMessage();
         }
     }
 
     public static void setTickets(){
-
-
         final TicketsAdapter adapter = new TicketsAdapter(mView.getContext(), tickets);
         adapter.setOnCLickListener(new TicketsAdapter.OnItemClickListener() {
 
@@ -201,38 +207,41 @@ public class SupportChat extends Fragment {
                 userLoginTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             }
         });
-        mRecyclerView.setAdapter(adapter);
 
-        newMessagesHandler();
+
+        mRecyclerView.setAdapter(adapter);
+        mProgressBar.setVisibility(View.GONE);
+        mRecyclerView.setVisibility(View.VISIBLE);
+
+
+        handler = NewMessagesHandler.getInstance();
+        handler.startListen(getLastMessageId(), mView.getContext());
+    }
+
+    private static int getLastMessageId()
+    {
+        try {
+            int last_message_id = 0;
+
+            for (Ticket t : tickets) {
+                int message_id = t.getMessage().getId();
+                if (message_id > last_message_id) {
+                    last_message_id = message_id;
+                }
+            }
+            return last_message_id;
+        }
+        catch (Exception ex)
+        {
+            return 0;
+        }
     }
 
 
     public static void newMessagesHandler()
     {
-        int last_message_id = 0;
-
-        for(Ticket t: tickets){
-            int message_id = t.getMessage().getId();
-            if(message_id > last_message_id){
-                last_message_id = message_id;
-            }
-        }
-
-        Gson gson = new GsonBuilder().create();
-        HashMap<String, Object> mapUserId = new HashMap<String, Object>();
-        //mapUserId.put("ticket_id", ticket_id);
-        mapUserId.put("id>", last_message_id);
-        String json = gson.toJson(mapUserId);
-        HashMap<String, Object> params = new HashMap<String, Object>();
-        params.put("token", Api.getToken());
-        params.put("where", json);
-
-
-        //todo перенести этот вызов в Menu activity
-        if(MenuActivity.getNewMessagesTask == null) {
-            MenuActivity.getNewMessagesTask = new AsyncHttpTask(params, AsyncMethodNames.GET_NEW_MESSAGE, (Activity) mView.getContext());
-            MenuActivity.getNewMessagesTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-        }
+        handler = NewMessagesHandler.getInstance();
+        handler.startListen(getLastMessageId(), mView.getContext());
     }
 
     public static void checkNewMessages(List<Message> newMessages, Activity activity){
@@ -264,7 +273,7 @@ public class SupportChat extends Fragment {
     public static void newMessages(){
         boolean isChanged = false;
         Ticket t = null;
-        for(Message m: newMessages){
+        for(Message m: SupportChat.newMessages){
             t = getTicketById(m.getTicket().getId());
             if(t!=null){
                 /*User u = getUserById(m.getUser().getId());

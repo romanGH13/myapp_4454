@@ -1,6 +1,7 @@
 package com.example.eqvol.eqvola.fragments;
 
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -14,7 +15,9 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.eqvol.eqvola.Adapters.RegistrationPagerAdapter;
 import com.example.eqvol.eqvola.R;
+import com.example.eqvol.eqvola.RegistrationActivity;
 
 
 public class ModalAlert extends DialogFragment implements DialogInterface.OnDismissListener {
@@ -23,12 +26,22 @@ public class ModalAlert extends DialogFragment implements DialogInterface.OnDism
     private static View mView = null;
     private boolean status;
     private String description;
+    private Activity activity;
 
     public ModalAlert(boolean status, String descripton) {
         // Required empty public constructor
         this.status = status;
         this.description = descripton;
+        this.activity = null;
     }
+
+    public ModalAlert(boolean status, String descripton, Activity activity) {
+        // Required empty public constructor
+        this.status = status;
+        this.description = descripton;
+        this.activity = activity;
+    }
+
 
 
     public static ModalAlert newInstance(boolean status, String descripton) {
@@ -65,6 +78,13 @@ public class ModalAlert extends DialogFragment implements DialogInterface.OnDism
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(activity != null) {
+                    if (activity.getClass().toString().contentEquals(RegistrationActivity.class.toString())) {
+                        if (status) {
+                            ((RegistrationActivity) activity).goToLogin();
+                        }
+                    }
+                }
                 dialog.dismiss();
             }
         });

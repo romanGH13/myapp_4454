@@ -11,20 +11,31 @@ import android.widget.Toast;
 import com.example.eqvol.eqvola.Adapters.MessagesAdapter;
 import com.example.eqvol.eqvola.ChatActivity;
 import com.example.eqvol.eqvola.JsonResponse.JsonResponceCountries;
+import com.example.eqvol.eqvola.JsonResponse.JsonResponse;
 import com.example.eqvol.eqvola.JsonResponse.JsonResponseAccounts;
 import com.example.eqvol.eqvola.JsonResponse.JsonResponseCategories;
 import com.example.eqvol.eqvola.JsonResponse.JsonResponseGroups;
+import com.example.eqvol.eqvola.JsonResponse.JsonResponseOrders;
 import com.example.eqvol.eqvola.JsonResponse.JsonResponseTicketMessages;
 import com.example.eqvol.eqvola.JsonResponse.JsonResponseTickets;
+import com.example.eqvol.eqvola.JsonResponse.JsonResponseTransfers;
 import com.example.eqvol.eqvola.JsonResponse.JsonResponseUser;
+import com.example.eqvol.eqvola.JsonResponse.JsonResponseWithdrawal;
 import com.example.eqvol.eqvola.LoginActivity;
-import com.example.eqvol.eqvola.MenuActivity;
+import com.example.eqvol.eqvola.MainActivity;
 import com.example.eqvol.eqvola.R;
 import com.example.eqvol.eqvola.RegistrationActivity;
+import com.example.eqvol.eqvola.fragments.AccountOrdersFragment;
 import com.example.eqvol.eqvola.fragments.CreateAccount;
+import com.example.eqvol.eqvola.fragments.FinanceHistoryFragment;
+import com.example.eqvol.eqvola.fragments.MenuFragment;
 import com.example.eqvol.eqvola.fragments.MyAccounts;
+import com.example.eqvol.eqvola.fragments.OpenOrdersFragment;
+import com.example.eqvol.eqvola.fragments.RequestTransferFragment;
 import com.example.eqvol.eqvola.fragments.Support;
 import com.example.eqvol.eqvola.fragments.SupportChat;
+import com.example.eqvol.eqvola.fragments.TransfersFragment;
+import com.example.eqvol.eqvola.fragments.TransfersHistoryFragment;
 import com.example.eqvol.eqvola.fragments.UserPageFragment;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -36,6 +47,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * Created by eqvol on 18.10.2017.
@@ -47,10 +59,13 @@ public class AsyncHttpTask extends AsyncTask<Void, Void, String> {
     private final Activity act;
     private final AsyncMethodNames methodName;
 
+    public String target;
+
     public AsyncHttpTask(Map<String, Object> params, AsyncMethodNames methodName,  Activity act) {
         this.parametrs = params;
         this.act = act;
         this.methodName = methodName;
+        target = "";
     }
 
     @Override
@@ -129,6 +144,9 @@ public class AsyncHttpTask extends AsyncTask<Void, Void, String> {
         {
             response = Api.getAccounts(parametrs);
         }
+        else if(methodName == AsyncMethodNames.GET_ACCOUNT_HOLDER_NAME) {
+            response = Api.getAccountHolderName(parametrs);
+        }
         else if (methodName == AsyncMethodNames.USER_LOGOUT)
         {
             response = Api.userLogout(parametrs);
@@ -151,9 +169,9 @@ public class AsyncHttpTask extends AsyncTask<Void, Void, String> {
         }
         else if (methodName == AsyncMethodNames.GET_DATA_FROM_TICKETS)
         {
+            response = "";
             SupportChat.checkUsersInTickets(act);
             return null;
-            //Api.getDataFromTickets(act);
         }
         else if (methodName == AsyncMethodNames.GET_TICKET_MESSAGES)
         {
@@ -166,6 +184,7 @@ public class AsyncHttpTask extends AsyncTask<Void, Void, String> {
         else if (methodName == AsyncMethodNames.WAIT_AVATAR_LOADING)
         {
             SupportChat.isDataLoading();
+            response = "";
         }
         else if (methodName == AsyncMethodNames.GET_DATA_FROM_MESSAGES)
         {
@@ -178,6 +197,7 @@ public class AsyncHttpTask extends AsyncTask<Void, Void, String> {
                 }
             }
             SupportChat.checkNewMessages(list, act);
+            response = "";
         }
         else if (methodName == AsyncMethodNames.GET_ATTACHMENT)
         {
@@ -186,25 +206,70 @@ public class AsyncHttpTask extends AsyncTask<Void, Void, String> {
         else if (methodName == AsyncMethodNames.SET_ATTACHMENT) {
             response = Api.setAttachment(parametrs);
         }
+        else if (methodName == AsyncMethodNames.GET_ACCOUNT_ORDERS) {
+            response = Api.getAccountOrders(parametrs);
+        }
+        else if (methodName == AsyncMethodNames.UPDATE_ACCOUNT_ORDERS) {
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            response = Api.getAccountOrders(parametrs);
+        }
+        else if (methodName == AsyncMethodNames.GET_PAYMENTS) {
+            response = Api.getPayments(parametrs);
+        }
+        else if (methodName == AsyncMethodNames.GET_WITHDRAWAL) {
+            response = Api.getWithdrawal(parametrs);
+        }
+        else if (methodName == AsyncMethodNames.GET_NOTIFICATION)
+        {
+            response = Api.getNotification(parametrs);
+        }
+        else if (methodName == AsyncMethodNames.CLEAR_NOTIFICATIONS)
+        {
+            response = Api.clearNotifications(parametrs);
+        }
+        else if (methodName == AsyncMethodNames.REQUEST_TRANSFER)
+        {
+            response = Api.requestTransfer(parametrs);
+        }
+        else if (methodName == AsyncMethodNames.GET_TRANSFERS)
+        {
+            response = Api.getTransfers(parametrs);
+        }
         return response;
     }
 
     @Override
     protected void onPostExecute(final String success) {
 
+        if(success!=null) {
+            if (success.contentEquals("Error with connection to Api")) {
+                Toast toast = Toast.makeText(act.getApplicationContext(),
+                        success, Toast.LENGTH_SHORT);
+                toast.show();
+                return;
+            }
+        }
+
+
         if (methodName == AsyncMethodNames.USER_REGISTRATION) {
             Map<String, Object> map = Api.jsonToMap(success);
             for (Map.Entry<String, Object> response : map.entrySet()) {
                 if (response.getKey().contentEquals("status")) {
                     if(response.getValue().toString().contentEquals("success")){
-                        ((RegistrationActivity)act).showAccessRegisterDialog();
+                        //((RegistrationActivity)act).goToLogin();
+                        ((RegistrationActivity)act).showDialog(true, act.getString(R.string.account_register_info));
                     }
-                    else if(response.getValue().toString().contentEquals("error")) {
-                        for(Object list : (ArrayList<Object>)(response.getValue())){
-                            for (Map.Entry<String, Object> error : ((Map<String, Object>) list).entrySet()) {
-                                if (error.getKey().contentEquals("description")) {
-                                    ((RegistrationActivity)act).showErrorRegisterDialog((String) error.getValue());
-                                }
+
+                }
+                if(response.getKey().toString().contentEquals("errors")) {
+                    for(Object list : (ArrayList<Object>)(response.getValue())){
+                        for (Map.Entry<String, Object> error : ((Map<String, Object>) list).entrySet()) {
+                            if (error.getKey().contentEquals("description")) {
+                                ((RegistrationActivity)act).showDialog(false, (String) error.getValue());
                             }
                         }
                     }
@@ -214,7 +279,7 @@ public class AsyncHttpTask extends AsyncTask<Void, Void, String> {
         else if (methodName == AsyncMethodNames.CHECK_TOKEN) {
             Map<String, Object> map = Api.jsonToMap(success);
             if (map.containsKey("data")) {
-                int userId = 0;
+                int userId = -1;
                 for (Map.Entry<String, Object> entry : map.entrySet()) {
                     if (entry.getKey().contentEquals("data"))
                     {
@@ -232,17 +297,27 @@ public class AsyncHttpTask extends AsyncTask<Void, Void, String> {
                         }
                     }
                 }
+                if(userId == -1)
+                {
+                    ((LoginActivity) act).showProgress(false);
+                }
+            }
+            else
+            {
+                ((LoginActivity) act).showProgress(false);
             }
 
         } else if (methodName == AsyncMethodNames.CHECK_EMAIL) {
             Map<String, Object> map = Api.jsonToMap(success);
-            for (Map.Entry<String, Object> response : map.entrySet()) {
-                if (response.getKey().contentEquals("status")) {
-                    boolean isAlreadyUse = true;
-                    if(response.getValue().toString().contentEquals("error")){
-                        isAlreadyUse = false;
+            if (map.size() > 0) {
+                for (Map.Entry<String, Object> response : map.entrySet()) {
+                    if (response.getKey().contentEquals("status")) {
+                        boolean isAlreadyUse = true;
+                        if (response.getValue().toString().contentEquals("error")) {
+                            isAlreadyUse = false;
+                        }
+                        ((RegistrationActivity) act).emailChecked(isAlreadyUse);
                     }
-                    ((RegistrationActivity)act).emailChecked(isAlreadyUse);
                 }
             }
         } else if (methodName == AsyncMethodNames.GET_USER) {
@@ -269,30 +344,19 @@ public class AsyncHttpTask extends AsyncTask<Void, Void, String> {
                                 "Avatar was saved!", Toast.LENGTH_SHORT);
                         toast.show();
 
-
                         HashMap<String, Object> parametrs = new HashMap<String, Object>();
                         parametrs.put("user", Api.user);
                         AsyncHttpTask getUserTask = new AsyncHttpTask(parametrs, AsyncMethodNames.GET_USER_AVATAR, act);
                         getUserTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-
-
                     }
 
                 }
             }
         }
         else if(methodName == AsyncMethodNames.GET_USER_AVATAR){
-            if(Api.user.getId() == Integer.parseInt(success)) {
-                ImageView img = (ImageView) act.findViewById(R.id.imageView);
-                byte[] data = Api.user.getAvatar();
-                //byte[] decodedString = //Base64.decode(data, Base64.DEFAULT);
-                Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
-                img.setImageBitmap(bitmap);
-
-            }
-            else
+            if(target.contentEquals(MenuFragment.class.toString()))
             {
-
+                MainActivity.currentLoader.endLoading();
             }
         }
         else if(methodName == AsyncMethodNames.USER_LOGIN) {
@@ -301,7 +365,6 @@ public class AsyncHttpTask extends AsyncTask<Void, Void, String> {
             String token = null;
             int errorCode = -1;
             String errorDescription = null;
-            Object obj;
 
             for (Map.Entry<String, Object> response : map.entrySet()) {
                 if(response.getKey().contentEquals("data"))
@@ -332,10 +395,8 @@ public class AsyncHttpTask extends AsyncTask<Void, Void, String> {
                 ckeckTokenTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             }
             else if(errorCode != -1 && errorDescription != null){
-                ((LoginActivity)act).mLabelView.setText(errorDescription);
-                View view = ((LoginActivity)act).mLabelView;
-                view.requestFocus();
                 ((LoginActivity) act).showProgress(false);
+                ((LoginActivity) act).showDialog(false, errorDescription);
             }
         }
 
@@ -345,12 +406,13 @@ public class AsyncHttpTask extends AsyncTask<Void, Void, String> {
 
             if(act != null) {
                 if (act.getClass() == RegistrationActivity.class) {
-                    ((RegistrationActivity) act).setSpinner();
+                    ((RegistrationActivity) act).setCountries();
                 }
+
             }
-            else {
-                if(MenuActivity.currentLoader.fragment.getClass() == UserPageFragment.class) {
-                    MenuActivity.currentLoader.endLoading();
+            if(MainActivity.currentLoader != null) {
+                if (MainActivity.currentLoader.fragment.getClass() == UserPageFragment.class) {
+                    MainActivity.currentLoader.endLoading();
                 }
             }
         }
@@ -371,28 +433,37 @@ public class AsyncHttpTask extends AsyncTask<Void, Void, String> {
                         AsyncHttpTask getUserTask = new AsyncHttpTask(userData, AsyncMethodNames.GET_USER, act);
                         getUserTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                     }
-
                 }
             }
         }
         else if (methodName == AsyncMethodNames.GET_GROUPS)
         {
             Api.groups = JsonResponseGroups.getGroups(success);
-            if(MenuActivity.currentLoader.fragment.getClass() == CreateAccount.class) {
-                MenuActivity.currentLoader.endLoading();
+            if(MainActivity.currentLoader.fragment.getClass() == CreateAccount.class) {
+                MainActivity.currentLoader.endLoading();
             }
         }
         else if (methodName == AsyncMethodNames.CREATE_ACCOUNT)
         {
-            Map<String, Object> map = Api.jsonToMap(success);
+            Map<String, Object> map = null;
+            try {
+                map = Api.jsonToMap(success);
+            }
+            catch(Exception ex)
+            {
+                if(act.getClass() == MainActivity.class) {
+                    ((MainActivity) act).showDialog(false, "Something went wrong. Please write to support.");
+                    return;
+                }
+            }
             for (Map.Entry<String, Object> response : map.entrySet()) {
                 if (response.getKey().contentEquals("data")) {
                     for (Map.Entry<String, Object> dataEntry : ((Map<String, Object>) (response.getValue())).entrySet()) {
                         if (dataEntry.getKey().contentEquals("login")) {
-                            /*Toast toast = Toast.makeText(act.getApplicationContext(),
-                                    "Account was created with login: " + (int)(double)dataEntry.getValue(), Toast.LENGTH_SHORT);
-                            toast.show();*/
-                            ((MenuActivity)act).showDialog(true, "Account was created with login: " + (int)(double)dataEntry.getValue());
+
+                            if(act.getClass() == MainActivity.class) {
+                                ((MainActivity) act).showDialog(true, "Account was created with login: " + (int) (double) dataEntry.getValue());
+                            }
                         }
                     }
                 }
@@ -404,11 +475,9 @@ public class AsyncHttpTask extends AsyncTask<Void, Void, String> {
                         for (Map.Entry<String, Object> dataEntry : tmpMap.entrySet()) {
                             if (dataEntry.getKey().contentEquals("description")) {
                                 String description = (String) dataEntry.getValue();
-                                /*Toast toast = Toast.makeText(act.getApplicationContext(),
-                                        description, Toast.LENGTH_SHORT);
-                                toast.show();*/
-                                ((MenuActivity)act).showDialog(false, description);
-
+                                if(act.getClass() == MainActivity.class) {
+                                    ((MainActivity) act).showDialog(false, description);
+                                }
                             }
                         }
                     }
@@ -417,18 +486,54 @@ public class AsyncHttpTask extends AsyncTask<Void, Void, String> {
         }
         else if (methodName == AsyncMethodNames.GET_ACCOUNTS)
         {
-
             Api.user.accounts = JsonResponseAccounts.getAccounts(success);
-            if(MenuActivity.currentLoader.fragment.getClass() == MyAccounts.class) {
-                MenuActivity.currentLoader.endLoading();
+            if(MainActivity.currentLoader.fragment.getClass() == MyAccounts.class) {
+                if(target.contentEquals(MyAccounts.class.toString())) {
+                    MainActivity.currentLoader.endLoading();
+                }
+                else{
+                    MyAccounts.updateAccounts(Api.user.accounts);
+                }
+            }
+            if(MainActivity.currentLoader.fragment.getClass() == TransfersFragment.class) {
+                MainActivity.currentLoader.endLoading();
             }
 
+        }
+
+        else if(methodName == AsyncMethodNames.GET_ACCOUNT_HOLDER_NAME) {
+            Map<String, Object> map = Api.jsonToMap(success);
+            String accountHolderName = "";
+            for (Map.Entry<String, Object> entry : map.entrySet()) {
+                if(entry.getKey().contentEquals("status"))
+                {
+                    if(entry.getValue().toString().contentEquals("error"))
+                    {
+                        RequestTransferFragment.setError(target);
+                        return;
+                    }
+                }
+                if(entry.getKey().contentEquals("data"))
+                {
+                    Map<String, Object> tmp2 = (Map<String, Object>) entry.getValue();
+                    //Map<String, Object> map2 = entry.getValue();
+                    /*for (Map.Entry<String, Object> dataEntry : entry.entrySet()) {
+
+                    }*/
+                    for (Map.Entry<String, Object> dataEntry : tmp2.entrySet()) {
+                        if(dataEntry.getKey().contentEquals("name")) {
+                            accountHolderName = dataEntry.getValue().toString();
+                            RequestTransferFragment.setHolderName(accountHolderName, target);
+                        }
+                    }
+                }
+            }
         }
         else if (methodName == AsyncMethodNames.GET_CATEGORIES)
         {
             Api.categories = JsonResponseCategories.getCategories(success);
-            if(MenuActivity.currentLoader.fragment.getClass() == Support.class) {
-                MenuActivity.currentLoader.endLoading();
+            if(MainActivity.currentLoader.fragment.getClass() == Support.class) {
+                MainActivity.currentLoader.endLoading();
             }
         }
         else if (methodName == AsyncMethodNames.CREATE_TICKET)
@@ -446,6 +551,8 @@ public class AsyncHttpTask extends AsyncTask<Void, Void, String> {
                             Api.user.tickets.remove(Api.user.getCurrentTicketId());
                             Api.user.setCurrentTicketId(0);
 
+                            SupportChat.tickets.add(ticket);
+
                             HashMap<String, Object> mapUserId = new HashMap<String, Object>();
                             mapUserId.put("user_id", Api.user.getId());
                             mapUserId.put("ticket_id", ticket.getId());
@@ -461,10 +568,9 @@ public class AsyncHttpTask extends AsyncTask<Void, Void, String> {
                             AsyncHttpTask sendMessageTask = new AsyncHttpTask(params, AsyncMethodNames.SEND_MESSAGE, act);
                             sendMessageTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
-                            /*Toast toast = Toast.makeText(act.getApplicationContext(),
-                                    "Ticket was created!", Toast.LENGTH_SHORT);
-                            toast.show();*/
-                            ((MenuActivity)act).showDialog(true, "Ticket was created!");
+                            if(act.getClass() == MainActivity.class) {
+                                ((MainActivity) act).showDialog(true, "Ticket was created!");
+                            }
                         }
                     }
                 }
@@ -475,8 +581,10 @@ public class AsyncHttpTask extends AsyncTask<Void, Void, String> {
                         for (Map.Entry<String, Object> dataEntry : tmpMap.entrySet()) {
                             if (dataEntry.getKey().contentEquals("description")) {
                                 String description = (String) dataEntry.getValue();
-                                ((MenuActivity)act).showDialog(false, description);
 
+                                if(act.getClass() == MainActivity.class) {
+                                    ((MainActivity) act).showDialog(false, description);
+                                }
                             }
                         }
                     }
@@ -487,13 +595,9 @@ public class AsyncHttpTask extends AsyncTask<Void, Void, String> {
             Map<String, Object> map = Api.jsonToMap(success);
             for (Map.Entry<String, Object> response : map.entrySet()) {
                 if (response.getKey().contentEquals("status")) {
-
                     if (response.getValue().toString().contentEquals("success")) {
-                        /*Toast toast = Toast.makeText(act.getApplicationContext(),
-                                "Message was send!", Toast.LENGTH_SHORT);
-                        toast.show();*/
-                    }
 
+                    }
                 }
             }
         }
@@ -501,63 +605,62 @@ public class AsyncHttpTask extends AsyncTask<Void, Void, String> {
             Map<String, Object> map = Api.jsonToMap(success);
 
             JsonResponseTickets jrt = new JsonResponseTickets(success);
-            //Api.user.tickets = jrt.getTickets();
             SupportChat.tickets = jrt.getTickets();
             int countLastMessages = jrt.getLastMessages();
 
             AsyncHttpTask getDataFromTickets = new AsyncHttpTask(null, AsyncMethodNames.GET_DATA_FROM_TICKETS, act);
             getDataFromTickets.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-
         }
         else if (methodName == AsyncMethodNames.GET_DATA_FROM_TICKETS) {
 
             AsyncHttpTask getUserTask = new AsyncHttpTask(null, AsyncMethodNames.WAIT_AVATAR_LOADING, act);
             getUserTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-            //SupportChat.updateTickets();
         }
         else if (methodName == AsyncMethodNames.GET_TICKET_MESSAGES) {
-            //Map<String, Object> map = Api.jsonToMap(success);
             Api.currentChatMessages = JsonResponseTicketMessages.getMessages(success);
+            Map<String, Object> map = Api.jsonToMap(success);
             SupportChat.goToChatActivity();
-
         }
 
         else if (methodName == AsyncMethodNames.GET_NEW_MESSAGE) {
-            Map<String, Object> map = Api.jsonToMap(success);
-            List<Message>newMessages =null;
-            for (Map.Entry<String, Object> response : map.entrySet()) {
-                if (response.getKey().contentEquals("status")) {
+            try {
+                SupportChat.handler.endListen();
+                Map<String, Object> map = Api.jsonToMap(success);
+                List<Message> newMessages = null;
+                for (Map.Entry<String, Object> response : map.entrySet()) {
+                    if (response.getKey().contentEquals("status")) {
 
-                    if (response.getValue().toString().contentEquals("success")) {
-                        newMessages = JsonResponseTicketMessages.getMessages(success);
+                        if (response.getValue().toString().contentEquals("success")) {
+                            newMessages = JsonResponseTicketMessages.getMessages(success);
+                        }
                     }
                 }
-            }
-            if(newMessages != null){
-                SupportChat.checkNewMessages(newMessages, act);
-            }
-            else if(!act.isFinishing() && MenuActivity.getNewMessagesTask.equals(this)) {
-                SupportChat.newMessagesHandler();
+                if (newMessages != null) {
+                    SupportChat.checkNewMessages(newMessages, act);
+                }
+                if (!act.isFinishing()) {
+                    SupportChat.newMessagesHandler();
+                }
+            } catch(Exception ex)
+            {
+                String str = ex.getMessage();
             }
         }
         else if (methodName == AsyncMethodNames.WAIT_AVATAR_LOADING) {
-            //((ChatActivity) act).setMessages();
-            Object o = act.getClass();
+
             if(act.getClass() == ChatActivity.class)
                 ((ChatActivity) act).setMessages();
             else
                 SupportChat.updateTickets();
+
         }
         else if (methodName == AsyncMethodNames.GET_DATA_FROM_MESSAGES) {
             SupportChat.newMessages();
-
         }
         else if (methodName == AsyncMethodNames.GET_ATTACHMENT) {
             ((MessagesAdapter)ChatActivity.lvMessages.getAdapter()).notifyDataSetChanged();
         }
         else if (methodName == AsyncMethodNames.SET_ATTACHMENT) {
-            String str = success;
-            String str2 = str;
             /*Map<String, Object> map = Api.jsonToMap(success);
             for (Map.Entry<String, Object> response : map.entrySet()) {
                 if (response.getKey().contentEquals("status")) {
@@ -571,6 +674,105 @@ public class AsyncHttpTask extends AsyncTask<Void, Void, String> {
                 }
             }*/
         }
-    }
+        else if (methodName == AsyncMethodNames.GET_ACCOUNT_ORDERS) {
+            List<Order> orders = JsonResponseOrders.getOrders(success);
+            Api.account.openOrders = new ArrayList<Order>();
+            Api.account.closeOrders = new ArrayList<Order>();
+            for(Order o: orders)
+            {
+                if (o.getCmd().contentEquals("Sell") || o.getCmd().contentEquals("Buy")) {
+                    if (o.getCloseTime().contentEquals("1970-01-01 00:00:00"))
+                        Api.account.openOrders.add(o);
+                    else
+                        Api.account.closeOrders.add(o);
+                }
+            }
+            if (MainActivity.currentLoader.fragment.getClass() == AccountOrdersFragment.class) {
+                MainActivity.currentLoader.endLoading();
+            }
 
+        }
+        else if (methodName == AsyncMethodNames.UPDATE_ACCOUNT_ORDERS) {
+            OpenOrdersFragment.updateOrders(JsonResponseOrders.getOrders(success));
+            if(act.getClass().toString().contentEquals(MainActivity.class.toString())) {
+                if (OpenOrdersFragment.isNeedUpdate) {
+                    AsyncHttpTask updateOrders = new AsyncHttpTask(parametrs, AsyncMethodNames.UPDATE_ACCOUNT_ORDERS, act);
+                    updateOrders.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                }
+            }
+        }
+
+        else if (methodName == AsyncMethodNames.GET_WITHDRAWAL)
+        {
+            Map<String, Object> map = Api.jsonToMap(success);
+            Api.withdrawals = JsonResponseWithdrawal.getWithdrawals(success);
+
+            FinanceHistoryFragment.isWithdrawalLoaded = true;
+            if(FinanceHistoryFragment.isWithdrawalLoaded && FinanceHistoryFragment.isDepositsLoaded) {
+                if (MainActivity.currentLoader.fragment.getClass() == FinanceHistoryFragment.class) {
+                    MainActivity.currentLoader.endLoading();
+                }
+            }
+        }
+
+        else if (methodName == AsyncMethodNames.GET_PAYMENTS)
+        {
+            Map<String, Object> map = Api.jsonToMap(success);
+            Api.deposits = JsonResponseWithdrawal.getWithdrawals(success);
+            FinanceHistoryFragment.isDepositsLoaded = true;
+            if(FinanceHistoryFragment.isWithdrawalLoaded && FinanceHistoryFragment.isDepositsLoaded) {
+                if (MainActivity.currentLoader.fragment.getClass() == FinanceHistoryFragment.class) {
+                    MainActivity.currentLoader.endLoading();
+                }
+            }
+        }
+        else if (methodName == AsyncMethodNames.REQUEST_TRANSFER)
+        {
+            Map<String, Object> map = Api.jsonToMap(success);
+            if(act != null)
+            {
+                if(act.getClass() == MainActivity.class)
+                {
+                    for (Map.Entry<String, Object> response : map.entrySet()) {
+                        if (response.getKey().contentEquals("status")) {
+                            if(response.getValue().toString().contentEquals("success"))
+                            {
+                                MainActivity activity = (MainActivity) act;
+                                activity.showDialog(true, "Transfer was requested");
+                            }
+                        }
+                        if (response.getKey().contentEquals("errors")) {
+                            ArrayList<Object> errorList = (ArrayList<Object>)response.getValue();
+                            for(Object error: errorList) {
+                                Map<String, Object> tmpMap = (Map<String, Object>) error;
+                                for (Map.Entry<String, Object> dataEntry : tmpMap.entrySet()) {
+                                    if (dataEntry.getKey().contentEquals("description")) {
+                                        String description = (String) dataEntry.getValue();
+
+                                        MainActivity activity = (MainActivity) act;
+                                        activity.showDialog(false, description);
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                }
+            }
+
+        }
+        else if (methodName == AsyncMethodNames.GET_TRANSFERS)
+        {
+            Map<String, Object> map = Api.jsonToMap(success);
+            List<Transfer> transfers = JsonResponseTransfers.getTransfers(success);
+            Api.transfers = transfers;
+            if(target.contentEquals(TransfersHistoryFragment.class.toString())) {
+                TransfersHistoryFragment.setList();
+            }
+            else{
+                TransfersHistoryFragment.updateList();
+            }
+
+        }
+    }
 }

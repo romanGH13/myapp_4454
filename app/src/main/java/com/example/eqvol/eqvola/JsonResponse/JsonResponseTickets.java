@@ -23,26 +23,10 @@ public class JsonResponseTickets{
 
     public JsonResponseTickets(String json) {
 
-
         Gson gson = new GsonBuilder().create();
         JsonReader reader = new JsonReader(new StringReader(json));
         reader.setLenient(true);
         JsonResponseTickets response = gson.fromJson(reader, JsonResponseTickets.class);
-
-        /*Gson gson = new GsonBuilder().serializeNulls().setLenient().create();
-        JsonResponseTickets response = null;
-        try {
-            JsonElement element = new JsonParser().parse(json);
-            JsonObject obj = element.getAsJsonObject();
-
-            response = gson.fromJson(obj, JsonResponseTickets.class);
-
-        }
-        catch(Exception ex)
-        {
-            String str1 = ex.getMessage();
-        }*/
-        //String str = response.status;
         this.status = response.status;
         this.data = response.data;
     }

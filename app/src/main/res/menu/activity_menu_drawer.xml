@@ -3,19 +3,23 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_my_accounts"
+            android:id="@+id/navigation_my_accounts"
             android:icon="@drawable/ic_menu_archive"
             android:title="My accounts" />
         <item
-            android:id="@+id/nav_create_account"
+            android:id="@+id/navigation_create_account"
             android:icon="@drawable/ic_menu_add_account"
             android:title="Create account" />
         <item
-            android:id="@+id/nav_finance_history"
+            android:id="@+id/navigation_finance_history"
             android:icon="@drawable/ic_menu_wallet"
             android:title="Finance history" />
         <item
-            android:id="@+id/nav_support"
+            android:id="@+id/navigation_transfers"
+            android:icon="@drawable/ic_menu_share"
+            android:title="Transfers" />
+        <item
+            android:id="@+id/navigation_support"
             android:icon="@drawable/ic_menu_help"
             android:title="Support" />
         <item

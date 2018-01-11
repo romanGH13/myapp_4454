@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/navigation_my_accounts"
+        android:icon="@drawable/ic_menu_archive"
+        android:title="@string/title_my_accounts" />
+
+    <item
+        android:id="@+id/navigation_finance_history"
+        android:icon="@drawable/ic_menu_wallet"
+        android:title="@string/title_finance_history" />
+
+    <item
+        android:id="@+id/navigation_support"
+        android:icon="@drawable/ic_menu_help"
+        android:title="@string/title_support" />
+
+    <item
+        android:id="@+id/navigation_create_account"
+        android:icon="@drawable/ic_menu_add_account"
+        android:title="@string/title_create_account" />
+
+    <item
+        android:id="@+id/navigation_menu"
+        android:icon="@drawable/ic_home_black_24dp"
+        android:title="@string/title_menu" />
+
+</menu>

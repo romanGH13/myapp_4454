@@ -1,16 +1,19 @@
 package com.example.eqvol.eqvola.Adapters;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
+import android.widget.AdapterView;
 import android.widget.TextView;
 
 import com.example.eqvol.eqvola.Classes.Order;
+import com.example.eqvol.eqvola.Classes.Withdrawal;
+import com.example.eqvol.eqvola.MainActivity;
 import com.example.eqvol.eqvola.R;
 
 import java.text.DateFormat;
@@ -20,64 +23,96 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by eqvol on 27.12.2017.
  */
 
-public class OpenOrdersAdapter extends RecyclerView.Adapter<OpenOrdersAdapter.OpenOrdersViewHolder> implements Comparator<Order> {
+public class WithdrawalsAdapter extends RecyclerView.Adapter<WithdrawalsAdapter.WithdrawalsViewHolder> implements Comparator<Withdrawal>{
 
     Context ctx;
     LayoutInflater lInflater;
-    List<Order> orders;
+    List<Withdrawal> withdrawals;
 
-    private OpenOrdersAdapter.OnItemClickListener mOnItemClickListener;
+    /*private OnItemClickListener mListener;
+    GestureDetector mGestureDetector;
 
     public interface OnItemClickListener {
         public void onItemClick(View view, int position);
     }
 
-    public void setOnCLickListener(OpenOrdersAdapter.OnItemClickListener onItemClickListener)
+    public void setOnItemCLickListener(OnItemClickListener listener)
     {
-        this.mOnItemClickListener = onItemClickListener;
-    }
+        mListener = listener;
+        mGestureDetector = new GestureDetector(ctx, new GestureDetector.SimpleOnGestureListener() {
+            @Override
+            public boolean onSingleTapUp(MotionEvent e) {
+                return true;
+            }
 
-    public OpenOrdersAdapter(@NonNull Context context, List<Order> orders) {
+        });
+    }*/
+
+    public WithdrawalsAdapter(@NonNull Context context, List<Withdrawal> withdrawals) {
         this.ctx = context;
-        this.orders = orders;
-        Collections.sort(this.orders, this);
+        this.withdrawals = withdrawals;
+        Collections.sort(this.withdrawals, this);
         this.lInflater = LayoutInflater.from(this.ctx);
     }
 
-
-    public static class OpenOrdersViewHolder extends RecyclerView.ViewHolder{
-        RecyclerView rv;
-        TextView mOrderView;
-        TextView mCurrencyPairView;
-        TextView mOpenPriceView;
-        TextView mCurrentPriceView;
-        TextView mProfitView;
-
-        public View container;
-
-        OpenOrdersViewHolder(View itemView) {
-            super(itemView);
-            container = itemView;
-            rv = (RecyclerView)itemView.findViewById(R.id.open_orders_list);
-            mOrderView = ((TextView) itemView.findViewById(R.id.order));
-            mCurrencyPairView = ((TextView) itemView.findViewById(R.id.currencyPair));
-            mOpenPriceView = ((TextView) itemView.findViewById(R.id.openPrice));
-            mCurrentPriceView = ((TextView) itemView.findViewById(R.id.currentPrice));
-            mProfitView = ((TextView) itemView.findViewById(R.id.profit));
+    /*@Override
+    public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
+        View childView = rv.findChildViewUnder(e.getX(), e.getY());
+        if (childView != null && mListener != null && mGestureDetector.onTouchEvent(e)) {
+            mListener.onItemClick(childView, rv.getChildAdapterPosition(childView));
+            return true;
         }
+        return false;
+    }
+
+    @Override
+    public void onTouchEvent(RecyclerView rv, MotionEvent e) {
 
     }
 
     @Override
-    public OpenOrdersViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.open_order_item, parent, false);
-        OpenOrdersViewHolder pvh = new OpenOrdersViewHolder(v);
+    public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
+
+    }
+*/
+
+    public  class WithdrawalsViewHolder extends RecyclerView.ViewHolder  implements View.OnClickListener{
+        RecyclerView rv;
+        TextView mAccountView;
+        TextView mAmountView;
+        TextView mStatusView;
+
+        public View container;
+
+        WithdrawalsViewHolder(View itemView) {
+            super(itemView);
+            container = itemView;
+            rv = (RecyclerView)itemView.findViewById(R.id.withdrawals_list);
+            mAccountView = ((TextView) itemView.findViewById(R.id.account));
+            mAmountView = ((TextView) itemView.findViewById(R.id.amount));
+            mStatusView = ((TextView) itemView.findViewById(R.id.status));
+            itemView.setOnClickListener(this);
+        }
+
+
+        @Override
+        public void onClick(View v) {
+            int position = getLayoutPosition();
+            Withdrawal withdrawal = get(position);
+            MainActivity main = (MainActivity)container.getContext();
+            main.openFinanceOperation(withdrawal);
+        }
+    }
+
+    @Override
+    public WithdrawalsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.withdrawal_item, parent, false);
+        WithdrawalsViewHolder pvh = new WithdrawalsViewHolder(v);
         return pvh;
     }
 
@@ -91,44 +126,44 @@ public class OpenOrdersAdapter extends RecyclerView.Adapter<OpenOrdersAdapter.Op
     }
 
     @Override
-    public void onBindViewHolder(OpenOrdersAdapter.OpenOrdersViewHolder holder, final int position) {
+    public void onBindViewHolder(WithdrawalsViewHolder holder, final int position) {
 
-        double openPrice = orders.get(position).getOpenPrice();
-        double currentPrice = orders.get(position).getClosePrice();
-        double profit = orders.get(position).getProfit();
-
-        holder.mOrderView.setText("Order #" + Integer.toString(orders.get(position).getOrder()));
-        holder.mCurrencyPairView.setText(orders.get(position).getSymbol());
-        holder.mOpenPriceView.setText(Double.toString(openPrice));
-        holder.mCurrentPriceView.setText(Double.toString(currentPrice));
-        holder.mProfitView.setText(Double.toString(profit));
-
-        if (profit >= 0)
+        holder.mAccountView.setText("Account " + Integer.toString(withdrawals.get(position).getLogin()));
+        holder.mAmountView.setText(Double.toString(withdrawals.get(position).getAmount()));
+        int status = withdrawals.get(position).getStatus();
+        switch(status)
         {
-            holder.mProfitView.setTextAppearance(ctx, R.style.ThemeAccountDetailGreen);
-        }
-        else
-        {
-            holder.mProfitView.setTextAppearance(ctx, R.style.ThemeAccountDetailOrange);
+            case 0:
+                holder.mStatusView.setText("Pending");
+                holder.mStatusView.setTextAppearance(ctx, R.style.ThemeAccountDetailBlue);
+                break;
+            case 1:
+                holder.mStatusView.setText("Confirmed");
+                holder.mStatusView.setTextAppearance(ctx, R.style.ThemeAccountDetailGreen);
+                break;
+            case 2:
+                holder.mStatusView.setText("Canceled");
+                holder.mStatusView.setTextAppearance(ctx, R.style.ThemeAccountDetailOrange);
+                break;
         }
     }
 
     @Override
     public long getItemId(int position) {
-        return orders.get(position).getOrder();
+        return withdrawals.get(position).getId();
     }
 
     @Override
     public int getItemCount() {
-        return orders.size();
+        return withdrawals.size();
     }
 
     @Override
-    public int compare(Order o1, Order o2) {
+    public int compare(Withdrawal o1, Withdrawal o2) {
         DateFormat format = new SimpleDateFormat(ctx.getString(R.string.date_format));
         try {
-            Date date1 = format.parse(o1.getOpenTime());
-            Date date2 = format.parse(o2.getOpenTime());
+            Date date1 = format.parse(o1.getDate());
+            Date date2 = format.parse(o2.getDate());
             return date1.compareTo(date2)*(-1);
         } catch (ParseException e) {
             e.printStackTrace();
@@ -136,21 +171,28 @@ public class OpenOrdersAdapter extends RecyclerView.Adapter<OpenOrdersAdapter.Op
         return 0;
     }
 
-    public void UpdateOrderById(Order order){
-        for(Order o: orders){
-            if(o.getOrder() == order.getOrder())
-                o = order;
+    public void UpdateOrderById(Withdrawal withdrawal){
+        for(Withdrawal w: withdrawals){
+            if(w.getId() == withdrawal.getId())
+                w = withdrawal;
         }
-        Collections.sort(this.orders, this);
+        Collections.sort(this.withdrawals, this);
     }
 
-    public Order getOrderById(long id){
-        for(Order o: orders){
-            if(o.getOrder() == id)
-                return o;
+    public Withdrawal getOrderById(long id){
+        for(Withdrawal w: withdrawals){
+            if(w.getId() == id)
+                return w;
         }
         return null;
     }
+
+    public Withdrawal get(int position)
+    {
+        return getOrderById(getItemId(position));
+    }
+
+
 
 
 

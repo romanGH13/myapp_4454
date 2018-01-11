@@ -8,6 +8,8 @@ import android.content.ContentResolver;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -15,9 +17,6 @@ import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
 import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,12 +31,9 @@ import android.widget.TextView;
 
 import com.example.eqvol.eqvola.Classes.Api;
 import com.example.eqvol.eqvola.Classes.AsyncHttpTask;
-import com.example.eqvol.eqvola.Classes.Attachment;
 import com.example.eqvol.eqvola.Classes.Country;
 import com.example.eqvol.eqvola.Adapters.CountryAdapter;
 import com.example.eqvol.eqvola.Classes.MyDateFormat;
-import com.example.eqvol.eqvola.Classes.MyFirstLoader;
-import com.example.eqvol.eqvola.MenuActivity;
 import com.example.eqvol.eqvola.R;
 import com.example.eqvol.eqvola.Classes.AsyncMethodNames;
 import com.google.gson.Gson;
@@ -45,9 +41,7 @@ import com.google.gson.GsonBuilder;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -61,16 +55,7 @@ public class UserPageFragment extends Fragment{
 
     public UserPageFragment()
     {
-        try {
-            /*mLoader = getLoaderManager().initLoader(LOADER_ID, null, this);
-            mLoader.forceLoad();*/
-            getAllCountries();
-           // mLoader.onContentChanged();
-        }
-        catch(Exception ex)
-        {
-            String str = ex.getMessage();
-        }
+        getAllCountries();
     }
 
 
@@ -147,6 +132,8 @@ public class UserPageFragment extends Fragment{
                 userLoginTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             }
         });
+        Drawable drawable = btn.getBackground();
+        drawable.setColorFilter(getResources().getColor(R.color.colorNext), PorterDuff.Mode.MULTIPLY);
         return  mView;
     }
 
@@ -210,7 +197,7 @@ public class UserPageFragment extends Fragment{
 
     public  void setSpinner()
     {
-        ArrayAdapter<Country> adapter = new CountryAdapter(mView.getContext());
+        ArrayAdapter<Country> adapter = new CountryAdapter(mView.getContext(), Api.countries);
         adapter.setDropDownViewResource(R.layout.drop_down_item);
 
         final Spinner spinner = (Spinner) mView.findViewById(R.id.spinnerCountries);

@@ -1,109 +1,156 @@
 package com.example.eqvol.eqvola.fragments;
 
+import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.BottomNavigationView;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.TextView;
 
+import com.example.eqvol.eqvola.Classes.Api;
+import com.example.eqvol.eqvola.Classes.AsyncHttpTask;
+import com.example.eqvol.eqvola.Classes.AsyncMethodNames;
+import com.example.eqvol.eqvola.Classes.FragmentLoader;
+import com.example.eqvol.eqvola.MainActivity;
 import com.example.eqvol.eqvola.R;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link MenuFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link MenuFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
-public class MenuFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+import java.util.HashMap;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
 
-    private OnFragmentInteractionListener mListener;
+public class MenuFragment extends Fragment implements NavigationView.OnNavigationItemSelectedListener  {
+
+    private View mView;
 
     public MenuFragment() {
-        // Required empty public constructor
+
+        HashMap<String, Object> parametrs = new HashMap<String, Object>();
+        parametrs.put("user", Api.user);
+        AsyncHttpTask getUserAvatarTask = new AsyncHttpTask(parametrs, AsyncMethodNames.GET_USER_AVATAR, getActivity());
+        getUserAvatarTask.target = MenuFragment.class.toString();
+        getUserAvatarTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment MenuFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static MenuFragment newInstance(String param1, String param2) {
+    public static MenuFragment newInstance() {
         MenuFragment fragment = new MenuFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
+
         return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_menu, container, false);
+        mView = inflater.inflate(R.layout.fragment_menu, container, false);
+        setNavHeaderData();
+        return mView;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
+    public void setNavHeaderData()
+    {
+        if(Api.user == null) return;
+
+        NavigationView navigationView = (NavigationView) mView.findViewById(R.id.nav_view);
+        View header = navigationView.getHeaderView(0);
+        TextView headerName = (TextView)header.findViewById(R.id.nav_header_name);
+        TextView headerEmail = (TextView)header.findViewById(R.id.nav_header_email);
+        headerName.setText(Api.user.getName());
+        headerEmail.setText(Api.user.getEmail());
+
+        ImageButton btn = (ImageButton)header.findViewById(R.id.btnEditProfile);
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onEditProfileClick(v);
+            }
+        });
+
+        ImageView img = (ImageView) header.findViewById(R.id.imageView);
+        byte[] data = Api.user.getAvatar();
+        Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
+        img.setImageBitmap(bitmap);
+
+        //NavigationView navigationView = (NavigationView) mView.findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+
     }
 
+    @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
+    public boolean onNavigationItemSelected(MenuItem item) {
+        // Handle navigation view item clicks here.
+        int id = item.getItemId();
+        MainActivity activity = (MainActivity)getActivity();
+        activity.mOnNavigationItemSelectedListener.onNavigationItemSelected(item);
+        BottomNavigationView navigation = (BottomNavigationView) activity.findViewById(R.id.navigation);
+        navigation.setSelectedItemId(item.getItemId());
+        Class fragmentClass = null;
+
+        /*if (id == R.id.nav_create_account) {
+
+            fragmentClass = CreateAccount.class;
+        } else if (id == R.id.nav_my_accounts) {
+            fragmentClass = MyAccounts.class;
+        } else if (id == R.id.nav_finance_history) {
+            fragmentClass = FinanceHistoryFragment.class;
+        } else if (id == R.id.nav_support) {
+            fragmentClass = Support.class;
+        } else if (id == R.id.nav_logout) {
+            HashMap<String, Object> params = new HashMap<String, Object>();
+            params.put("token", Api.getToken());
+
+            AsyncHttpTask userLoginTask = new AsyncHttpTask(params, AsyncMethodNames.USER_LOGOUT, getActivity());
+            userLoginTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            activity.deleteFileToken();
+
+            Api.setToken(null);
+            Api.user = null;
+            Api.countries = null;
+            activity.goToLoginActivity();
         }
+
+        try {
+            if(fragmentClass != null) {
+                FragmentLoader fl = new FragmentLoader(fragmentClass, activity.getSupportFragmentManager(), R.id.container, false);
+                fl.startLoading();
+                MainActivity.currentLoader = fl;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        /*DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);*/
+        return true;
     }
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
+    public void onEditProfileClick(View view)
+    {
+        /*if(currentLoader != null)
+        {
+            //currentLoader.
+        }*/
+        //setTitle("Edit profile");
+        FragmentLoader fl = new FragmentLoader(UserPageFragment.class, ((MainActivity)(mView.getContext())).getSupportFragmentManager(), R.id.container, false);
+        fl.startLoading();
+        MainActivity.currentLoader = fl;
+        /*DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);*/
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
-    }
 }

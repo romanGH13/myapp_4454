@@ -6,6 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/colorWhite"
     android:orientation="vertical">
 
     <TextView
@@ -15,7 +16,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:layout_gravity="left"
-        android:textAppearance="@style/ThemeAccountDetail"
+        android:textAppearance="@style/ThemeAccountDetailDark"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         />
@@ -47,9 +48,8 @@
         android:layout_height="wrap_content"
         android:text="Currency pair:"
         android:layout_marginTop="10dp"
-        android:layout_marginLeft="25dp"
         android:layout_marginStart="25dp"
-        android:textAppearance="@style/ThemeAccountDetail"
+        android:textAppearance="@style/ThemeAccountDetailDark"
         app:layout_constraintHorizontal_chainStyle="spread_inside"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/account_line"
@@ -60,7 +60,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text=""
-        android:textAppearance="@style/ThemeAccountDetail"
+        android:textAppearance="@style/ThemeAccountDetailDark"
         app:layout_constraintStart_toEndOf="@+id/space"
         app:layout_constraintTop_toTopOf="@+id/labelCurrencyPair" />
 
@@ -70,9 +70,8 @@
         android:layout_height="wrap_content"
         android:text="Open price:"
         android:layout_marginTop="5dp"
-        android:layout_marginLeft="25dp"
         android:layout_marginStart="25dp"
-        android:textAppearance="@style/ThemeAccountDetail"
+        android:textAppearance="@style/ThemeAccountDetailDark"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/labelCurrencyPair" />
 
@@ -81,49 +80,67 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text=""
-        android:textAppearance="@style/ThemeAccountDetail"
+        android:textAppearance="@style/ThemeAccountDetailGreen"
         app:layout_constraintStart_toEndOf="@+id/space"
         app:layout_constraintTop_toTopOf="@+id/labelOpenPrice" />
 
     <TextView
-        android:id="@+id/labelCurrentPrice"
+        android:id="@+id/labelClosePrice"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Open price:"
+        android:text="Close price:"
         android:layout_marginTop="5dp"
-        android:layout_marginLeft="25dp"
         android:layout_marginStart="25dp"
-        android:textAppearance="@style/ThemeAccountDetail"
+        android:textAppearance="@style/ThemeAccountDetailDark"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/labelOpenPrice" />
 
     <TextView
-        android:id="@+id/currentPrice"
+        android:id="@+id/closePrice"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text=""
-        android:textAppearance="@style/ThemeAccountDetail"
+        android:textAppearance="@style/ThemeAccountDetailBlue"
         app:layout_constraintStart_toEndOf="@+id/space"
-        app:layout_constraintTop_toTopOf="@+id/labelCurrentPrice" />
+        app:layout_constraintTop_toTopOf="@+id/labelClosePrice" />
+
+    <TextView
+        android:id="@+id/labelCloseTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Close time:"
+        android:layout_marginTop="5dp"
+        android:layout_marginStart="25dp"
+        android:textAppearance="@style/ThemeAccountDetailDark"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/labelClosePrice" />
+
+    <TextView
+        android:id="@+id/closeTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:textAppearance="@style/ThemeAccountDetailDark"
+        app:layout_constraintStart_toEndOf="@+id/space"
+        app:layout_constraintTop_toTopOf="@+id/labelCloseTime" />
 
     <TextView
         android:id="@+id/labelProfit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Open price:"
+        android:text="Profit:"
         android:layout_marginTop="5dp"
-        android:layout_marginLeft="25dp"
         android:layout_marginStart="25dp"
-        android:textAppearance="@style/ThemeAccountDetail"
+        android:textAppearance="@style/ThemeAccountDetailDark"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/labelCurrentPrice" />
+        app:layout_constraintTop_toBottomOf="@+id/labelCloseTime" />
 
     <TextView
         android:id="@+id/profit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text=""
-        android:textAppearance="@style/ThemeAccountDetail"
+        android:textAppearance="@style/ThemeAccountDetailGreen"
         app:layout_constraintStart_toEndOf="@+id/space"
         app:layout_constraintTop_toTopOf="@+id/labelProfit" />
 
@@ -131,7 +148,7 @@
     <Space
         android:id="@+id/space2"
         android:layout_width="match_parent"
-        android:layout_height="1dp"
+        android:layout_height="0dp"
         android:layout_marginTop="10dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/labelProfit" />

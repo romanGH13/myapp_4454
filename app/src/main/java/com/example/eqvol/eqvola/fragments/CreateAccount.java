@@ -1,5 +1,7 @@
 package com.example.eqvol.eqvola.fragments;
 
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -17,6 +19,7 @@ import com.example.eqvol.eqvola.Classes.AsyncHttpTask;
 import com.example.eqvol.eqvola.Classes.AsyncMethodNames;
 import com.example.eqvol.eqvola.Classes.Group;
 import com.example.eqvol.eqvola.Adapters.GroupAdapter;
+import com.example.eqvol.eqvola.Classes.Leverage;
 import com.example.eqvol.eqvola.R;
 
 import java.util.HashMap;
@@ -70,6 +73,9 @@ public class CreateAccount extends Fragment {
             }
         });
 
+
+        Drawable drawable = btn.getBackground();
+        drawable.setColorFilter(getResources().getColor(R.color.colorNext), PorterDuff.Mode.MULTIPLY);
         return mView;
     }
 
@@ -90,18 +96,18 @@ public class CreateAccount extends Fragment {
                                        int pos, long id) {
                 Group group = (Group)parent.getItemAtPosition(pos);
                 Spinner spinnerLeverages = (Spinner)mView.findViewById(R.id.create_account_spinner_leverage);
-                //ArrayList<Leverage> leverageList = new ArrayList<Leverage>();
-                //String leverageArray[] = group.getLeverages().split(", ");
-                /*for(String leverage: leverageArray)
-                {
-                    Leverage lev = new Leverage();
-                    lev.setLeverage(leverage);
-                    leverageList.add(lev);
-                }*/
                 try {
                     ArrayAdapter<String> adapter = new LeverageAdapter(mView.getContext(), group.getLeverages());
                     adapter.setDropDownViewResource(R.layout.drop_down_item);
                     spinnerLeverages.setAdapter(adapter);
+                    for(String leverage: group.getLeverages())
+                    {
+                        if(leverage.contentEquals("100"))
+                        {
+                            int leveratePosition = adapter.getPosition(leverage);
+                            spinnerLeverages.setSelection(leveratePosition);
+                        }
+                    }
                 } catch(Exception ex)
                 {
                     String str = ex.getMessage();

@@ -1,109 +1,143 @@
 package com.example.eqvol.eqvola.fragments;
 
+import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.Toast;
 
+import com.example.eqvol.eqvola.Adapters.OpenOrdersAdapter;
+import com.example.eqvol.eqvola.Adapters.TransferHistoryAdapter;
+import com.example.eqvol.eqvola.Classes.Api;
+import com.example.eqvol.eqvola.Classes.AsyncHttpTask;
+import com.example.eqvol.eqvola.Classes.AsyncMethodNames;
+import com.example.eqvol.eqvola.Classes.SpaceItemDecoration;
 import com.example.eqvol.eqvola.R;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link TransfersHistoryFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link TransfersHistoryFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import java.util.HashMap;
+
 public class TransfersHistoryFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private static  View mView;
+    private static RecyclerView list;
+    private static ProgressBar progressBar;
+    private static EditText mSearchView;
+    private static TransferHistoryAdapter adapter;
+    private static SwipeRefreshLayout swipeRefreshLayout;
 
-    private OnFragmentInteractionListener mListener;
+
+    static float x;
+    static float y;
+    static String sDown;
+    static String sMove;
+    static String sUp;
+
 
     public TransfersHistoryFragment() {
-        // Required empty public constructor
+        HashMap<String, Object> params = new HashMap<String, Object>();
+        params.put("token", Api.getToken());
+
+        AsyncHttpTask getAllTransfersTask = new AsyncHttpTask(params, AsyncMethodNames.GET_TRANSFERS, getActivity());
+        getAllTransfersTask.target = TransfersHistoryFragment.class.toString();
+        getAllTransfersTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment TransfersHistoryFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static TransfersHistoryFragment newInstance(String param1, String param2) {
+
+    public static TransfersHistoryFragment newInstance() {
         TransfersHistoryFragment fragment = new TransfersHistoryFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
         return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_transfers_history, container, false);
+        mView = inflater.inflate(R.layout.fragment_transfers_history, container, false);
+        swipeRefreshLayout = (SwipeRefreshLayout)mView.findViewById(R.id.transfer_history_swipe_refresh);
+        progressBar = (ProgressBar) mView.findViewById(R.id.login_progress);
+        mSearchView = (EditText) mView.findViewById(R.id.search);
+        return mView;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
+
+    public static void setList() {
+        try {
+            list = (RecyclerView) mView.findViewById(R.id.transfer_history_list);
+            list.setHasFixedSize(true);
+            LinearLayoutManager llm = new LinearLayoutManager(mView.getContext());
+            llm.setItemPrefetchEnabled(false);
+            list.setLayoutManager(llm);
+            list.addItemDecoration(new DividerItemDecoration(mView.getContext(), LinearLayout.VERTICAL));
+            list.addItemDecoration(new SpaceItemDecoration(10, mView.getContext()));
+
+            adapter = new TransferHistoryAdapter(mView.getContext(), mSearchView);
+            list.setAdapter(adapter);
+
+            progressBar.setVisibility(View.GONE);
+            swipeRefreshLayout.setVisibility(View.VISIBLE);
+
+            swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+                    HashMap<String, Object> params = new HashMap<String, Object>();
+                    params.put("token", Api.getToken());
+
+                    AsyncHttpTask getAllTransfersTask = new AsyncHttpTask(params, AsyncMethodNames.GET_TRANSFERS, (Activity) mView.getContext());
+                    getAllTransfersTask.target = "update";
+                    getAllTransfersTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+
+                }
+            });
+
+            mSearchView = (EditText) mView.findViewById(R.id.search);
+            mSearchView.setVisibility(View.VISIBLE);
+            mSearchView.addTextChangedListener(new TextWatcher(){
+                @Override
+                public void afterTextChanged(Editable s) {
+                    if(adapter!= null) {
+                        adapter.searchStringChanged();
+                        adapter.notifyDataSetChanged();
+                    }
+                }
+
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                }
+            });
+        } catch (Exception ex) {
+            String str = ex.getMessage();
         }
     }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
+    public static void updateList() {
+        adapter.UpdateTransfers();
+        adapter.notifyDataSetChanged();
+        swipeRefreshLayout.setRefreshing(false);
     }
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
-    }
 }

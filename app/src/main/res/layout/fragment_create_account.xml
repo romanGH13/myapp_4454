@@ -1,99 +1,91 @@
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout
     android:layout_height="match_parent"
     android:layout_width="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context="com.example.eqvol.eqvola.fragments.CreateAccount">
-
-        <TextView
-            android:id="@+id/textGroup"
-            android:layout_marginTop="15dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Group"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            />
-        <LinearLayout
-            android:id="@+id/linearSpinGroup"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textGroup"
-            style="@style/spinner_style">
-                <Spinner
-                    android:id="@+id/create_account_spinner_group"
+            android:layout_height="match_parent">
+                <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                    xmlns:tools="http://schemas.android.com/tools"
+                    android:layout_height="match_parent"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:spinnerMode="dropdown" />
-        </LinearLayout>
+                    xmlns:app="http://schemas.android.com/apk/res-auto"
+                    android:background="@color/colorWhite"
+                    tools:context="com.example.eqvol.eqvola.fragments.CreateAccount">
 
-        <TextView
-            android:id="@+id/textLeverage"
-            android:layout_marginTop="15dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Leverage"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/linearSpinGroup"/>
-        <LinearLayout
-            android:id="@+id/linearSpinLeverage"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textLeverage"
-            style="@style/spinner_style">
-                <Spinner
-                    android:id="@+id/create_account_spinner_leverage"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:spinnerMode="dropdown" />
-        </LinearLayout>
+                        <TextView
+                            android:id="@+id/textGroup"
+                            android:layout_marginTop="15dp"
+                            android:layout_marginStart="15dp"
+                            android:layout_marginEnd="15dp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Account type"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            />
+                        <LinearLayout
+                            android:id="@+id/linearSpinGroup"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="15dp"
+                            android:layout_marginEnd="15dp"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/textGroup"
+                            style="@style/spinner_style">
+                                <Spinner
+                                    android:id="@+id/create_account_spinner_group"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:spinnerMode="dropdown" />
+                        </LinearLayout>
 
-        <Button
-            android:id="@+id/btnCreateAccount"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/create_account"
-            android:layout_marginTop="30dp"
-            android:layout_marginLeft="40dp"
-            android:layout_marginRight="40dp"
-            android:fontFamily="Roboto"
-            android:textSize="@dimen/text_size"
-            android:textStyle="bold"
-            android:textColor="@color/colorWhite"
-            android:background="@drawable/custom_button_next"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/linearSpinLeverage"/>
+                        <TextView
+                            android:id="@+id/textLeverage"
+                            android:layout_marginTop="15dp"
+                            android:layout_marginStart="15dp"
+                            android:layout_marginEnd="15dp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Leverage"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/linearSpinGroup"/>
+                        <LinearLayout
+                            android:id="@+id/linearSpinLeverage"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="15dp"
+                            android:layout_marginEnd="15dp"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/textLeverage"
+                            style="@style/spinner_style">
+                                <Spinner
+                                    android:id="@+id/create_account_spinner_leverage"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:spinnerMode="dropdown" />
+                        </LinearLayout>
 
-</android.support.constraint.ConstraintLayout>
-<!--<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="com.example.eqvol.eqvola.fragments.CreateAccount">
+                        <Button
+                            android:id="@+id/btnCreateAccount"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/create_account"
+                            android:layout_marginTop="30dp"
+                            android:layout_marginStart="15dp"
+                            android:layout_marginEnd="15dp"
+                            android:fontFamily="Roboto"
+                            android:textAppearance="@style/MyTextAppearance"
+                            android:textSize="@dimen/text_size"
+                            android:textStyle="bold"
+                            android:textColor="@color/colorWhite"
+                            android:background="@drawable/rectangle"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/linearSpinLeverage"/>
 
-        <Spinner
-            android:id="@+id/create_account_spinner_group"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"></Spinner>
-        <Spinner
-            android:id="@+id/create_account_spinner_leverage"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"></Spinner>
-        <Button
-            android:id="@+id/btnCreateAccount"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/create_account"/>
-
-</FrameLayout>-->
+                </android.support.constraint.ConstraintLayout>
+        </ScrollView>
+</LinearLayout>

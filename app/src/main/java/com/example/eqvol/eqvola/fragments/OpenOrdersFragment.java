@@ -1,109 +1,113 @@
 package com.example.eqvol.eqvola.fragments;
 
-import android.content.Context;
-import android.net.Uri;
+import android.app.Activity;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
+import com.example.eqvol.eqvola.Adapters.OpenOrdersAdapter;
+import com.example.eqvol.eqvola.Classes.Api;
+import com.example.eqvol.eqvola.Classes.AsyncHttpTask;
+import com.example.eqvol.eqvola.Classes.AsyncMethodNames;
+import com.example.eqvol.eqvola.Classes.Order;
+import com.example.eqvol.eqvola.Classes.SpaceItemDecoration;
 import com.example.eqvol.eqvola.R;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link OpenOrdersFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link OpenOrdersFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+
 public class OpenOrdersFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    public static boolean isNeedUpdate;
+    private static View mView;
+    private static RecyclerView list;
+    public static int accountId;
 
-    private OnFragmentInteractionListener mListener;
+    private HashMap<String, Object> params;
 
     public OpenOrdersFragment() {
-        // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment OpenOrdersFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static OpenOrdersFragment newInstance(String param1, String param2) {
+    public static OpenOrdersFragment newInstance() {
         OpenOrdersFragment fragment = new OpenOrdersFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
+
         return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_open_orders, container, false);
-    }
+        mView = inflater.inflate(R.layout.fragment_open_orders, container, false);
+        list = (RecyclerView) mView.findViewById(R.id.open_orders_list);
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
+        list.addItemDecoration(new SpaceItemDecoration(10, getContext()));
+        isNeedUpdate = true;
+
+        setList();
+
+        accountId = Api.account.getLogin();
+
+        HashMap<String, Object> where = new HashMap<String, Object>();
+        where.put("Login", accountId);
+        where.put("CloseTime", "1970-01-01 00:00:00");
+
+        Gson gson = new GsonBuilder().create();
+
+        params = new HashMap<String, Object>();
+        params.put("token", Api.getToken());
+        params.put("where", gson.toJson(where));
+
+        AsyncHttpTask getOrdersTask = new AsyncHttpTask(params, AsyncMethodNames.UPDATE_ACCOUNT_ORDERS, (Activity) mView.getContext());
+        getOrdersTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+
+        return mView;
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
+    public void onDestroyView() {
+        super.onDestroyView();
+        isNeedUpdate = false;
+    }
+
+    private void setList() {
+        try {
+            list = (RecyclerView) mView.findViewById(R.id.open_orders_list);
+            list.setHasFixedSize(true);
+            LinearLayoutManager llm = new LinearLayoutManager(getContext());
+            llm.setItemPrefetchEnabled(false);
+            list.setLayoutManager(llm);
+            list.addItemDecoration(new DividerItemDecoration(this.getActivity(), LinearLayout.VERTICAL));
+
+            OpenOrdersAdapter adapter = new OpenOrdersAdapter(mView.getContext());
+            list.setAdapter(adapter);
+        } catch (Exception ex) {
+            String str = ex.getMessage();
         }
     }
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
+
+    public static void updateOrders(List<Order> newOrders) {
+
+        OpenOrdersAdapter adapter = (OpenOrdersAdapter) list.getAdapter();
+        adapter.UpdateOrders(newOrders);
+        adapter.notifyDataSetChanged();
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
-    }
 }

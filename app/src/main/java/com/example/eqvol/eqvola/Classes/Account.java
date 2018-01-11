@@ -1,5 +1,7 @@
 package com.example.eqvol.eqvola.Classes;
 
+import java.util.List;
+
 /**
  * Created by eqvol on 26.10.2017.
  */
@@ -39,6 +41,9 @@ public class Account {
     private String RegisterDate;
     private String LastDate;
     private String Timestamp;
+
+    public List<Order> openOrders;
+    public List<Order> closeOrders;
 
     private boolean isDetailOpen = false;
 
@@ -211,5 +216,77 @@ public class Account {
 
     public void setDetailOpen(boolean detailOpen) {
         isDetailOpen = detailOpen;
+    }
+
+    public String getAgentAccount() {
+        return AgentAccount;
+    }
+
+    public void setAgentAccount(String agentAccount) {
+        AgentAccount = agentAccount;
+    }
+
+    public String getPrevMonthBalance() {
+        return PrevMonthBalance;
+    }
+
+    public void setPrevMonthBalance(String prevMonthBalance) {
+        PrevMonthBalance = prevMonthBalance;
+    }
+
+    public String getPrevBalance() {
+        return PrevBalance;
+    }
+
+    public void setPrevBalance(String prevBalance) {
+        PrevBalance = prevBalance;
+    }
+
+    public String getCredit() {
+        return Credit;
+    }
+
+    public void setCredit(String credit) {
+        Credit = credit;
+    }
+
+    public String getInterestRate() {
+        return InterestRate;
+    }
+
+    public void setInterestRate(String interestRate) {
+        InterestRate = interestRate;
+    }
+
+    public String getTaxes() {
+        return Taxes;
+    }
+
+    public void setTaxes(String taxes) {
+        Taxes = taxes;
+    }
+
+    public String getSendReports() {
+        return SendReports;
+    }
+
+    public void setSendReports(String sendReports) {
+        SendReports = sendReports;
+    }
+
+    public String getPrevEquity() {
+        return PrevEquity;
+    }
+
+    public void setPrevEquity(String prevEquity) {
+        PrevEquity = prevEquity;
+    }
+
+    public String getPrevMonthEquity() {
+        return PrevMonthEquity;
+    }
+
+    public void setPrevMonthEquity(String prevMonthEquity) {
+        PrevMonthEquity = prevMonthEquity;
     }
 }

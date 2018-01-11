@@ -4,6 +4,11 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
 
+
+    <!---->
+    <color name="colorBlue">#1c61ae</color>
+    <!---->
+
     <color name="colorMenuBackground">#202334</color>
 
     <color name="colorMain">#00B2F0</color>
@@ -12,7 +17,8 @@
     <color name="colorRegister">#f78f00</color>
     <color name="colorWhite">#FFF</color>
     <color name="colorBlack">#FF000000</color>
-    <color name="colorGray">#cecece</color>
+    <color name="colorDarkGray">#5b5b5b</color>
+    <color name="colorGray">#f4f5f7</color>
 
     <color name="colorGreenBalance">#146e0e</color>
     <color name="colorBlueAccountType">#3c5977</color>

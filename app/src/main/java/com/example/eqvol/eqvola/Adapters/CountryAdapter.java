@@ -12,6 +12,8 @@ import com.example.eqvol.eqvola.Classes.Api;
 import com.example.eqvol.eqvola.Classes.Country;
 import com.example.eqvol.eqvola.R;
 
+import java.util.List;
+
 /**
  * Created by eqvol on 23.10.2017.
  */
@@ -19,8 +21,8 @@ import com.example.eqvol.eqvola.R;
 public class CountryAdapter extends ArrayAdapter<Country>
 {
 
-    public CountryAdapter(@NonNull Context context) {
-        super(context, R.layout.spinner_item, Api.countries);
+    public CountryAdapter(@NonNull Context context, List<Country> countries) {
+        super(context, R.layout.spinner_item, countries);
     }
 
     @Override

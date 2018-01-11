@@ -1,62 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorGray"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context="com.example.eqvol.eqvola.ChatActivity"
-    android:orientation="vertical"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin">
-
+    tools:context="com.example.eqvol.eqvola.ChatActivity">
 
     <ListView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentTop="true"
-        android:layout_above="@id/fab"
+        android:id="@+id/list_of_messages"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:dividerHeight="16dp"
         android:divider="@android:color/transparent"
-        android:id="@+id/list_of_messages"
-        android:layout_marginBottom="16dp"
-        android:layout_alignParentLeft="true" />
+        android:stackFromBottom="true"
+        android:transcriptMode="alwaysScroll"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/chat_message_text"/>
 
-    <android.support.design.widget.TextInputLayout
-        android:layout_width="match_parent"
+    <ImageView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/colorWhite"
+        app:layout_constraintTop_toTopOf="@+id/chat_message_text"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <EditText
+        android:id="@+id/chat_message_text"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_toLeftOf="@id/attach_file"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true">
+        android:hint="Write a message"
+        android:layout_marginBottom="5dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/attach_file"
+        />
 
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Input message"
-            android:id="@+id/chat_message_text"
-            />
-    </android.support.design.widget.TextInputLayout>
+
     <android.support.design.widget.FloatingActionButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:clickable="true"
-        android:src="@drawable/ic_menu_share"
         android:id="@+id/attach_file"
-        android:tint="@android:color/white"
-        android:layout_alignParentBottom="true"
-        app:fabSize="mini"
-        android:layout_toLeftOf="@id/fab"
-        android:onClick="loadGallery"/>
-    <android.support.design.widget.FloatingActionButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:clickable="true"
-        android:src="@drawable/ic_menu_send"
-        android:id="@+id/fab"
+        android:src="@drawable/ic_attachment"
         android:tint="@android:color/white"
-        android:layout_alignParentBottom="true"
+        android:layout_margin="5dp"
+        app:rippleColor="@color/colorMenuBackground"
         app:fabSize="mini"
-        android:layout_alignParentRight="true"
-        android:onClick="sendMessage"/>
-</RelativeLayout>
+        android:onClick="loadGallery"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/fab"/>
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_menu_send"
+        android:tint="@android:color/white"
+        android:layout_margin="5dp"
+        app:fabSize="mini"
+        android:onClick="sendMessage"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+</android.support.constraint.ConstraintLayout>

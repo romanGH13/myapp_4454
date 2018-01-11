@@ -4,8 +4,13 @@
     android:layout_height="200dp"
     android:layout_centerHorizontal="true"
     android:layout_centerVertical="true"
+    android:layout_gravity="center"
     android:theme="@style/AppTheme.ProgressBar"
     android:visibility="visible"
     xmlns:android="http://schemas.android.com/apk/res/android"
     tools:context="com.example.eqvol.eqvola.fragments.MyProgressBar"
-    xmlns:tools="http://schemas.android.com/tools" />
+    xmlns:tools="http://schemas.android.com/tools"
+    app:layout_constraintTop_toTopOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto" />

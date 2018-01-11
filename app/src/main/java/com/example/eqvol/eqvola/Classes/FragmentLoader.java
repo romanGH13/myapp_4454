@@ -1,14 +1,9 @@
 package com.example.eqvol.eqvola.Classes;
 
-import android.app.LoaderManager;
-import android.content.Loader;
-import android.database.Cursor;
-import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 
 import com.example.eqvol.eqvola.fragments.MyProgressBar;
-import com.example.eqvol.eqvola.fragments.SupportChat;
 
 /**
  * Created by eqvol on 03.11.2017.

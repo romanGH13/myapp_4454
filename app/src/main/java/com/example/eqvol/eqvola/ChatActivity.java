@@ -1,18 +1,16 @@
 package com.example.eqvol.eqvola;
 
-import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.provider.MediaStore;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Base64;
 import android.view.ActionMode;
+import android.view.MenuItem;
 import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.EditText;
@@ -30,13 +28,10 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class ChatActivity extends AppCompatActivity {
 
@@ -58,17 +53,23 @@ public class ChatActivity extends AppCompatActivity {
         Intent intent = getIntent();
         ticket_id = intent.getIntExtra("ticket_id", 0);
         last_message_id = intent.getIntExtra("last_message_id", 0);
-
         SupportChat.images = new HashMap<Integer, Bitmap>();
-
         messages = Api.currentChatMessages;
+        setTitle(messages.get(0).getTicket().getTitle());
 
-        if(ticket_id == 0 || last_message_id == 0) finish();
-
-        SupportChat.users = new ArrayList<User>();
-        SupportChat.users.add(Api.user);
+        if(ticket_id == -1 || last_message_id == -1) finish();
 
         checkUsersAvatar();
+
+    }
+
+
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        finish();
+        /*Intent myIntent = new Intent(getApplicationContext(), MenuActivity.class);
+        startActivityForResult(myIntent, 0);*/
+        return true;
     }
 
     public void checkUsersAvatar()
@@ -123,12 +124,10 @@ public class ChatActivity extends AppCompatActivity {
     {
         messages.addAll(newMessages);
         ((MessagesAdapter)lvMessages.getAdapter()).notifyDataSetChanged();
+        //lvMessages.setSelection(lvMessages.getCount()-1);
+        lvMessages.smoothScrollToPosition(lvMessages.getCount() -1);
     }
 
-    //обработчик нажатия кнопки Attach file для отправки сообщения
-    public void attachFile(View view) {
-
-    }
     //обработчик нажатия кнопки Send для отправки сообщения
     public void sendMessage(View view) {
 
@@ -159,7 +158,6 @@ public class ChatActivity extends AppCompatActivity {
         isActive = false;
         super.onActionModeFinished(mode);
     }
-    ///
 
     public void loadGallery(View view) {
         Intent intent = new Intent();

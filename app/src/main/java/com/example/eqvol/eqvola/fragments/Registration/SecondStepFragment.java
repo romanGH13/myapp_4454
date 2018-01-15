@@ -74,7 +74,7 @@ public class SecondStepFragment extends Fragment implements TextView.OnEditorAct
 
         setDateBirth();
         if(Api.countries != null)
-        setSpinner();
+            setSpinner(RegistrationActivity.getCountry(getContext()));
 
         return mView;
     }
@@ -92,7 +92,6 @@ public class SecondStepFragment extends Fragment implements TextView.OnEditorAct
     {
         if (isPhoneNumberValid()) {
             RegistrationActivity act = (RegistrationActivity)getActivity();
-            act.goToStep3();
             return false;
         }
         else {
@@ -156,8 +155,9 @@ public class SecondStepFragment extends Fragment implements TextView.OnEditorAct
         selectValue(spinYear, "1990");
     }
 
-    public  void setSpinner()
+    public void setSpinner(String country)
     {
+
         ArrayAdapter<Country> adapter = new CountryAdapter(getActivity(), Api.countries);
         adapter.setDropDownViewResource(R.layout.drop_down_item);
 
@@ -177,6 +177,18 @@ public class SecondStepFragment extends Fragment implements TextView.OnEditorAct
 
             }
         });
+        if(!country.contentEquals(""))
+        {
+            for(Country c: Api.countries)
+            {
+                if(c.getCode().toLowerCase().contentEquals(country.toLowerCase()))
+                {
+                    int countryPosition = adapter.getPosition(c);
+                    spinner.setSelection(countryPosition);
+                    break;
+                }
+            }
+        }
     }
 
     public static void selectValue(Spinner spinner, String value)
@@ -207,5 +219,12 @@ public class SecondStepFragment extends Fragment implements TextView.OnEditorAct
         data.put("phone_code", mPhoneCodeView.getText().toString());
         data.put("phone_number", mPhoneNumberView.getText().toString());
         return data;
+    }
+
+    public String getPhoneCode() {
+        return mPhoneCodeView.getText().toString();
+    }
+    public String getPhoneNumber() {
+        return mPhoneNumberView.getText().toString();
     }
 }

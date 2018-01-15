@@ -12,50 +12,45 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.eqvol.eqvola.Adapters.RegistrationPagerAdapter;
 import com.example.eqvol.eqvola.R;
 import com.example.eqvol.eqvola.RegistrationActivity;
 
 
-public class ModalAlert extends DialogFragment implements DialogInterface.OnDismissListener {
+public class ModalInput extends DialogFragment implements DialogInterface.OnDismissListener {
 
     private Dialog dialog;
-    private static View mView = null;
-    private boolean status;
+    private View mView = null;
     private String description;
     private Activity activity;
 
-    public ModalAlert(boolean status, String descripton) {
-        // Required empty public constructor
-        this.status = status;
+    public ModalInput(String descripton) {
         this.description = descripton;
         this.activity = null;
     }
 
-    public ModalAlert(boolean status, String descripton, Activity activity) {
-        // Required empty public constructor
-        this.status = status;
+    public ModalInput(String descripton, Activity activity) {
         this.description = descripton;
         this.activity = activity;
     }
 
 
 
-    public static ModalAlert newInstance(boolean status, String descripton) {
-        ModalAlert fragment = new ModalAlert(status, descripton);
+    public static ModalInput newInstance(String descripton) {
+        ModalInput fragment = new ModalInput(descripton);
 
         return fragment;
     }
 
-    @Override
+    /*@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        mView = inflater.inflate(R.layout.fragment_create_account, container, false);
+        mView = inflater.inflate(R.layout.custom_alert_input, container, false);
         return mView;
-    }
+    }*/
 
 
 
@@ -64,35 +59,54 @@ public class ModalAlert extends DialogFragment implements DialogInterface.OnDism
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = getActivity().getLayoutInflater();
-        View view = inflater.inflate(R.layout.custom_alert, null);
-        ImageView img = (ImageView)view.findViewById(R.id.alertImage);
-        TextView text = (TextView)view.findViewById(R.id.alertText);
-        Button btn = (Button)view.findViewById(R.id.alertBtn);
-        if(status) {
-            img.setImageResource(R.drawable.image_success);
-        }
-        else {
-            img.setImageResource(R.drawable.image_error);
-        }
+        mView = inflater.inflate(R.layout.custom_alert_input, null);
+        TextView text = (TextView)mView.findViewById(R.id.alertText);
+        final EditText code = (EditText)mView.findViewById(R.id.code);
+        Button btn = (Button)mView.findViewById(R.id.alertBtn);
+        TextView labelResendView = (TextView) mView.findViewById(R.id.labelResend);
+        ImageView imageResendView = (ImageView) mView.findViewById(R.id.imgResend);
+
         text.setText(description);
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(activity != null) {
                     if (activity.getClass().toString().contentEquals(RegistrationActivity.class.toString())) {
-                        if (status) {
-                            ((RegistrationActivity) activity).goToLogin();
-                        }
+                        ((RegistrationActivity)activity).checkBeforeRegister(code.getText().toString());
                     }
                 }
-                dialog.dismiss();
             }
         });
 
-        builder.setView(view);
+        View.OnClickListener resendOnClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(activity != null) {
+                    if (activity.getClass().toString().contentEquals(RegistrationActivity.class.toString())) {
+                        ((RegistrationActivity)activity).resendBeforeRegister();
+                    }
+                }
+
+            }
+        };
+
+        labelResendView.setOnClickListener(resendOnClickListener);
+        imageResendView.setOnClickListener(resendOnClickListener);
+
+        builder.setView(mView);
         dialog = builder.create();
 
         return dialog;
+    }
+
+    public void showError(String errorText)
+    {
+        EditText mCodeView = (EditText)mView.findViewById(R.id.code);
+        mCodeView.setError(errorText);
+    }
+    public void closeDialog()
+    {
+        dialog.dismiss();
     }
 
 

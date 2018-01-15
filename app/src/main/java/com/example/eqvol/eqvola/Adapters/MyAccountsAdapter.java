@@ -155,6 +155,13 @@ public class MyAccountsAdapter extends RecyclerView.Adapter<MyAccountsAdapter.My
             holder.accountTypeView.setText(account.getGroup().getName());
             holder.leverageView.setText("1:" + Integer.toString(account.getLeverage()));
             holder.registrationDateView.setText(account.getRegisterDate());
+
+            holder.accountTypeView.setVisibility(View.VISIBLE);
+            holder.leverageView.setVisibility(View.VISIBLE);
+            holder.registrationDateView.setVisibility(View.VISIBLE);
+            holder.labelAccountTypeView.setVisibility(View.VISIBLE);
+            holder.labelLeverageView.setVisibility(View.VISIBLE);
+            holder.labelRegistrationDateView.setVisibility(View.VISIBLE);
         }
     }
 
@@ -170,6 +177,11 @@ public class MyAccountsAdapter extends RecyclerView.Adapter<MyAccountsAdapter.My
 
     @Override
     public int compare(Account t1, Account t2) {
+        if(t1.getRegisterDate() == null)
+            return -100;
+        if(t2.getRegisterDate() == null)
+            return 100;
+
         DateFormat format = new SimpleDateFormat(ctx.getString(R.string.date_format));
         try {
             Date date1 = format.parse(t1.getRegisterDate());

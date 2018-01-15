@@ -92,6 +92,17 @@ public class RequestTransferFragment extends Fragment implements TextView.OnEdit
         mTargetAccount.addTextChangedListener(myTextWatcher);
         mAmount.addTextChangedListener(myTextWatcher);
 
+        mTargetAccount.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                EditText mTargetView = (EditText) v;
+                if(!hasFocus && mTargetView.getText().length() > 0)
+                {
+                    getAccountHolderName();
+                }
+            }
+        });
+
         mTargetAccount.setImeActionLabel("Next", EditorInfo.IME_ACTION_NEXT);
         mTargetAccount.setNextFocusForwardId(R.id.request_transfer_amount);
         mAmount.setImeActionLabel("Done", EditorInfo.IME_ACTION_SEND);

@@ -84,12 +84,22 @@ public class AsyncHttpTask extends AsyncTask<Void, Void, String> {
             try {
                 response = Api.login(email, password);
             } catch (IOException e) {
-                e.printStackTrace();
+
             }
         }
         else if(methodName == AsyncMethodNames.USER_REGISTRATION){
             response = Api.registration(parametrs);
         }
+        else if(methodName == AsyncMethodNames.USER_BEFORE_REGISTRATION) {
+            response = Api.beforeRegistration(parametrs);
+        }
+        else if(methodName == AsyncMethodNames.USER_CHECK_BEFORE_REGISTRATION) {
+            response = Api.checkBeforeRegistration(parametrs);
+        }
+        else if(methodName == AsyncMethodNames.USER_RESEND_BEFORE_REGISTRATION) {
+            response = Api.resendBeforeRegistration(parametrs);
+        }
+
         else if (methodName == AsyncMethodNames.SET_USER_AVATAR) {
             response = Api.setUserAvatar(parametrs);
         }
@@ -276,6 +286,71 @@ public class AsyncHttpTask extends AsyncTask<Void, Void, String> {
                 }
             }
         }
+        else if(methodName == AsyncMethodNames.USER_BEFORE_REGISTRATION) {
+            Map<String, Object> map = Api.jsonToMap(success);
+            for (Map.Entry<String, Object> response : map.entrySet()) {
+
+                if(response.getKey().toString().contentEquals("errors")) {
+                    for(Object list : (ArrayList<Object>)(response.getValue())){
+                        for (Map.Entry<String, Object> error : ((Map<String, Object>) list).entrySet()) {
+                            if (error.getKey().contentEquals("description")) {
+                                if(error.getValue().toString().contentEquals("Sms register does not exist!"))
+                                {
+                                    ((RegistrationActivity)act).goToStep3();
+                                }
+                                else {
+                                    ((RegistrationActivity) act).showDialog(false, (String) error.getValue());
+                                }
+                            }
+                        }
+                    }
+                }
+                if(response.getKey().toString().contentEquals("data")) {
+
+                    for (Map.Entry<String, Object> data : ((Map<String, Object>) response.getValue()).entrySet()) {
+                        if (data.getKey().contentEquals("register_id")) {
+                            String register_id = data.getValue().toString();
+                            ((RegistrationActivity) act).requestCodeDialog("Your Phone " + target + ".\n\r Enter the code from Sms.", register_id);
+                        }
+                    }
+
+                }
+            }
+            String str = "";
+        }
+        else if(methodName == AsyncMethodNames.USER_CHECK_BEFORE_REGISTRATION) {
+            Map<String, Object> map = Api.jsonToMap(success);
+            for (Map.Entry<String, Object> response : map.entrySet()) {
+
+                if(response.getKey().toString().contentEquals("errors")) {
+                    for(Object list : (ArrayList<Object>)(response.getValue())){
+                        for (Map.Entry<String, Object> error : ((Map<String, Object>) list).entrySet()) {
+                            if (error.getKey().contentEquals("code")) {
+                                int errorCode = (int) Double.parseDouble(error.getValue().toString());
+                                if(errorCode == 5)
+                                {
+                                    String errorText = "Incorrect code";
+                                    ((RegistrationActivity)act).showError(errorText);
+                                    return;
+                                }
+
+                            }
+                            if(error.getKey().contentEquals("description"))
+                            {
+                                ((RegistrationActivity)act).showError(error.getValue().toString());
+                            }
+                        }
+                    }
+                }
+                if(response.getKey().toString().contentEquals("status")) {
+
+                    if(response.getValue().toString().contentEquals("success"))
+                    {
+                        ((RegistrationActivity)act).closeInputDialog();
+                    }
+                }
+            }
+        }
         else if (methodName == AsyncMethodNames.CHECK_TOKEN) {
             Map<String, Object> map = Api.jsonToMap(success);
             if (map.containsKey("data")) {
@@ -310,13 +385,26 @@ public class AsyncHttpTask extends AsyncTask<Void, Void, String> {
         } else if (methodName == AsyncMethodNames.CHECK_EMAIL) {
             Map<String, Object> map = Api.jsonToMap(success);
             if (map.size() > 0) {
+                boolean isAlreadyUse = true;
                 for (Map.Entry<String, Object> response : map.entrySet()) {
                     if (response.getKey().contentEquals("status")) {
-                        boolean isAlreadyUse = true;
-                        if (response.getValue().toString().contentEquals("error")) {
-                            isAlreadyUse = false;
+                        if (response.getValue().toString().contentEquals("success")) {
+                            ((RegistrationActivity) act).emailChecked(isAlreadyUse);
                         }
-                        ((RegistrationActivity) act).emailChecked(isAlreadyUse);
+                    }
+                    if (response.getKey().contentEquals("errors")) {
+                        for(Object list : (ArrayList<Object>)(response.getValue())) {
+                            for (Map.Entry<String, Object> error : ((Map<String, Object>) list).entrySet()) {
+                                if (error.getKey().contentEquals("code")) {
+                                    int code = (int) Double.parseDouble(error.getValue().toString());
+                                    if (code == 3) {
+                                        isAlreadyUse = false;
+                                        ((RegistrationActivity) act).emailChecked(isAlreadyUse);
+                                    }
+                                }
+                            }
+                        }
+
                     }
                 }
             }

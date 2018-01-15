@@ -78,6 +78,32 @@ public class Api extends LoginActivity {
         Api.token = token;
     }
 
+
+
+    /*Методы для регистрации нового пользователя*/
+    public static String registration(Map<String, Object> params)
+    {
+        return performPostCall(params, siteUrl+"account/register");
+    }
+    public static String beforeRegistration(Map<String, Object> params)
+    {
+        return performPostCall(params, siteUrl+"account/before_register ");
+    }
+    public static String checkBeforeRegistration(Map<String, Object> params)
+    {
+        return performPostCall(params, siteUrl+"account/check_before_register ");
+    }
+    public static String resendBeforeRegistration(Map<String, Object> params)
+    {
+        return performPostCall(params, siteUrl+"account/resend_before_register");
+    }
+
+    public static String checkEmail(Map<String, Object> params)
+    {
+        return performPostCall(params, siteUrl+"account/check_email");
+    }
+
+    /*Метод для авторизации пользователя*/
     public static String login(String email, String password) throws IOException {
         HashMap<String, Object> params = new HashMap<String, Object>();
         params.put("email", email);
@@ -85,25 +111,15 @@ public class Api extends LoginActivity {
         return performPostCall(params, siteUrl+"account/login");
     }
 
-    public static String registration(Map<String, Object> params)
-    {
-        return performPostCall(params, siteUrl+"account/register");
-    }
     public static String checkToken(String token)
     {
         HashMap<String, Object> params = new HashMap<String, Object>();
         params.put("token", token);
         return performPostCall(params, siteUrl+"account/check_token");
     }
-    public static String checkEmail(Map<String, Object> params)
-    {
-        return performPostCall(params, siteUrl+"account/check_email");
-    }
 
-    public static String getAccountHolderName(Map<String, Object> params)
-    {
-        return performPostCall(params, siteUrl+"mt4/account/get_name");
-    }
+
+
 
     public static String getWithdrawal(Map<String, Object> params)
     {
@@ -118,7 +134,6 @@ public class Api extends LoginActivity {
     {
         return performPostCall(params, siteUrl+"notification/get");
     }
-
     public static String clearNotifications(Map<String, Object> params)
     {
         return performPostCall(params, siteUrl+"notification/clear");
@@ -133,7 +148,6 @@ public class Api extends LoginActivity {
     {
         return performPostCall(params, siteUrl+"support/attachment/set");
     }
-
     public static String getAttachment(Map<String, Object> params)
     {
         Map<String, Object> mapUserId = new HashMap<String, Object>();
@@ -156,32 +170,32 @@ public class Api extends LoginActivity {
         return Integer.toString(attachment.getId());
     }
 
+
     public static String requestTransfer(Map<String, Object> params)
     {
         return performPostCall(params, siteUrl+"transfer/do");
     }
-
     public static String getTransfers(Map<String, Object> params)
     {
         return performPostCall(params, siteUrl+"transfer/self");
+    }
+    public static String getAccountHolderName(Map<String, Object> params)
+    {
+        return performPostCall(params, siteUrl+"mt4/account/get_name");
     }
 
     public static String getTickets(Map<String, Object> params)
     {
         return performPostCall(params, siteUrl+"support/ticket/get");
     }
-
     public static String getTicketMessages(Map<String, Object> params)
     {
         return performPostCall(params, siteUrl+"support/message/get");
     }
-
-
     public static String sendMessage(Map<String, Object> params)
     {
         return performPostCall(params, siteUrl+"support/message/set");
     }
-
     public static String createTicket(Map<String, Object> params)
     {
         return performPostCall(params, siteUrl+"support/ticket/set");
@@ -196,7 +210,6 @@ public class Api extends LoginActivity {
     {
         return performPostCall(params, siteUrl+"mt4/account_create");
     }
-
     public static String getAccounts(Map<String, Object> params)
     {
         return performPostCall(params, siteUrl+"mt4/account/get");
@@ -206,18 +219,13 @@ public class Api extends LoginActivity {
     {
         return performPostCall(params, siteUrl+"mt4/group/get");
     }
+
     public static String setUser(Map<String, Object> params)
     {
         return performPostCall(params, siteUrl+"account/user/set");
     }
-    public static String userLogout(Map<String, Object> params)
-    {
-        String str = performPostCall(params, siteUrl+"logout");
-        if(str == "")
-            return "logout";
-        else
-        return str;
-    }
+
+
 
     public static String getUser(int id, String token)
     {
@@ -252,6 +260,15 @@ public class Api extends LoginActivity {
     public static String getCountries()
     {
         return performPostCall(siteUrl+"location/get");
+    }
+
+    public static String userLogout(Map<String, Object> params)
+    {
+        String str = performPostCall(params, siteUrl+"logout");
+        if(str == "")
+            return "logout";
+        else
+            return str;
     }
 
 
@@ -365,7 +382,7 @@ public class Api extends LoginActivity {
     public static Map<String, Object> jsonToMap(String json)
     {
         Gson gson = new Gson();
-        JsonElement element = new JsonParser().parse(json);
+        //JsonElement element = new JsonParser().parse(json);
         Map<String, Object> map = gson.fromJson(json, Map.class);
         return map;
     }

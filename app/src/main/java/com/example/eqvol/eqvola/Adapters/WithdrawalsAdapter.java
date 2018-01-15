@@ -34,24 +34,6 @@ public class WithdrawalsAdapter extends RecyclerView.Adapter<WithdrawalsAdapter.
     LayoutInflater lInflater;
     List<Withdrawal> withdrawals;
 
-    /*private OnItemClickListener mListener;
-    GestureDetector mGestureDetector;
-
-    public interface OnItemClickListener {
-        public void onItemClick(View view, int position);
-    }
-
-    public void setOnItemCLickListener(OnItemClickListener listener)
-    {
-        mListener = listener;
-        mGestureDetector = new GestureDetector(ctx, new GestureDetector.SimpleOnGestureListener() {
-            @Override
-            public boolean onSingleTapUp(MotionEvent e) {
-                return true;
-            }
-
-        });
-    }*/
 
     public WithdrawalsAdapter(@NonNull Context context, List<Withdrawal> withdrawals) {
         this.ctx = context;
@@ -60,26 +42,6 @@ public class WithdrawalsAdapter extends RecyclerView.Adapter<WithdrawalsAdapter.
         this.lInflater = LayoutInflater.from(this.ctx);
     }
 
-    /*@Override
-    public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
-        View childView = rv.findChildViewUnder(e.getX(), e.getY());
-        if (childView != null && mListener != null && mGestureDetector.onTouchEvent(e)) {
-            mListener.onItemClick(childView, rv.getChildAdapterPosition(childView));
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public void onTouchEvent(RecyclerView rv, MotionEvent e) {
-
-    }
-
-    @Override
-    public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
-
-    }
-*/
 
     public  class WithdrawalsViewHolder extends RecyclerView.ViewHolder  implements View.OnClickListener{
         RecyclerView rv;
@@ -128,7 +90,14 @@ public class WithdrawalsAdapter extends RecyclerView.Adapter<WithdrawalsAdapter.
     @Override
     public void onBindViewHolder(WithdrawalsViewHolder holder, final int position) {
 
-        holder.mAccountView.setText("Account " + Integer.toString(withdrawals.get(position).getLogin()));
+        int login = withdrawals.get(position).getLogin();
+        if(login == 0)
+        {
+            holder.mAccountView.setText("Local wallet");
+        }
+        else {
+            holder.mAccountView.setText("Account " + Integer.toString(login));
+        }
         holder.mAmountView.setText(Double.toString(withdrawals.get(position).getAmount()));
         int status = withdrawals.get(position).getStatus();
         switch(status)

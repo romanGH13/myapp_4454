@@ -82,9 +82,11 @@ public class MenuFragment extends Fragment implements NavigationView.OnNavigatio
         });
 
         ImageView img = (ImageView) header.findViewById(R.id.imageView);
-        byte[] data = Api.user.getAvatar();
-        Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
-        img.setImageBitmap(bitmap);
+        if(Api.user.getAvatar() != null) {
+            byte[] data = Api.user.getAvatar();
+            Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
+            img.setImageBitmap(bitmap);
+        }
 
         //NavigationView navigationView = (NavigationView) mView.findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);

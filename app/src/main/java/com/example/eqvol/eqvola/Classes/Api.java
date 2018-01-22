@@ -1,5 +1,8 @@
 package com.example.eqvol.eqvola.Classes;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 
@@ -42,8 +45,10 @@ import okhttp3.Response;
 
 public class Api extends LoginActivity {
 
+    public static Context context;
+
     private static String token;
-    public static User user;
+    public static User user = null;
     public static List<Country> countries = null;
     public static List<Group> groups = null;
     public static List<Category> categories = null;
@@ -55,6 +60,7 @@ public class Api extends LoginActivity {
     public static List<Transfer> transfers;
     public static Withdrawal currentOperation;
     public static Account account;
+    public static Ticket ticket;
 
     public static FragmentLoader chatLoader = null;
 
@@ -119,8 +125,14 @@ public class Api extends LoginActivity {
     }
 
 
-
-
+    public static String forgotPassword(Map<String, Object> params)
+    {
+        return performPostCall(params, siteUrl+"account/forgot");
+    }
+    public static String closeTicket(Map<String, Object> params)
+    {
+        return performPostCall(params, siteUrl+"support/ticket/set");
+    }
     public static String getWithdrawal(Map<String, Object> params)
     {
         return performPostCall(params, siteUrl+"withdrawal/get");
@@ -273,17 +285,24 @@ public class Api extends LoginActivity {
 
 
     private static byte[]  performGetCall(Map<String, Object> getDataParams, String strUrl) throws UnsupportedEncodingException {
-        OkHttpClient client = new OkHttpClient();
         Request request = null;
         Response response = null;
         byte[] json = null;
-        request = new Request.Builder()
-                    .url(strUrl+"?"+getPostDataString(getDataParams)).build();//
-        try {
-            response = client.newCall(request).execute();
-            json = response.body().bytes();
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (isNetworkAvailable(context)) {
+            try {
+                OkHttpClient client = new OkHttpClient();
+
+                request = new Request.Builder().url(strUrl + "?" + getPostDataString(getDataParams)).build();
+
+                response = client.newCall(request).execute();
+                json = response.body().bytes();
+            } catch (Exception e) {
+                //e.printStackTrace();
+                json = null;
+            }
+        }
+        else {
+            json = null;
         }
         return json;
     }
@@ -291,73 +310,96 @@ public class Api extends LoginActivity {
     private static String  performPostCall( String strUrl) {
 
         String response = "";
-        try {
-            URL url = new URL(strUrl);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setReadTimeout(15000);
-            conn.setConnectTimeout(15000);
-            conn.setRequestMethod("POST");
 
-            conn.setDoInput(true);
-            conn.setDoOutput(true);
+        if (isNetworkAvailable(context)) {
+            try {
+                URL url = new URL(strUrl);
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setReadTimeout(15000);
+                conn.setConnectTimeout(15000);
+                conn.setRequestMethod("POST");
 
-            int responseCode=conn.getResponseCode();
+                conn.setDoInput(true);
+                conn.setDoOutput(true);
 
-            if (responseCode == HttpsURLConnection.HTTP_OK) {
-                String line;
-                BufferedReader br=new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                while ((line=br.readLine()) != null) {
-                    response+=line;
+                int responseCode=conn.getResponseCode();
+
+                if (responseCode == HttpsURLConnection.HTTP_OK) {
+                    String line;
+                    BufferedReader br=new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                    while ((line=br.readLine()) != null) {
+                        response+=line;
+                    }
                 }
-            }
-            else {
-                response="Error with connection to Api";
+                else {
+                    response="Error with connection to Api";
 
+                }
+            } catch (Exception e) {
+                //e.printStackTrace();
+                response="Error with connection to Api";
+                return response;
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        } else {
+            response="Problems with connections";
         }
 
         return response;
     }
 
+    public static boolean isNetworkAvailable(Context context) {
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = cm.getActiveNetworkInfo();
+        if (networkInfo != null && networkInfo.isConnected()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     private static String  performPostCall(Map<String, Object> postDataParams, String strUrl) {
 
         String response = "";
-        try {
-            URL url = new URL(strUrl);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setReadTimeout(30000);
-            conn.setConnectTimeout(30000);
-            conn.setRequestMethod("POST");
+        if (isNetworkAvailable(context)) {
+            try {
+                URL url = new URL(strUrl);
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setReadTimeout(30000);
+                conn.setConnectTimeout(30000);
+                conn.setRequestMethod("POST");
 
-            conn.setDoInput(true);
-            conn.setDoOutput(true);
+                conn.setDoInput(true);
+                conn.setDoOutput(true);
 
-            OutputStream os = conn.getOutputStream();
-            BufferedWriter writer = new BufferedWriter(
-                    new OutputStreamWriter(os, "UTF-8"));
-            writer.write(getPostDataString(postDataParams));
+                OutputStream os = conn.getOutputStream();
+                BufferedWriter writer = new BufferedWriter(
+                        new OutputStreamWriter(os, "UTF-8"));
+                writer.write(getPostDataString(postDataParams));
 
-            writer.flush();
-            writer.close();
-            os.close();
+                writer.flush();
+                writer.close();
+                os.close();
 
-            int responseCode=conn.getResponseCode();
+                int responseCode = conn.getResponseCode();
 
-            if (responseCode == HttpsURLConnection.HTTP_OK) {
-                String line;
-                BufferedReader br=new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                while ((line=br.readLine()) != null) {
-                    response+=line;
+                if (responseCode == HttpsURLConnection.HTTP_OK) {
+                    String line;
+                    BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                    while ((line = br.readLine()) != null) {
+                        response += line;
+                    }
+                } else {
+                    response = "";
+
                 }
+            } catch (Exception e) {
+                //e.printStackTrace();
+                response = "Error with connection to Api";
+                return response;
             }
-            else {
-                response="";
-
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+        }
+        else {
+            response="Problems with connections";
         }
 
         return response;

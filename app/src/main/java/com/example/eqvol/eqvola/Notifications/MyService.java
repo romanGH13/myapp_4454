@@ -4,8 +4,11 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.provider.Settings;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
@@ -35,6 +38,7 @@ import javax.net.ssl.HttpsURLConnection;
 
 public class MyService extends Service {
 
+    private static final String siteUrl = "http://api.eqvola.net/";
     final String LOG_TAG = "myLogs";
     private int counter;
 
@@ -77,6 +81,7 @@ public class MyService extends Service {
 
     private Bundle getNotification(Bundle b) {
 
+
         //получаем данные из намерения
         String token = b.getString("token");
         int user_id = b.getInt("user_id");
@@ -91,27 +96,35 @@ public class MyService extends Service {
         params.put("where", gson.toJson(where));
 
         //запрос на получение всех непрочитанных оповещений
-        String resp = performPostCall(params, "http://api.eqvola.net/notification/get");
-        if(resp.contentEquals("Error with connection to Api"))
+        String resp = "";
+        try {
+            resp = performPostCall(params, siteUrl + "notification/get");
+            if (resp.contentEquals("Error with connection to Api")) {
+                return b;
+            }
+        } catch (Exception ex)
         {
-            return b;
+            resp = "";
         }
 
         //парсим Json строку, что бы получить список объектов типа Notification
         JsonResponseNotification parser = new JsonResponseNotification();
 
         List<Notification> notifications = null;
-        try {
-            List<Notification> list = null;
-            list = parser.getNotifications(resp);
-            if(list != null)
-            {
-                notifications = list;
+
+        if(!resp.contentEquals("")) {
+            try {
+                List<Notification> list = null;
+                list = parser.getNotifications(resp);
+                if (list != null) {
+                    notifications = list;
+                }
+            } catch (Exception ex) {
             }
-        } catch (Exception ex) { }
-        if (notifications != null) {
-            for (Notification n : notifications) {
-                counter = showNotification(n.getDescription(), counter);
+            if (notifications != null) {
+                for (Notification n : notifications) {
+                    counter = showNotification(n.getDescription(), counter);
+                }
             }
         }
 
@@ -120,12 +133,13 @@ public class MyService extends Service {
             //делаем все полученные уведомления прочитаными
             HashMap<String, Object> parametrForClear = new HashMap<String, Object>();
             parametrForClear.put("token", token);
-            String str = Api.clearNotifications(parametrForClear);
+            String str = performPostCall(params, siteUrl+"notification/clear");;//Api.clearNotifications(parametrForClear);
         }
 
         b.putInt("counter", counter);
         return b;
     }
+
 
     /*
     * метод для отображения уведомления
@@ -133,8 +147,11 @@ public class MyService extends Service {
     private int showNotification(String title, int id) {
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)
-                        .setSmallIcon(R.drawable.ic_menu_share)
-                        .setContentTitle(title);
+                        .setSmallIcon(R.drawable.ic_stat_new_message)
+                        .setContentTitle(title)
+                        .setSound(Settings.System.DEFAULT_NOTIFICATION_URI)
+                        .setVibrate(new long[] { 1000, 1000})
+                        .setLights(0xff00ff00, 300, 100);
 
         Intent resultIntent = new Intent(this, MainActivity.class);
         PendingIntent resultPendingIntent =
@@ -191,7 +208,9 @@ public class MyService extends Service {
 
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
+            response = "Error with connection to Api";
+            return response;
         }
 
         return response;

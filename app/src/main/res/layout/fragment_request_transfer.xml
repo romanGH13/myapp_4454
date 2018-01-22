@@ -2,7 +2,8 @@
     android:layout_height="match_parent"
     android:layout_width="match_parent"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:orientation="vertical"
+    tools:context="com.example.eqvol.eqvola.fragments.RequestTransferFragment">
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -10,40 +11,15 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            tools:context="com.example.eqvol.eqvola.fragments.RequestTransferFragment">
+            android:orientation="vertical">
 
-           <!-- <Space
-                android:id="@+id/leftLine"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.02"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <Space
-                android:id="@+id/rightLine"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.97"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />-->
-
-            <android.support.design.widget.TextInputLayout
+            <LinearLayout
                 android:id="@+id/linearSpinGroup"
-                style="@style/edit_text_style"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="15dp"
-                android:layout_marginStart="40dp"
-                android:layout_marginTop="20dp"
-                app:layout_constraintEnd_toEndOf="@+id/rightLine"
-                app:layout_constraintStart_toStartOf="@+id/leftLine"
-                app:layout_constraintTop_toTopOf="parent">
+                android:layout_marginEnd="20dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="20dp">
 
                 <Spinner
                     android:id="@+id/request_transfer_spinner_accounts"
@@ -52,16 +28,15 @@
                     android:layout_margin="5dp"
                     android:spinnerMode="dropdown" />
 
-            </android.support.design.widget.TextInputLayout>
+            </LinearLayout>
 
 
             <EditText
                 android:id="@+id/request_transfer_account_balance"
-                style="@style/edit_text_style"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="5dp"
-                android:layout_marginStart="5dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginStart="20dp"
                 android:layout_marginTop="20dp"
                 android:cursorVisible="false"
                 android:focusable="false"
@@ -70,64 +45,49 @@
                 android:inputType="number"
                 android:longClickable="false"
                 android:padding="10dp"
-                android:textAppearance="@style/MyTextAppearance"
-                app:layout_constraintEnd_toEndOf="@+id/rightLine"
-                app:layout_constraintStart_toStartOf="@+id/leftLine"
-                app:layout_constraintTop_toBottomOf="@+id/linearSpinGroup" />
+                android:textAppearance="@style/MyTextAppearance"/>
 
 
             <EditText
                 android:id="@+id/request_transfer_target_account"
-                style="@style/edit_text_style"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="5dp"
-                android:layout_marginStart="5dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginStart="20dp"
                 android:layout_marginTop="20dp"
                 android:hint="To account"
                 android:inputType="number"
                 android:maxLines="1"
                 android:padding="10dp"
-                android:textAppearance="@style/MyTextAppearance"
-                app:layout_constraintEnd_toEndOf="@+id/rightLine"
-                app:layout_constraintStart_toStartOf="@+id/leftLine"
-                app:layout_constraintTop_toBottomOf="@+id/request_transfer_account_balance" />
+                android:textAppearance="@style/MyTextAppearance"/>
 
 
             <TextView
                 android:id="@+id/request_transfer_account_holder_name"
-                style="@style/edit_text_style"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="5dp"
-                android:layout_marginStart="5dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginStart="20dp"
                 android:layout_marginTop="20dp"
                 android:focusableInTouchMode="false"
                 android:hint="Account holder name"
                 android:padding="10dp"
-                android:textAppearance="@style/ThemeAccountDetailDark"
-                app:layout_constraintEnd_toEndOf="@+id/rightLine"
-                app:layout_constraintStart_toStartOf="@+id/leftLine"
-                app:layout_constraintTop_toBottomOf="@+id/request_transfer_target_account" />
+                android:textAppearance="@style/ThemeAccountDetailDark"/>
 
 
             <EditText
                 android:id="@+id/request_transfer_amount"
-                style="@style/edit_text_style"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="5dp"
-                android:layout_marginStart="5dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginStart="20dp"
                 android:layout_marginTop="20dp"
                 android:hint="Amount"
                 android:inputType="number"
                 android:maxLines="1"
                 android:padding="10dp"
                 android:singleLine="true"
-                android:textAppearance="@style/MyTextAppearance"
-                app:layout_constraintEnd_toEndOf="@+id/rightLine"
-                app:layout_constraintStart_toStartOf="@+id/leftLine"
-                app:layout_constraintTop_toBottomOf="@+id/request_transfer_account_holder_name" />
+                android:textAppearance="@style/MyTextAppearance"/>
 
             <Button
                 android:id="@+id/btnSubmit"
@@ -136,16 +96,13 @@
                 android:layout_marginEnd="20dp"
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="20dp"
-                android:background="@drawable/rectangle"
+                android:padding="10dp"
                 android:fontFamily="Roboto"
                 android:text="Submit"
                 android:textAppearance="@style/MyTextAppearance"
                 android:textColor="@color/colorWhite"
                 android:textSize="@dimen/text_size"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="@+id/rightLine"
-                app:layout_constraintStart_toStartOf="@+id/leftLine"
-                app:layout_constraintTop_toBottomOf="@+id/request_transfer_amount" />
+                android:textStyle="bold"/>
 
         </LinearLayout>
     </ScrollView>

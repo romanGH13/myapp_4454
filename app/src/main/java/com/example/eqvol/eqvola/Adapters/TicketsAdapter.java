@@ -3,6 +3,7 @@ package com.example.eqvol.eqvola.Adapters;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -101,34 +102,43 @@ public class TicketsAdapter extends RecyclerView.Adapter<TicketsAdapter.TicketsV
     @Override
     public void onBindViewHolder(TicketsViewHolder holder, final int position) {
 
+        Ticket ticket = tickets.get(position);
         //set title
-        String title = tickets.get(position).getTitle();
-        if(title.length() > 20)
-        {
-            holder.tvTitle.setText(title.substring(0,20) + "...");
-        }
-        else
-        {
-            holder.tvTitle.setText(title);
-        }
+        String title = ticket.getTitle();
+
+
+            if (title.length() > 20) {
+                holder.tvTitle.setText(title.substring(0, 20) + "...");
+            } else {
+                holder.tvTitle.setText(title);
+            }
+
+
 
         //set message
-        String message = tickets.get(position).getMessage().getMessage();
-        if(message.contentEquals(""))
+        if(ticket.getStatus()==0)
         {
-            holder.tvMessage.setText("Attachment..");
+            String message = ticket.getMessage().getMessage();
+            if (message.contentEquals("")) {
+                holder.tvMessage.setText("Attachment...");
+                holder.tvMessage.setTextColor(Color.BLUE);
+            } else {
+                holder.tvMessage.setText(message);
+                holder.tvMessage.setTextColor(Color.BLACK);
+            }
         }
-        else {
-            holder.tvMessage.setText(message);
+        else if(ticket.getStatus() == 1)
+        {
+            holder.tvMessage.setText("Ticket was closed!");
+            holder.tvMessage.setTextColor(Color.RED);
         }
-
         //set time
         String time = "";
         SimpleDateFormat formatter = new SimpleDateFormat(ctx.getString(R.string.date_format));
         Date date = null;
         DateFormat dateFormat = null;
         try {
-            date = formatter.parse(tickets.get(position).getMessage().getDate());
+            date = formatter.parse(ticket.getMessage().getDate());
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -149,7 +159,7 @@ public class TicketsAdapter extends RecyclerView.Adapter<TicketsAdapter.TicketsV
         Bitmap bmp = null;
         for(Map.Entry<Integer, Bitmap> entry: SupportChat.images.entrySet())
         {
-            if(entry.getKey().equals(tickets.get(position).getMessage().getUser().getId())){
+            if(entry.getKey().equals(ticket.getMessage().getUser().getId())){
                 bmp = entry.getValue();
             }
         }

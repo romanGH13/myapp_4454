@@ -40,7 +40,6 @@ public class TransfersFragment extends Fragment {
 
         AsyncHttpTask userLoginTask = new AsyncHttpTask(params, AsyncMethodNames.GET_ACCOUNTS, getActivity());
         userLoginTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-
     }
 
 

@@ -151,6 +151,12 @@ public class CloseOrdersAdapter extends RecyclerView.Adapter<CloseOrdersAdapter.
         return null;
     }
 
+    public void updateOrders(List<Order> orders)
+    {
+        Api.account.closeOrders = orders;
+        Collections.sort(Api.account.closeOrders, this);
+    }
+
 
 
 }

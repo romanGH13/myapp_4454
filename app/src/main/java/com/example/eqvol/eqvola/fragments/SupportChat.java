@@ -44,8 +44,9 @@ public class SupportChat extends Fragment {
 
     private static View mView = null;
     private static FragmentLoader fl = null;
-    private static int currentTicketId;
-    private static int currentTicketLastMessageId;
+    public static int currentTicketId;
+    public static String title;
+    public static int currentTicketLastMessageId;
     private static boolean isFirstLoad;
 
     public static List<Ticket> tickets;
@@ -193,7 +194,9 @@ public class SupportChat extends Fragment {
                 ///list item was clicked
                 Ticket ticket = adapter.getTicketById(adapter.getItemId(position));
                 currentTicketId = ticket.getId();
+                title = ticket.getTitle();
                 currentTicketLastMessageId = ticket.getMessage().getId();
+                Api.ticket = ticket;
 
                 Gson gson = new GsonBuilder().create();
                 HashMap<String, Object> mapUserId = new HashMap<String, Object>();
@@ -270,6 +273,18 @@ public class SupportChat extends Fragment {
         return null;
     }
 
+    public static void closeTicket(int ticket_id){
+        for(Ticket t: tickets)
+        {
+            if(t.getId() == ticket_id)
+            {
+                t.setStatus(1);
+            }
+        }
+        RecyclerView.Adapter adapter = mRecyclerView.getAdapter();
+        adapter.notifyDataSetChanged();
+    }
+
     public static void newMessages(){
         boolean isChanged = false;
         Ticket t = null;
@@ -313,6 +328,7 @@ public class SupportChat extends Fragment {
     {
         Intent intent = new Intent(mView.getContext(), ChatActivity.class);
         intent.putExtra("ticket_id", currentTicketId);
+        intent.putExtra("title", title);
         intent.putExtra("last_message_id", currentTicketLastMessageId);
         mView.getContext().startActivity(intent);
     }

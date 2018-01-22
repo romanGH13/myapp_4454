@@ -33,7 +33,13 @@ public class RequestTransferAccountAdapter extends ArrayAdapter<Account> {
         }
         TextView tv = ((TextView) convertView.findViewById(R.id.item));
         int login = account.getLogin();
-        tv.setText(Integer.toString(login));
+        if(login == 0)
+        {
+            tv.setText("Local wallet");
+        }
+        else {
+            tv.setText(Integer.toString(login));
+        }
         return convertView;
     }
     @Override
@@ -48,7 +54,13 @@ public class RequestTransferAccountAdapter extends ArrayAdapter<Account> {
         TextView tv = ((TextView) convertView.findViewById(R.id.drop_down_item));
 
         int login = account.getLogin();
-        tv.setText(Integer.toString(login));
+        if(login == 0)
+        {
+            tv.setText("Local wallet");
+        }
+        else {
+            tv.setText(Integer.toString(login));
+        }
         return convertView;
     }
 }

@@ -16,7 +16,7 @@ import java.util.List;
 public class Ticket{
     private int id;
     private String title;
-    private int status;
+    private int status;//0-open; 1-closed
     private String date;
     private User user;
     private Category category;

@@ -1,7 +1,9 @@
-<LinearLayout
-    android:layout_height="match_parent"
+<LinearLayout android:layout_height="match_parent"
     android:layout_width="match_parent"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mainLayout"
+    tools:context="com.example.eqvol.eqvola.RegistrationActivity">
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -10,9 +12,7 @@
             xmlns:app="http://schemas.android.com/apk/res-auto"
             xmlns:tools="http://schemas.android.com/tools"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/background_image"
-            tools:context="com.example.eqvol.eqvola.RegistrationActivity">
+            android:layout_height="wrap_content">
             
             <ImageView
                 android:id="@+id/imageLogo"
@@ -45,7 +45,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:layout_marginLeft="20dp"
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="2dp"
                 android:onClick="prevStep"
@@ -59,7 +58,7 @@
                 android:id="@+id/btnPrev"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
+                android:layout_marginStart="5dp"
                 android:layout_marginTop="15dp"
                 android:onClick="prevStep"
                 android:text="Login"
@@ -73,7 +72,7 @@
                 android:id="@+id/btnNext"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="5dp"
+                android:layout_marginEnd="5dp"
                 android:layout_marginTop="15dp"
                 android:onClick="nextStep"
                 android:text="Next"
@@ -89,7 +88,6 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_marginEnd="20dp"
-                android:layout_marginRight="20dp"
                 android:layout_marginTop="2dp"
                 android:onClick="nextStep"
                 android:rotation="90"

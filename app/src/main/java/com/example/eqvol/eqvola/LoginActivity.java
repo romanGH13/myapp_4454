@@ -13,6 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatDelegate;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
@@ -20,6 +21,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.eqvol.eqvola.Classes.Api;
@@ -47,7 +49,6 @@ public class LoginActivity extends AppCompatActivity implements TextView.OnEdito
     // UI references.
     private AutoCompleteTextView mEmailView;
     private EditText mPasswordView;
-    public TextView mLabelView;
     private View mProgressView;
     private View mLoginFormView;
 
@@ -55,7 +56,12 @@ public class LoginActivity extends AppCompatActivity implements TextView.OnEdito
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
+        Api.context = getApplicationContext();
         setContentView(R.layout.activity_login);
+
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
+        Drawable backgroundDrawable = getResources().getDrawable(R.drawable.background_image);
+        ((LinearLayout)findViewById(R.id.mainLayout)).setBackground(backgroundDrawable);
 
         // получение всех графических элементов
         //mLabelView = (TextView) findViewById(R.id.textComment);
@@ -73,9 +79,9 @@ public class LoginActivity extends AppCompatActivity implements TextView.OnEdito
 
         //замена цвета для кнопки, что бы не копировать лишний раз Drawable для каждой кнопки
         Button btnLogin = (Button) findViewById(R.id.btnLogin);
-        Drawable drawable = btnLogin.getBackground();
+        Drawable drawable = getResources().getDrawable(R.drawable.rectangle);//btnLogin.getBackground();
         drawable.setColorFilter(getResources().getColor(R.color.colorBlue), PorterDuff.Mode.MULTIPLY);
-
+        btnLogin.setBackground(drawable);
         //проверка токена, если токен уже есть приложение само авторизирует пользователя.
         checkTokenInFile();
     }
@@ -136,6 +142,12 @@ public class LoginActivity extends AppCompatActivity implements TextView.OnEdito
         }
     }
 
+    public void forgotPassword(View view)
+    {
+        Intent SecAct = new Intent(getApplicationContext(), ForgotPasswordActivity.class);
+        startActivity(SecAct);
+        finish();
+    }
     //переход на главный экран приложения
     public void goToMenuActivity()
     {
@@ -232,6 +244,7 @@ public class LoginActivity extends AppCompatActivity implements TextView.OnEdito
         startActivity(SecAct);
         finish();
     }
+
 
     private boolean isEmailValid(String email)
     {

@@ -151,33 +151,8 @@ public class OpenOrdersAdapter extends RecyclerView.Adapter<OpenOrdersAdapter.Op
     public void UpdateOrders(List<Order> orders)
     {
         try {
-            boolean isStillOpen = false;
-            for (Order myOrder : Api.account.openOrders) {
-                for (Order newOrder : orders) {
-                    if (myOrder.getOrder() == newOrder.getOrder()) {
-                        if (!myOrder.equals(newOrder)) {
-                            if(myOrder.getLogin() == newOrder.getLogin()) {
-                                isStillOpen = true;
-                                myOrder.setProfit(newOrder.getProfit());
-                                myOrder.setClosePrice(newOrder.getClosePrice());
-                            }
-                        }
-                        orders.remove(newOrder);
-                    }
-                }
-                if (!isStillOpen) {
-                    Api.account.openOrders.remove(myOrder);
-                }
-            }
-
-            if (orders.size() > 0) {
-                for(Order o: orders)
-                {
-                    if(!o.getCloseTime().contentEquals("1970-01-01 00:00:00"))
-                        Api.account.openOrders.add(o);
-                }
-
-            }
+            Api.account.openOrders = orders;
+            Collections.sort(Api.account.openOrders, this);
         } catch(Exception ex) {
             String str = ex.getMessage();
         }

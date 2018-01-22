@@ -3,7 +3,11 @@ package com.example.eqvol.eqvola.Classes;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 
+import com.example.eqvol.eqvola.MainActivity;
+import com.example.eqvol.eqvola.fragments.AccountOrdersFragment;
+import com.example.eqvol.eqvola.fragments.FinanceOperationFragment;
 import com.example.eqvol.eqvola.fragments.MyProgressBar;
+import com.example.eqvol.eqvola.fragments.UserPageFragment;
 
 /**
  * Created by eqvol on 03.11.2017.
@@ -32,16 +36,18 @@ public class FragmentLoader {
     public void startLoading()
     {
         fragmentManager.beginTransaction().replace(fragmentContainerId, myProgressBar).commit();
+
     }
 
-    public void closeLoading()
-    {
-        //this.myProgressBar.getFragmentManager()
-    }
-
-    public void endLoading()
-    {
+    public void endLoading() {
         fragmentManager.beginTransaction().replace(fragmentContainerId, fragment).commit();
+        try {
+            if (fragment.getClass() == AccountOrdersFragment.class)
+                MainActivity.currentItem = AccountOrdersFragment.class.toString();
+            else if (fragment.getClass() == UserPageFragment.class) {
+                MainActivity.currentItem = UserPageFragment.class.toString();
+            }
+        } catch (Exception ex) { }
     }
 
     public MyProgressBar getProgressBar()

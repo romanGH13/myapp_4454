@@ -4,10 +4,13 @@ package com.example.eqvol.eqvola.fragments;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatDelegate;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.eqvol.eqvola.Adapters.RegistrationPagerAdapter;
+import com.example.eqvol.eqvola.ForgotPasswordActivity;
 import com.example.eqvol.eqvola.R;
 import com.example.eqvol.eqvola.RegistrationActivity;
 
@@ -33,6 +37,7 @@ public class ModalAlert extends DialogFragment implements DialogInterface.OnDism
         this.status = status;
         this.description = descripton;
         this.activity = null;
+
     }
 
     public ModalAlert(boolean status, String descripton, Activity activity) {
@@ -48,13 +53,6 @@ public class ModalAlert extends DialogFragment implements DialogInterface.OnDism
         ModalAlert fragment = new ModalAlert(status, descripton);
 
         return fragment;
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        mView = inflater.inflate(R.layout.fragment_create_account, container, false);
-        return mView;
     }
 
 
@@ -79,15 +77,25 @@ public class ModalAlert extends DialogFragment implements DialogInterface.OnDism
             @Override
             public void onClick(View v) {
                 if(activity != null) {
-                    if (activity.getClass().toString().contentEquals(RegistrationActivity.class.toString())) {
+                    if (activity.getClass() == RegistrationActivity.class) {
                         if (status) {
                             ((RegistrationActivity) activity).goToLogin();
+                        }
+                    }
+                    if (activity.getClass() == ForgotPasswordActivity.class) {
+                        if (status) {
+                            ((ForgotPasswordActivity) activity).backToLogin(null);
                         }
                     }
                 }
                 dialog.dismiss();
             }
         });
+
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
+        Drawable drawable = getResources().getDrawable(R.drawable.rectangle);//btnLogin.getBackground();
+        drawable.setColorFilter(getResources().getColor(R.color.colorMain), PorterDuff.Mode.MULTIPLY);
+        btn.setBackground(drawable);
 
         builder.setView(view);
         dialog = builder.create();

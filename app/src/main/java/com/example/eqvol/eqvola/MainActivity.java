@@ -12,11 +12,14 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
+import android.widget.FrameLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.eqvol.eqvola.Classes.*;
 import com.example.eqvol.eqvola.Classes.Api;
 import com.example.eqvol.eqvola.Notifications.MyService;
+import com.example.eqvol.eqvola.fragments.AccountOrdersFragment;
 import com.example.eqvol.eqvola.fragments.CreateAccount;
 import com.example.eqvol.eqvola.fragments.FinanceHistoryFragment;
 import com.example.eqvol.eqvola.fragments.FinanceOperationFragment;
@@ -25,6 +28,7 @@ import com.example.eqvol.eqvola.fragments.ModalAlert;
 import com.example.eqvol.eqvola.fragments.MyAccounts;
 import com.example.eqvol.eqvola.fragments.Support;
 import com.example.eqvol.eqvola.fragments.TransfersFragment;
+import com.example.eqvol.eqvola.fragments.UserPageFragment;
 
 import java.io.File;
 import java.util.HashMap;
@@ -32,8 +36,10 @@ import java.util.HashMap;
 public class MainActivity extends AppCompatActivity {
 
     private TextView mTextMessage;
-    private String currentItem;
+    public static String currentItem = "";
     public static FragmentLoader currentLoader = null;
+    private static long back_pressed;
+    private Intent intentMyIntentService;
 
     public BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -77,6 +83,7 @@ public class MainActivity extends AppCompatActivity {
                     Api.user = null;
                     Api.countries = null;
 
+                    stopService(intentMyIntentService);
                     goToLoginActivity();
 
                     break;
@@ -126,6 +133,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if(Api.user == null)
+        {
+            goToLoginActivity();
+        }
         setContentView(R.layout.activity_main);
         currentItem = "";
 
@@ -135,10 +146,22 @@ public class MainActivity extends AppCompatActivity {
         navigation.setSelectedItemId(R.id.navigation_my_accounts);
 
         if(!isMyServiceRunning(MyService.class)) {
-            Intent intentMyIntentService = new Intent(this, MyService.class);
+            intentMyIntentService = new Intent(this, MyService.class);
             intentMyIntentService.putExtra("user_id", Api.user.getId());
             intentMyIntentService.putExtra("token", Api.getToken());
             startService(intentMyIntentService);
+
+        }
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+
+        setIntent(intent);
+        if(Api.user == null)
+        {
+            goToLoginActivity();
         }
     }
 
@@ -174,6 +197,30 @@ public class MainActivity extends AppCompatActivity {
         FragmentManager manager = getSupportFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
         myDialogFragment.show(transaction, "dialog");
+    }
+
+    @Override
+    public void onBackPressed() {
+
+        if( MainActivity.currentItem.contentEquals(AccountOrdersFragment.class.toString()))
+        {
+            FragmentLoader fl = new FragmentLoader(MyAccounts.class, getSupportFragmentManager(), R.id.container, false);
+            fl.startLoading();
+            currentLoader = fl;
+        }
+        else if (MainActivity.currentItem.contentEquals(UserPageFragment.class.toString())) {
+            FragmentLoader fl = new FragmentLoader(MenuFragment.class, getSupportFragmentManager(), R.id.container, false);
+            fl.startLoading();
+            currentLoader = fl;
+        }
+        else {
+            if (back_pressed + 2000 > System.currentTimeMillis())
+                super.onBackPressed();
+            else
+                Toast.makeText(getApplicationContext(), "Press once again to exit!",
+                        Toast.LENGTH_SHORT).show();
+            back_pressed = System.currentTimeMillis();
+        }
     }
 
 }

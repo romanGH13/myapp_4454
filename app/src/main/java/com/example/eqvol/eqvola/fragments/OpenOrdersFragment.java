@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -33,6 +34,7 @@ public class OpenOrdersFragment extends Fragment {
     private static View mView;
     private static RecyclerView list;
     public static int accountId;
+    private static SwipeRefreshLayout swipeRefreshLayout;
 
     private HashMap<String, Object> params;
 
@@ -77,6 +79,28 @@ public class OpenOrdersFragment extends Fragment {
         AsyncHttpTask getOrdersTask = new AsyncHttpTask(params, AsyncMethodNames.UPDATE_ACCOUNT_ORDERS, (Activity) mView.getContext());
         getOrdersTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
+        swipeRefreshLayout = (SwipeRefreshLayout)mView.findViewById(R.id.open_orders_swipe_refresh);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                HashMap<String, Object> where = new HashMap<String, Object>();
+                where.put("Login", accountId);
+                where.put("CloseTime", "1970-01-01 00:00:00");
+
+                Gson gson = new GsonBuilder().create();
+
+                HashMap<String, Object> params = new HashMap<String, Object>();
+                params.put("token", Api.getToken());
+                params.put("where", gson.toJson(where));
+
+
+                AsyncHttpTask getOrdersTask = new AsyncHttpTask(params, AsyncMethodNames.GET_ACCOUNT_ORDERS, (Activity) mView.getContext());
+                getOrdersTask.target = OpenOrdersFragment.class.toString();
+                getOrdersTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+
+            }
+        });
+
         return mView;
     }
 
@@ -104,10 +128,12 @@ public class OpenOrdersFragment extends Fragment {
 
 
     public static void updateOrders(List<Order> newOrders) {
-
         OpenOrdersAdapter adapter = (OpenOrdersAdapter) list.getAdapter();
-        adapter.UpdateOrders(newOrders);
-        adapter.notifyDataSetChanged();
+        synchronized(adapter) {
+            adapter.UpdateOrders(newOrders);
+            adapter.notifyDataSetChanged();
+            swipeRefreshLayout.setRefreshing(false);
+        }
     }
 
 }

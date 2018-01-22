@@ -9,7 +9,6 @@
         android:layout_height="70dp"
         android:layout_margin="5dp"
         android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 
     <LinearLayout
@@ -20,9 +19,6 @@
         android:padding="5dp"
         android:layout_alignParentTop="true"
         android:layout_marginTop="5dp"
-        android:layout_marginRight="25dp"
-        android:layout_marginLeft="10dp"
-        android:layout_toRightOf="@+id/message_image"
         android:layout_marginEnd="25dp"
         android:layout_marginStart="10dp"
         android:layout_toEndOf="@+id/message_image" >
@@ -49,9 +45,7 @@
         android:id="@+id/message_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
         android:layout_below="@+id/layoutMessage"
-        android:layout_toRightOf="@+id/message_image"
         android:layout_marginStart="10dp"
         android:layout_toEndOf="@+id/message_image" />
 </RelativeLayout>

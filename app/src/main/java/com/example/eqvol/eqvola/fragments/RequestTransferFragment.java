@@ -1,12 +1,16 @@
 package com.example.eqvol.eqvola.fragments;
 
 import android.app.Activity;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.graphics.drawable.VectorDrawableCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AppCompatDelegate;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
@@ -17,8 +21,10 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.eqvol.eqvola.Adapters.RequestTransferAccountAdapter;
 import com.example.eqvol.eqvola.Classes.Account;
@@ -45,6 +51,8 @@ public class RequestTransferFragment extends Fragment implements TextView.OnEdit
     private static boolean isAccountExists;
     private static boolean isRequestClick;
 
+    private Drawable backgroundDrawable;
+
     public RequestTransferFragment() {
         isAccountExists = false;
         isRequestClick = false;
@@ -58,6 +66,9 @@ public class RequestTransferFragment extends Fragment implements TextView.OnEdit
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
+
     }
 
     @Override
@@ -69,6 +80,23 @@ public class RequestTransferFragment extends Fragment implements TextView.OnEdit
         mTargetAccount = (EditText) mView.findViewById(R.id.request_transfer_target_account);
         mAmount = (EditText) mView.findViewById(R.id.request_transfer_amount);
         mAccountHolderName = (TextView) mView.findViewById(R.id.request_transfer_account_holder_name);
+
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
+        try {
+            backgroundDrawable = ContextCompat.getDrawable(mView.getContext(), R.drawable.my_text_border);
+        }
+        catch(Exception ex)
+        {
+            Toast toast = Toast.makeText(mView.getContext(),
+                    ex.toString(), Toast.LENGTH_SHORT);
+            toast.show();
+        }
+
+        ((LinearLayout)mView.findViewById(R.id.linearSpinGroup)).setBackground(backgroundDrawable);
+        mBalance.setBackground(backgroundDrawable);
+        mTargetAccount.setBackground(backgroundDrawable);
+        mAmount.setBackground(backgroundDrawable);
+        mAccountHolderName.setBackground(backgroundDrawable);
 
         mAmount.setOnEditorActionListener(this);
         mTargetAccount.setOnEditorActionListener(this);
@@ -95,10 +123,14 @@ public class RequestTransferFragment extends Fragment implements TextView.OnEdit
         mTargetAccount.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                EditText mTargetView = (EditText) v;
-                if(!hasFocus && mTargetView.getText().length() > 0)
+                try {
+                    EditText mTargetView = (EditText) v;
+                    if (!hasFocus && mTargetView.getText().length() > 0) {
+                        getAccountHolderName();
+                    }
+                } catch (Exception ex)
                 {
-                    getAccountHolderName();
+
                 }
             }
         });
@@ -111,26 +143,27 @@ public class RequestTransferFragment extends Fragment implements TextView.OnEdit
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                try {
 
-                if(mTargetAccount.getText().length() == 0)
-                {
-                    mTargetAccount.setError("Recipient account can not be empty");
-                    return;
-                }
-                if(mAmount.getText().length() == 0)
-                {
-                    mAmount.setError("Amount can not be empty");
-                    return;
-                }
-
-                isRequestClick = true;
-
-                if(onEditorAction(mAmount, 0, null))
-                {
-                    if(!onEditorAction(mTargetAccount, 0, null))
-                    {
-                        getAccountHolderName();
+                    if (mTargetAccount.getText().length() == 0) {
+                        mTargetAccount.setError("Recipient account can not be empty");
+                        return;
                     }
+                    if (mAmount.getText().length() == 0) {
+                        mAmount.setError("Amount can not be empty");
+                        return;
+                    }
+
+                    isRequestClick = true;
+
+                    if (onEditorAction(mAmount, 0, null)) {
+                        if (!onEditorAction(mTargetAccount, 0, null)) {
+                            getAccountHolderName();
+                        }
+                    }
+                }catch(Exception ex)
+                {
+
                 }
             }
         });
@@ -193,15 +226,20 @@ public class RequestTransferFragment extends Fragment implements TextView.OnEdit
 
     private void getAccountHolderName()
     {
-        String accountLogin = mTargetAccount.getText().toString();
+        try {
+            String accountLogin = mTargetAccount.getText().toString();
 
-        HashMap<String, Object> params = new HashMap<String, Object>();
-        params.put("token", Api.getToken());
-        params.put("login", accountLogin);
+            HashMap<String, Object> params = new HashMap<String, Object>();
+            params.put("token", Api.getToken());
+            params.put("login", accountLogin);
 
-        AsyncHttpTask getAccountHolderNameTask = new AsyncHttpTask(params, AsyncMethodNames.GET_ACCOUNT_HOLDER_NAME, getActivity());
-        getAccountHolderNameTask.target = accountLogin;
-        getAccountHolderNameTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            AsyncHttpTask getAccountHolderNameTask = new AsyncHttpTask(params, AsyncMethodNames.GET_ACCOUNT_HOLDER_NAME, getActivity());
+            getAccountHolderNameTask.target = accountLogin;
+            getAccountHolderNameTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        } catch(Exception ex)
+        {
+
+        }
     }
 
     @Override
@@ -243,42 +281,47 @@ public class RequestTransferFragment extends Fragment implements TextView.OnEdit
 
     public static void setHolderName(String holderName, String login)
     {
-        if(mAccountHolderName != null)
-        {
-            if(mTargetAccount != null)
-            {
-                String currentTargetAccount = mTargetAccount.getText().toString();
-                if(currentTargetAccount.contentEquals(login))
-                {
-                    mAccountHolderName.setText(holderName);
-                    mAccountHolderName.setError(null);
-                    isAccountExists = true;
-                    if(isRequestClick)
-                    {
-                        if(mAccountsSpinner != null && mAmount != null && mTargetAccount != null) {
-                            double amount = Double.parseDouble(mAmount.getText().toString());
-                            Account account = (Account) mAccountsSpinner.getSelectedItem();
-                            String recipient = mTargetAccount.getText().toString();
-                            String sender = Integer.toString(account.getLogin());
-                            requestTransfer(sender, recipient, amount);
+        try {
+            if (mAccountHolderName != null) {
+                if (mTargetAccount != null) {
+                    String currentTargetAccount = mTargetAccount.getText().toString();
+                    if (currentTargetAccount.contentEquals(login)) {
+                        mAccountHolderName.setText(holderName);
+                        mAccountHolderName.setError(null);
+                        isAccountExists = true;
+                        if (isRequestClick) {
+                            if (mAccountsSpinner != null && mAmount != null && mTargetAccount != null) {
+                                double amount = Double.parseDouble(mAmount.getText().toString());
+                                Account account = (Account) mAccountsSpinner.getSelectedItem();
+                                String recipient = mTargetAccount.getText().toString();
+                                String sender = Integer.toString(account.getLogin());
+                                requestTransfer(sender, recipient, amount);
+                            }
                         }
                     }
                 }
             }
+        } catch(Exception ex)
+        {
+
         }
     }
     public static void setError(String login)
     {
-        if(mAccountHolderName != null)
-        {
-            if(mTargetAccount != null) {
-                if (mTargetAccount.getText().toString().contentEquals(login)) {
-                    mAccountHolderName.setTextColor(Color.BLACK);
-                    mAccountHolderName.setText("Account does not exist");
-                    mAccountHolderName.setError("");
-                    isAccountExists = false;
+        try {
+            if (mAccountHolderName != null) {
+                if (mTargetAccount != null) {
+                    if (mTargetAccount.getText().toString().contentEquals(login)) {
+                        mAccountHolderName.setTextColor(Color.BLACK);
+                        mAccountHolderName.setText("Account does not exist");
+                        mAccountHolderName.setError("");
+                        isAccountExists = false;
+                    }
                 }
             }
+        } catch(Exception ex)
+        {
+
         }
     }
 }

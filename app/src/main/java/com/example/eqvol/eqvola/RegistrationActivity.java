@@ -1,17 +1,20 @@
 package com.example.eqvol.eqvola;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -22,11 +25,13 @@ import android.support.v4.content.Loader;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatDelegate;
 import android.telephony.TelephonyManager;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Adapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -89,10 +94,15 @@ public class RegistrationActivity extends AppCompatActivity implements TextView.
 
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration);
+
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
+        Drawable backgroundDrawable = getResources().getDrawable(R.drawable.background_image);
+        ((LinearLayout)findViewById(R.id.mainLayout)).setBackground(backgroundDrawable);
 
         populateAutoComplete();
 
@@ -216,16 +226,7 @@ public class RegistrationActivity extends AppCompatActivity implements TextView.
         if (checkSelfPermission(ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             return true;
         }
-        if (shouldShowRequestPermissionRationale(ACCESS_COARSE_LOCATION)) {
-            /*Snackbar.make(null, R.string.permission_rationale, Snackbar.LENGTH_INDEFINITE)
-                    .setAction(android.R.string.ok, new View.OnClickListener() {
-                        @Override
-                        @TargetApi(Build.VERSION_CODES.M)
-                        public void onClick(View v) {
-                            requestPermissions(new String[]{ACCESS_COARSE_LOCATION}, MY_LOCATION_REQUEST_CODE);
-                        }
-                    });*/
-        } else {
+        if (!shouldShowRequestPermissionRationale(ACCESS_COARSE_LOCATION)) {
             requestPermissions(new String[]{ACCESS_COARSE_LOCATION}, MY_LOCATION_REQUEST_CODE);
         }
         return false;
@@ -467,6 +468,16 @@ public class RegistrationActivity extends AppCompatActivity implements TextView.
     {
         myDialogFragment.closeDialog();
         goToStep3();
+    }
+
+    public void startTimer()
+    {
+        myDialogFragment.startTimer();
+    }
+
+    public void setCodeFromSms(String code)
+    {
+        myDialogFragment.setCode(code);
     }
 
     public void checkBeforeRegister(String code)

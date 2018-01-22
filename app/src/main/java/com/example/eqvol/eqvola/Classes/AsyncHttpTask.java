@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import com.example.eqvol.eqvola.Adapters.MessagesAdapter;
 import com.example.eqvol.eqvola.ChatActivity;
+import com.example.eqvol.eqvola.ForgotPasswordActivity;
 import com.example.eqvol.eqvola.JsonResponse.JsonResponceCountries;
 import com.example.eqvol.eqvola.JsonResponse.JsonResponse;
 import com.example.eqvol.eqvola.JsonResponse.JsonResponseAccounts;
@@ -27,6 +28,7 @@ import com.example.eqvol.eqvola.R;
 import com.example.eqvol.eqvola.RegistrationActivity;
 import com.example.eqvol.eqvola.fragments.AccountOrdersFragment;
 import com.example.eqvol.eqvola.fragments.CreateAccount;
+import com.example.eqvol.eqvola.fragments.DepositsRecyclerFragment;
 import com.example.eqvol.eqvola.fragments.FinanceHistoryFragment;
 import com.example.eqvol.eqvola.fragments.MenuFragment;
 import com.example.eqvol.eqvola.fragments.MyAccounts;
@@ -34,9 +36,11 @@ import com.example.eqvol.eqvola.fragments.OpenOrdersFragment;
 import com.example.eqvol.eqvola.fragments.RequestTransferFragment;
 import com.example.eqvol.eqvola.fragments.Support;
 import com.example.eqvol.eqvola.fragments.SupportChat;
+import com.example.eqvol.eqvola.fragments.TradingHistoryFragment;
 import com.example.eqvol.eqvola.fragments.TransfersFragment;
 import com.example.eqvol.eqvola.fragments.TransfersHistoryFragment;
 import com.example.eqvol.eqvola.fragments.UserPageFragment;
+import com.example.eqvol.eqvola.fragments.WithdrawalsRecyclerFragment;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.internal.LinkedTreeMap;
@@ -111,6 +115,7 @@ public class AsyncHttpTask extends AsyncTask<Void, Void, String> {
                     token = (String) entry.getValue();
             }
             response = Api.checkToken(token);
+            String str ="";
         }
         else if (methodName == AsyncMethodNames.CHECK_EMAIL) {
             response = Api.checkEmail(parametrs);
@@ -176,6 +181,10 @@ public class AsyncHttpTask extends AsyncTask<Void, Void, String> {
         else if (methodName == AsyncMethodNames.GET_TICKETS)
         {
             response = Api.getTickets(parametrs);
+        }
+        else if (methodName == AsyncMethodNames.CLOSE_TICKET)
+        {
+            response = Api.closeTicket(parametrs);
         }
         else if (methodName == AsyncMethodNames.GET_DATA_FROM_TICKETS)
         {
@@ -249,6 +258,10 @@ public class AsyncHttpTask extends AsyncTask<Void, Void, String> {
         {
             response = Api.getTransfers(parametrs);
         }
+        else if (methodName == AsyncMethodNames.FORGOT_PASSWORD)
+        {
+            response = Api.forgotPassword(parametrs);
+        }
         return response;
     }
 
@@ -256,10 +269,18 @@ public class AsyncHttpTask extends AsyncTask<Void, Void, String> {
     protected void onPostExecute(final String success) {
 
         if(success!=null) {
-            if (success.contentEquals("Error with connection to Api")) {
-                Toast toast = Toast.makeText(act.getApplicationContext(),
-                        success, Toast.LENGTH_SHORT);
-                toast.show();
+            try {
+                if (success.contentEquals("Error with connection to Api") || success.contentEquals("Problems with connections")) {
+                    Toast toast2 = Toast.makeText(Api.context,
+                            success, Toast.LENGTH_SHORT);
+                    toast2.show();
+                    if (act.getClass() == LoginActivity.class) {
+                        ((LoginActivity) act).showProgress(false);
+                    }
+                    return;
+                }
+            } catch(Exception e)
+            {
                 return;
             }
         }
@@ -351,8 +372,18 @@ public class AsyncHttpTask extends AsyncTask<Void, Void, String> {
                 }
             }
         }
+        else if(methodName == AsyncMethodNames.USER_RESEND_BEFORE_REGISTRATION) {
+            Map<String, Object> map = Api.jsonToMap(success);
+            String str = "";
+            ((RegistrationActivity)act).startTimer();
+
+        }
         else if (methodName == AsyncMethodNames.CHECK_TOKEN) {
             Map<String, Object> map = Api.jsonToMap(success);
+            if(map == null)
+            {
+                return;
+            }
             if (map.containsKey("data")) {
                 int userId = -1;
                 for (Map.Entry<String, Object> entry : map.entrySet()) {
@@ -657,7 +688,20 @@ public class AsyncHttpTask extends AsyncTask<Void, Void, String> {
                             sendMessageTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
                             if(act.getClass() == MainActivity.class) {
-                                ((MainActivity) act).showDialog(true, "Ticket was created!");
+                                //((MainActivity) act).showDialog(true, "Ticket was created!");
+
+                                SupportChat.currentTicketId = ticket.getId();
+                                SupportChat.title = ticket.getTitle();
+                                SupportChat.currentTicketLastMessageId = 0;
+                                HashMap<String, Object> where = new HashMap<String, Object>();
+                                where.put("ticket_id", ticket.getId());
+                                String jsonWhere = gson.toJson(where);
+                                HashMap<String, Object> parametrs = new HashMap<String, Object>();
+                                parametrs.put("token", Api.getToken());
+                                parametrs.put("where", jsonWhere);
+
+                                AsyncHttpTask userLoginTask = new AsyncHttpTask(parametrs, AsyncMethodNames.GET_TICKET_MESSAGES, act);
+                                userLoginTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                             }
                         }
                     }
@@ -677,6 +721,31 @@ public class AsyncHttpTask extends AsyncTask<Void, Void, String> {
                         }
                     }
                 }
+            }
+        }
+        else if (methodName == AsyncMethodNames.CLOSE_TICKET)
+        {
+            Map<String, Object> map = Api.jsonToMap(success);
+            for (Map.Entry<String, Object> response : map.entrySet()) {
+                if (response.getKey().contentEquals("data")) {
+
+                    for (Map.Entry<String, Object> dataEntry : ((Map<String, Object>)response.getValue()).entrySet()) {
+                        if (dataEntry.getKey().toString().contentEquals("ticket_id")) {
+
+                            int ticket_id =(int)((double)dataEntry.getValue());
+                            SupportChat.closeTicket(ticket_id);
+                            try {
+                                if (ChatActivity.ticket_id == ticket_id) {
+                                    ChatActivity.setClosed(ticket_id);
+                                }
+                            } catch (Exception ex)
+                            {
+
+                            }
+                        }
+                    }
+                }
+
             }
         }
         else if (methodName == AsyncMethodNames.SEND_MESSAGE) {
@@ -764,19 +833,48 @@ public class AsyncHttpTask extends AsyncTask<Void, Void, String> {
         }
         else if (methodName == AsyncMethodNames.GET_ACCOUNT_ORDERS) {
             List<Order> orders = JsonResponseOrders.getOrders(success);
-            Api.account.openOrders = new ArrayList<Order>();
-            Api.account.closeOrders = new ArrayList<Order>();
-            for(Order o: orders)
-            {
-                if (o.getCmd().contentEquals("Sell") || o.getCmd().contentEquals("Buy")) {
-                    if (o.getCloseTime().contentEquals("1970-01-01 00:00:00"))
-                        Api.account.openOrders.add(o);
-                    else
-                        Api.account.closeOrders.add(o);
-                }
-            }
+
             if (MainActivity.currentLoader.fragment.getClass() == AccountOrdersFragment.class) {
-                MainActivity.currentLoader.endLoading();
+                if(target.contentEquals(TransfersHistoryFragment.class.toString()))
+                {
+
+                    Api.account.closeOrders = new ArrayList<Order>();
+                    for(Order o: orders)
+                    {
+                        if (o.getCmd().contentEquals("Sell") || o.getCmd().contentEquals("Buy")) {
+                            if (!o.getCloseTime().contentEquals("1970-01-01 00:00:00"))
+                                Api.account.closeOrders.add(o);
+                        }
+                    }
+                    TradingHistoryFragment.updateList(Api.account.closeOrders);
+                }
+                else if(target.contentEquals(OpenOrdersFragment.class.toString()))
+                {
+
+                    Api.account.openOrders = new ArrayList<Order>();
+                    for(Order o: orders)
+                    {
+                        if (o.getCmd().contentEquals("Sell") || o.getCmd().contentEquals("Buy")) {
+                            if (o.getCloseTime().contentEquals("1970-01-01 00:00:00"))
+                                Api.account.openOrders.add(o);
+                        }
+                    }
+                    OpenOrdersFragment.updateOrders(Api.account.openOrders);
+                }
+                else {
+                    Api.account.openOrders = new ArrayList<Order>();
+                    Api.account.closeOrders = new ArrayList<Order>();
+                    for(Order o: orders)
+                    {
+                        if (o.getCmd().contentEquals("Sell") || o.getCmd().contentEquals("Buy")) {
+                            if (o.getCloseTime().contentEquals("1970-01-01 00:00:00"))
+                                Api.account.openOrders.add(o);
+                            else
+                                Api.account.closeOrders.add(o);
+                        }
+                    }
+                    MainActivity.currentLoader.endLoading();
+                }
             }
 
         }
@@ -798,7 +896,13 @@ public class AsyncHttpTask extends AsyncTask<Void, Void, String> {
             FinanceHistoryFragment.isWithdrawalLoaded = true;
             if(FinanceHistoryFragment.isWithdrawalLoaded && FinanceHistoryFragment.isDepositsLoaded) {
                 if (MainActivity.currentLoader.fragment.getClass() == FinanceHistoryFragment.class) {
-                    MainActivity.currentLoader.endLoading();
+                    if(target.contentEquals(WithdrawalsRecyclerFragment.class.toString())) {
+                        MainActivity.currentLoader.endLoading();
+                    }
+                    else
+                    {
+                        WithdrawalsRecyclerFragment.updateWithdrawals(Api.withdrawals);
+                    }
                 }
             }
         }
@@ -810,7 +914,13 @@ public class AsyncHttpTask extends AsyncTask<Void, Void, String> {
             FinanceHistoryFragment.isDepositsLoaded = true;
             if(FinanceHistoryFragment.isWithdrawalLoaded && FinanceHistoryFragment.isDepositsLoaded) {
                 if (MainActivity.currentLoader.fragment.getClass() == FinanceHistoryFragment.class) {
-                    MainActivity.currentLoader.endLoading();
+                    if(target.contentEquals(DepositsRecyclerFragment.class.toString())) {
+                        MainActivity.currentLoader.endLoading();
+                    }
+                    else
+                    {
+                        DepositsRecyclerFragment.updateDeposits(Api.deposits);
+                    }
                 }
             }
         }
@@ -861,6 +971,37 @@ public class AsyncHttpTask extends AsyncTask<Void, Void, String> {
                 TransfersHistoryFragment.updateList();
             }
 
+        }
+        else if (methodName == AsyncMethodNames.FORGOT_PASSWORD)
+        {
+            Map<String, Object> map = Api.jsonToMap(success);
+            for (Map.Entry<String, Object> response : map.entrySet()) {
+                if (response.getKey().contentEquals("status")) {
+                    if(response.getValue().toString().contentEquals("success"))
+                    {
+                        if(act.getClass() == ForgotPasswordActivity.class) {
+                            ForgotPasswordActivity activity = (ForgotPasswordActivity) act;
+                            activity.showDialog(true, "A letter with further instructions has been send to your email.", act);
+                        }
+                    }
+                }
+                if (response.getKey().contentEquals("errors")) {
+                    ArrayList<Object> errorList = (ArrayList<Object>)response.getValue();
+                    for(Object error: errorList) {
+                        Map<String, Object> tmpMap = (Map<String, Object>) error;
+                        for (Map.Entry<String, Object> dataEntry : tmpMap.entrySet()) {
+                            if (dataEntry.getKey().contentEquals("description")) {
+                                String description = (String) dataEntry.getValue();
+
+                                if(act.getClass() == ForgotPasswordActivity.class) {
+                                    ForgotPasswordActivity activity = (ForgotPasswordActivity) act;
+                                    activity.showDialog(false, description, act);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }

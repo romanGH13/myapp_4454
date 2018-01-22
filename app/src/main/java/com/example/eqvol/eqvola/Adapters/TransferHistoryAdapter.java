@@ -93,7 +93,16 @@ public class TransferHistoryAdapter extends RecyclerView.Adapter<TransferHistory
         int status = transfers.get(position).getStatus();
 
         holder.mTransferView.setText("Transfer #" + Integer.toString(transfers.get(position).getId()));
-        holder.mTransferFromView.setText(Integer.toString(transfers.get(position).getSender()));
+        int login = transfers.get(position).getSender();
+        if(login == 0)
+        {
+            holder.mTransferFromView.setText("Local wallet");
+        }
+        else
+        {
+            holder.mTransferFromView.setText(Integer.toString(login));
+        }
+
         holder.mTransferToView.setText(Integer.toString(transfers.get(position).getRecipient()));
         holder.mAmountView.setText(Double.toString(transfers.get(position).getAmount()));
         holder.mDateView.setText(transfers.get(position).getDate());

@@ -4,11 +4,16 @@
     android:layout_height="match_parent"
     tools:context="com.example.eqvol.eqvola.fragments.OpenOrdersFragment">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/open_orders_list"
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/open_orders_swipe_refresh"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/colorGray">
-    </android.support.v7.widget.RecyclerView>
+        android:layout_height="match_parent">
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/open_orders_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/colorGray">
+        </android.support.v7.widget.RecyclerView>
+    </android.support.v4.widget.SwipeRefreshLayout>
 
 </FrameLayout>

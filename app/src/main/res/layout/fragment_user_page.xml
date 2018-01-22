@@ -32,7 +32,7 @@
                     app:fabSize="normal"
                     android:tint="@android:color/white"
                     style="@style/BackgroundTintBlue"
-                    app:srcCompat="@drawable/ic_menu_camera"
+                    app:srcCompat="@drawable/ic_camera"
                     app:layout_constraintBottom_toTopOf="@+id/content"
                     app:layout_constraintEnd_toEndOf="parent"/>
 
@@ -87,7 +87,7 @@
                                                     android:layout_width="wrap_content"
                                                     android:layout_height="wrap_content"
                                                     android:hint="Code"
-                                                    android:layout_marginStart="5dp"
+                                                    android:minWidth="40dp"
                                                     android:inputType="phone"
                                                     android:focusable="false"
                                                     android:focusableInTouchMode="false"
@@ -120,20 +120,23 @@
 
                                 <Spinner
                                     android:id="@+id/spinnerDay"
-                                    android:layout_width="wrap_content"
+                                    android:layout_width="0dp"
                                     android:layout_height="wrap_content"
+                                    android:layout_weight="5"
                                     style="@style/holoSpinner"/>
 
                                 <Spinner
                                     android:id="@+id/spinnerMonth"
-                                    android:layout_width="wrap_content"
+                                    android:layout_width="0dp"
                                     android:layout_height="wrap_content"
+                                    android:layout_weight="8"
                                     style="@style/holoSpinner"/>
 
                                 <Spinner
                                     android:id="@+id/spinnerYear"
-                                    android:layout_width="wrap_content"
+                                    android:layout_width="0dp"
                                     android:layout_height="wrap_content"
+                                    android:layout_weight="6"
                                     style="@style/holoSpinner"/>
                         </LinearLayout>
 

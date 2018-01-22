@@ -1,8 +1,10 @@
 package com.example.eqvol.eqvola.fragments.Registration;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatDelegate;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +13,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -39,6 +42,8 @@ public class SecondStepFragment extends Fragment implements TextView.OnEditorAct
     private Spinner mBirthYearSpinnerView;
     private Spinner mCountrySpinnerView;
 
+    private Drawable backgroundDrawable;
+
     private MyDateFormat mdt = new MyDateFormat();
 
     public SecondStepFragment() {
@@ -53,6 +58,8 @@ public class SecondStepFragment extends Fragment implements TextView.OnEditorAct
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
+        backgroundDrawable = getResources().getDrawable(R.drawable.rectangle);
     }
 
     @Override
@@ -71,6 +78,12 @@ public class SecondStepFragment extends Fragment implements TextView.OnEditorAct
         mPhoneNumberView = (EditText) mView.findViewById(R.id.phoneNumber);
         mPhoneNumberView.setOnEditorActionListener(this);
         mPhoneNumberView.setImeActionLabel("Next step", EditorInfo.IME_ACTION_DONE);
+
+        ((LinearLayout)mView.findViewById(R.id.layoutSpinnerDayOfBirth)).setBackground(backgroundDrawable);
+        ((LinearLayout)mView.findViewById(R.id.layoutSpinnerMonthOfBirth)).setBackground(backgroundDrawable);
+        ((LinearLayout)mView.findViewById(R.id.layoutSpinnerYearOfBirth)).setBackground(backgroundDrawable);
+        ((LinearLayout)mView.findViewById(R.id.layoutSpinnerCountries)).setBackground(backgroundDrawable);
+        ((LinearLayout)mView.findViewById(R.id.layoutPhone)).setBackground(backgroundDrawable);
 
         setDateBirth();
         if(Api.countries != null)

@@ -19,6 +19,9 @@ import android.widget.TextView;
 import com.example.eqvol.eqvola.R;
 import com.example.eqvol.eqvola.RegistrationActivity;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 
 public class ModalInput extends DialogFragment implements DialogInterface.OnDismissListener {
 
@@ -26,6 +29,11 @@ public class ModalInput extends DialogFragment implements DialogInterface.OnDism
     private View mView = null;
     private String description;
     private Activity activity;
+
+    TextView labelResendView;
+
+    private Timer timer;
+    private int timerCounter;
 
     public ModalInput(String descripton) {
         this.description = descripton;
@@ -63,8 +71,11 @@ public class ModalInput extends DialogFragment implements DialogInterface.OnDism
         TextView text = (TextView)mView.findViewById(R.id.alertText);
         final EditText code = (EditText)mView.findViewById(R.id.code);
         Button btn = (Button)mView.findViewById(R.id.alertBtn);
-        TextView labelResendView = (TextView) mView.findViewById(R.id.labelResend);
+        labelResendView = (TextView) mView.findViewById(R.id.labelResend);
         ImageView imageResendView = (ImageView) mView.findViewById(R.id.imgResend);
+
+        timer = new Timer("timer");
+        startTimer();
 
         text.setText(description);
         btn.setOnClickListener(new View.OnClickListener() {
@@ -81,9 +92,13 @@ public class ModalInput extends DialogFragment implements DialogInterface.OnDism
         View.OnClickListener resendOnClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(timerCounter != 0)
+                    return;
                 if(activity != null) {
                     if (activity.getClass().toString().contentEquals(RegistrationActivity.class.toString())) {
                         ((RegistrationActivity)activity).resendBeforeRegister();
+
+                        //timer.purge();
                     }
                 }
 
@@ -93,16 +108,50 @@ public class ModalInput extends DialogFragment implements DialogInterface.OnDism
         labelResendView.setOnClickListener(resendOnClickListener);
         imageResendView.setOnClickListener(resendOnClickListener);
 
+
+
+
         builder.setView(mView);
         dialog = builder.create();
 
         return dialog;
     }
 
+    public void startTimer()
+    {
+        timerCounter = 60;
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        timerCounter--;
+                        if (timerCounter > 0) {
+                            if(labelResendView != null)
+                                labelResendView.setText("You can request a new message in " + Integer.toString(timerCounter) + " seconds");
+                        }
+                        else {
+                            if(labelResendView != null)
+                                labelResendView.setText("Resend SMS");
+                            cancel();
+                        }
+                    }
+                });
+
+            }
+        }, 0, 1000);
+    }
+
     public void showError(String errorText)
     {
         EditText mCodeView = (EditText)mView.findViewById(R.id.code);
         mCodeView.setError(errorText);
+    }
+
+    public void setCode(String code)
+    {
+        ((EditText)mView.findViewById(R.id.code)).setText(code);
     }
     public void closeDialog()
     {

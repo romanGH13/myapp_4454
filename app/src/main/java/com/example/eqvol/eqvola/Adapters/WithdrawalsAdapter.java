@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.TextView;
 
+import com.example.eqvol.eqvola.Classes.Api;
 import com.example.eqvol.eqvola.Classes.Order;
 import com.example.eqvol.eqvola.Classes.Withdrawal;
 import com.example.eqvol.eqvola.MainActivity;
@@ -161,7 +162,11 @@ public class WithdrawalsAdapter extends RecyclerView.Adapter<WithdrawalsAdapter.
         return getOrderById(getItemId(position));
     }
 
-
+    public void UpdateData(List<Withdrawal> data)
+    {
+        withdrawals = data;
+        Collections.sort(withdrawals, this);
+    }
 
 
 

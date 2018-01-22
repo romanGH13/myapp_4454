@@ -2,9 +2,11 @@ package com.example.eqvol.eqvola.fragments.Registration;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatDelegate;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -12,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.eqvol.eqvola.Classes.AsyncHttpTask;
@@ -34,6 +37,8 @@ public class FirstStepFragment extends Fragment implements TextView.OnEditorActi
     private EditText mConfirmPasswordView;
     private EditText mPartnerCodeView;
 
+    private Drawable backgroundDrawable;
+
     String checkedEmail;
     boolean isClickNext;
     boolean isEmailAlreadyUse;
@@ -55,6 +60,9 @@ public class FirstStepFragment extends Fragment implements TextView.OnEditorActi
         isClickNext = false;
         isEmailAlreadyUse = true;
 
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
+        backgroundDrawable = getResources().getDrawable(R.drawable.rectangle);
+
     }
 
     @Override
@@ -67,6 +75,12 @@ public class FirstStepFragment extends Fragment implements TextView.OnEditorActi
         mPasswordView = (EditText) mView.findViewById(R.id.password);
         mConfirmPasswordView = (EditText) mView.findViewById(R.id.confirmPassword);
         mPartnerCodeView = (EditText) mView.findViewById(R.id.partnerCode);
+
+        mNameView.setBackground(backgroundDrawable);
+        mEmailView.setBackground(backgroundDrawable);
+        mPasswordView.setBackground(backgroundDrawable);
+        mConfirmPasswordView.setBackground(backgroundDrawable);
+        mPartnerCodeView.setBackground(backgroundDrawable);
 
         mNameView.setOnEditorActionListener(this);
         mNameView.setImeActionLabel("Next", EditorInfo.IME_ACTION_NEXT);

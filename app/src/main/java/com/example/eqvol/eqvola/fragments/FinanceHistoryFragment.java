@@ -48,8 +48,10 @@ public class FinanceHistoryFragment extends Fragment {
         params.put("where", json);
 
         AsyncHttpTask getDepositsTask = new AsyncHttpTask(params, AsyncMethodNames.GET_PAYMENTS, getActivity());
+        getDepositsTask.target = DepositsRecyclerFragment.class.toString();
         getDepositsTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         AsyncHttpTask getWithdrawalsTask = new AsyncHttpTask(params, AsyncMethodNames.GET_WITHDRAWAL, getActivity());
+        getWithdrawalsTask.target = WithdrawalsRecyclerFragment.class.toString();
         getWithdrawalsTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 

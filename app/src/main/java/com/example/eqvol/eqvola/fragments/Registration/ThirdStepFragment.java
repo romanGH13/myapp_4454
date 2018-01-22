@@ -1,8 +1,10 @@
 package com.example.eqvol.eqvola.fragments.Registration;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatDelegate;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,6 +27,8 @@ public class ThirdStepFragment extends Fragment implements TextView.OnEditorActi
     private EditText mStateView;
     private EditText mPostalCodeView;
 
+    private Drawable backgroundDrawable;
+
     public ThirdStepFragment() {
     }
 
@@ -37,7 +41,8 @@ public class ThirdStepFragment extends Fragment implements TextView.OnEditorActi
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
+        backgroundDrawable = getResources().getDrawable(R.drawable.rectangle);
     }
 
     @Override
@@ -49,6 +54,11 @@ public class ThirdStepFragment extends Fragment implements TextView.OnEditorActi
         mCityView = (EditText) mView.findViewById(R.id.city);
         mStateView = (EditText) mView.findViewById(R.id.state);
         mPostalCodeView = (EditText) mView.findViewById(R.id.postalCode);
+
+        mStreetView.setBackground(backgroundDrawable);
+        mCityView.setBackground(backgroundDrawable);
+        mStateView.setBackground(backgroundDrawable);
+        mPostalCodeView.setBackground(backgroundDrawable);
 
         mStreetView.setOnEditorActionListener(this);
         mStreetView.setImeActionLabel("Next", EditorInfo.IME_ACTION_NEXT);

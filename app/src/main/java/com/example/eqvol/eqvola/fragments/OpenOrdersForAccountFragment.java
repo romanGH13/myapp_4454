@@ -23,11 +23,12 @@ import com.example.eqvol.eqvola.R;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 
-public class OpenOrdersForAccountFragment extends Fragment {
+public class OpenOrdersFragment extends Fragment {
 
     public static boolean isNeedUpdate;
     private static View mView;
@@ -37,11 +38,11 @@ public class OpenOrdersForAccountFragment extends Fragment {
 
     private HashMap<String, Object> params;
 
-    public OpenOrdersForAccountFragment() {
+    public OpenOrdersFragment() {
     }
 
-    public static OpenOrdersForAccountFragment newInstance() {
-        OpenOrdersForAccountFragment fragment = new OpenOrdersForAccountFragment();
+    public static OpenOrdersFragment newInstance() {
+        OpenOrdersFragment fragment = new OpenOrdersFragment();
 
         return fragment;
     }
@@ -55,7 +56,7 @@ public class OpenOrdersForAccountFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        mView = inflater.inflate(R.layout.fragment_open_orders_for_account, container, false);
+        mView = inflater.inflate(R.layout.fragment_open_orders, container, false);
         list = (RecyclerView) mView.findViewById(R.id.open_orders_list);
 
         list.addItemDecoration(new SpaceItemDecoration(10, getContext()));
@@ -82,19 +83,21 @@ public class OpenOrdersForAccountFragment extends Fragment {
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-            HashMap<String, Object> where = new HashMap<String, Object>();
-            where.put("Login", accountId);
-            where.put("CloseTime", "1970-01-01 00:00:00");
+                HashMap<String, Object> where = new HashMap<String, Object>();
+                where.put("Login", accountId);
+                where.put("CloseTime", "1970-01-01 00:00:00");
 
-            Gson gson = new GsonBuilder().create();
+                Gson gson = new GsonBuilder().create();
 
-            HashMap<String, Object> params = new HashMap<String, Object>();
-            params.put("token", Api.getToken());
-            params.put("where", gson.toJson(where));
+                HashMap<String, Object> params = new HashMap<String, Object>();
+                params.put("token", Api.getToken());
+                params.put("where", gson.toJson(where));
 
-            AsyncHttpTask getOrdersTask = new AsyncHttpTask(params, AsyncMethodNames.GET_ACCOUNT_ORDERS, (Activity) mView.getContext());
-            getOrdersTask.target = OpenOrdersForAccountFragment.class.toString();
-            getOrdersTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+
+                AsyncHttpTask getOrdersTask = new AsyncHttpTask(params, AsyncMethodNames.GET_ACCOUNT_ORDERS, (Activity) mView.getContext());
+                getOrdersTask.target = OpenOrdersFragment.class.toString();
+                getOrdersTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+
             }
         });
 

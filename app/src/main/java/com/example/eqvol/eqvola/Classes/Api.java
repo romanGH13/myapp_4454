@@ -52,15 +52,18 @@ public class Api extends LoginActivity {
     public static List<Country> countries = null;
     public static List<Group> groups = null;
     public static List<Category> categories = null;
-    private static final String siteUrl = "http://api.eqvola.net/";
+    private static final String siteUrl = "http://api.cabinet.eqvola.info/";
     public static final String FILENAME = "eqvolaUserToken";
     public static List<Message> currentChatMessages;
     public static List<Withdrawal> withdrawals;
     public static List<Withdrawal> deposits;
     public static List<Transfer> transfers;
     public static Withdrawal currentOperation;
+    public static Order currentOrder;
     public static Account account;
     public static Ticket ticket;
+
+    public static List<Order> openOrders;
 
     public static FragmentLoader chatLoader = null;
 
@@ -103,6 +106,10 @@ public class Api extends LoginActivity {
     {
         return performPostCall(params, siteUrl+"account/resend_before_register");
     }
+    public static String approveEmail(Map<String, Object> params)
+    {
+        return performPostCall(params, siteUrl+"account/approve_email");
+    }
 
     public static String checkEmail(Map<String, Object> params)
     {
@@ -110,10 +117,7 @@ public class Api extends LoginActivity {
     }
 
     /*Метод для авторизации пользователя*/
-    public static String login(String email, String password) throws IOException {
-        HashMap<String, Object> params = new HashMap<String, Object>();
-        params.put("email", email);
-        params.put("password", password);
+    public static String login(Map<String, Object> params){
         return performPostCall(params, siteUrl+"account/login");
     }
 
@@ -124,6 +128,27 @@ public class Api extends LoginActivity {
         return performPostCall(params, siteUrl+"account/check_token");
     }
 
+    public static String getOrderUpdate(Map<String, Object> params)
+    {
+        return performPostCall(params, siteUrl+"mt4/trade/get");
+    }
+
+    public static String openOrder(Map<String, Object> params)
+    {
+        return performPostCall(params, siteUrl+"mt4/trade/open");
+    }
+    public static String closeOrder(Map<String, Object> params)
+    {
+        return performPostCall(params, siteUrl+"mt4/trade/close");
+    }
+    public static String updateOrder(Map<String, Object> params)
+    {
+        return performPostCall(params, siteUrl+"mt4/trade/update");
+    }
+    public static String deleteOrder(Map<String, Object> params)
+    {
+        return performPostCall(params, siteUrl+"mt4/trade/delete");
+    }
 
     public static String forgotPassword(Map<String, Object> params)
     {
@@ -237,7 +262,10 @@ public class Api extends LoginActivity {
         return performPostCall(params, siteUrl+"account/user/set");
     }
 
-
+    public static String getTradePairs(Map<String, Object> params)
+    {
+        return performPostCall(params, siteUrl+"mt4/trade/group");
+    }
 
     public static String getUser(int id, String token)
     {
@@ -276,11 +304,7 @@ public class Api extends LoginActivity {
 
     public static String userLogout(Map<String, Object> params)
     {
-        String str = performPostCall(params, siteUrl+"logout");
-        if(str == "")
-            return "logout";
-        else
-            return str;
+        return performPostCall(params, siteUrl+"account/logout");
     }
 
 

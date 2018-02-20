@@ -1,8 +1,6 @@
 package com.example.eqvol.eqvola.fragments;
 
 import android.app.Activity;
-import android.content.Context;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -13,23 +11,18 @@ import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
-import com.example.eqvol.eqvola.Adapters.OpenOrdersAdapter;
 import com.example.eqvol.eqvola.Adapters.TransferHistoryAdapter;
 import com.example.eqvol.eqvola.Classes.Api;
 import com.example.eqvol.eqvola.Classes.AsyncHttpTask;
 import com.example.eqvol.eqvola.Classes.AsyncMethodNames;
 import com.example.eqvol.eqvola.Classes.SpaceItemDecoration;
 import com.example.eqvol.eqvola.R;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 import java.util.HashMap;
 
@@ -41,14 +34,6 @@ public class TransfersHistoryFragment extends Fragment {
     private static EditText mSearchView;
     private static TransferHistoryAdapter adapter;
     private static SwipeRefreshLayout swipeRefreshLayout;
-
-
-    static float x;
-    static float y;
-    static String sDown;
-    static String sMove;
-    static String sUp;
-
 
     public TransfersHistoryFragment() {
         HashMap<String, Object> params = new HashMap<String, Object>();

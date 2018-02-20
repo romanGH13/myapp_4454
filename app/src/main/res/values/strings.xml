@@ -17,11 +17,23 @@
     <string name="prompt_birth_date">Birth date</string>
 
     <string name="account_was_created">Account was created.</string>
-    <string name="account_register_info">Thank you for registering. A confirmation letter has been sent to your email address.</string>
+    <string name="account_register_info">Thank you for registering. A confirmation letter has been sent to your email address. Input code or click the link in the email for confirm the email address.</string>
+    <string name="account_login_email_not_approved">Your email has not been confirmed. Input code or click the link in the email for confirm the email address.</string>
+
+    <string name="account_two_step_auth">Two step authentication! Pass your submit code!</string>
 
     <string name="registation_error">Error</string>
 
     <string name="label_next">Next</string>
+
+    <string name="navigation_my_accounts">My accounts</string>
+    <string name="navigation_create_account">Create account</string>
+    <string name="navigation_finance_history">Finance history</string>
+    <string name="navigation_transfers">My Transfers</string>
+    <string name="navigation_trader">Mobile trader</string>
+    <string name="navigation_support">Support</string>
+    <string name="navigation_menu">Menu</string>
+    <string name="nav_logout">Logout</string>
 
     <string name="action_reset">Reset</string>
     <string name="action_log_in">Login</string>
@@ -70,36 +82,9 @@
     <string name="support_create_ticket_send">Send</string>
 
     <string name="support_chat_message_send">Send</string>
+
     <string name="date_format">yyyy-MM-dd HH:mm:ss</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-
-    <string name="new_message_notification_title_template">New message: %1$s</string>
-
-    <!-- TODO: remove this placeholder text -->
-    <string name="new_message_notification_placeholder_text_template">You said %1$s and lorem ipsum
-        dolor sit amet, consectetur adipiscing elit. Etiam non enim magna. Morbi dictum, velit vel
-        semper venenatis, magna odio volutpat velit, at ullamcorper nulla lacus sed turpis.
-        Pellentesque vitae metus elit, nec tincidunt tellus. Integer sed nisl sem, ullamcorper
-        ornare lacus. Duis ac mauris sed massa congue volutpat. Donec sed erat sit amet turpis
-        viverra rhoncus sit amet nec magna. Donec lacinia ligula at libero volutpat volutpat nec nec
-        tortor.
-    </string>
-
-    <string name="action_share">Share</string>
-    <string name="action_reply">Reply</string>
-
-    <string name="my_notification_title_template">My: %1$s</string>
-
-    <!-- TODO: remove this placeholder text -->
-    <string name="my_notification_placeholder_text_template">You said %1$s and lorem ipsum dolor sit
-        amet, consectetur adipiscing elit. Etiam non enim magna. Morbi dictum, velit vel semper
-        venenatis, magna odio volutpat velit, at ullamcorper nulla lacus sed turpis. Pellentesque
-        vitae metus elit, nec tincidunt tellus. Integer sed nisl sem, ullamcorper ornare lacus. Duis
-        ac mauris sed massa congue volutpat. Donec sed erat sit amet turpis viverra rhoncus sit amet
-        nec magna. Donec lacinia ligula at libero volutpat volutpat nec nec tortor.
-    </string>
     <string name="title_activity_main">MainActivity</string>
     <string name="title_home">Home</string>
     <string name="title_my_accounts">My accounts</string>
@@ -108,6 +93,28 @@
     <string name="title_create_account">Create account</string>
     <string name="title_menu">Menu</string>
     <string name="title_logout">Logout</string>
+
+    <string name="create_order_bid">Bid</string>
+    <string name="create_order_ask">Ask</string>
+    <string name="create_order_sell">Sell</string>
+    <string name="create_order_buy">Buy</string>
+    <string name="create_order_set_an_order">Set an order</string>
+    <string name="create_order_stop_loss">Stop loss</string>
+    <string name="create_order_take_profit">Take profit</string>
+    <string name="create_order_comment">Comment</string>
+    <string name="create_order_volume">Volume</string>
+    <string name="create_order_balance">Balance</string>
+    <string name="create_order_price">Price</string>
+    <string name="create_order_expiration">Expiration</string>
+    <string name="create_order_marke_execution">Market execution</string>
+    <string name="create_order_deferred_order">Deferred order</string>
+
+    <string name="order_account_login">Account</string>
+    <string name="order_account_balance">Balance</string>
+    <string name="order_symbol">Symbol</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 
 </resources>

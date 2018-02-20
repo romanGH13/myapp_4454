@@ -4,8 +4,11 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
+import com.example.eqvol.eqvola.fragments.CreateOrderFragment;
 import com.example.eqvol.eqvola.fragments.DepositsRecyclerFragment;
+import com.example.eqvol.eqvola.fragments.OpenOrdersForAccountFragment;
 import com.example.eqvol.eqvola.fragments.OpenOrdersFragment;
+import com.example.eqvol.eqvola.fragments.QuotationsFragment;
 import com.example.eqvol.eqvola.fragments.RequestTransferFragment;
 import com.example.eqvol.eqvola.fragments.SupportChat;
 import com.example.eqvol.eqvola.fragments.SupportCreateTicket;
@@ -56,7 +59,7 @@ public class MyPagerAdapter extends FragmentStatePagerAdapter {
     public CharSequence getPageTitle(int position) {
         Fragment fragment = getItem(position);
 
-        if(fragment.getClass() == OpenOrdersFragment.class)
+        if(fragment.getClass() == OpenOrdersForAccountFragment.class || fragment.getClass() == OpenOrdersFragment.class )
         {
             return "Open Orders";
         }
@@ -87,6 +90,14 @@ public class MyPagerAdapter extends FragmentStatePagerAdapter {
         else if(fragment.getClass() == SupportChat.class)
         {
             return "Chat";
+        }
+        else if(fragment.getClass() == QuotationsFragment.class)
+        {
+            return "Quotations";
+        }
+        else if(fragment.getClass() == CreateOrderFragment.class)
+        {
+            return "Create order";
         }
 
         return "";

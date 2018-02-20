@@ -53,7 +53,7 @@ public class AccountOrdersFragment extends Fragment {
         FragmentManager f1 = ((AppCompatActivity)getContext()).getSupportFragmentManager();
 
         List<Fragment> fragments = new ArrayList<Fragment>();
-        fragments.add(OpenOrdersFragment.newInstance());
+        fragments.add(OpenOrdersForAccountFragment.newInstance());
         fragments.add(TradingHistoryFragment.newInstance());
 
         mViewPager = (ViewPager) mView.findViewById(R.id.account_orders_pager);

@@ -8,6 +8,7 @@ import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatDelegate;
@@ -19,7 +20,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.eqvol.eqvola.Adapters.RegistrationPagerAdapter;
+import com.example.eqvol.eqvola.Classes.FragmentLoader;
 import com.example.eqvol.eqvola.ForgotPasswordActivity;
+import com.example.eqvol.eqvola.MainActivity;
 import com.example.eqvol.eqvola.R;
 import com.example.eqvol.eqvola.RegistrationActivity;
 
@@ -31,13 +34,22 @@ public class ModalAlert extends DialogFragment implements DialogInterface.OnDism
     private boolean status;
     private String description;
     private Activity activity;
+    private String target;
 
     public ModalAlert(boolean status, String descripton) {
         // Required empty public constructor
         this.status = status;
         this.description = descripton;
         this.activity = null;
+        this.target = "";
+    }
 
+    public ModalAlert(boolean status, String descripton, Activity activity, String target) {
+        // Required empty public constructor
+        this.status = status;
+        this.description = descripton;
+        this.activity = activity;
+        this.target = target;
     }
 
     public ModalAlert(boolean status, String descripton, Activity activity) {
@@ -45,6 +57,7 @@ public class ModalAlert extends DialogFragment implements DialogInterface.OnDism
         this.status = status;
         this.description = descripton;
         this.activity = activity;
+        this.target = "";
     }
 
 
@@ -87,6 +100,12 @@ public class ModalAlert extends DialogFragment implements DialogInterface.OnDism
                             ((ForgotPasswordActivity) activity).backToLogin(null);
                         }
                     }
+                }
+                if(!target.contentEquals(""))
+                {
+                    FragmentLoader fl = new FragmentLoader(MobileTraderFragment.class, ((MainActivity)(activity)).getSupportFragmentManager(), R.id.container, false);
+                    fl.startLoading();
+                    MainActivity.currentLoader = fl;
                 }
                 dialog.dismiss();
             }

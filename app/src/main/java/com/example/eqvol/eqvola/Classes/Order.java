@@ -14,7 +14,7 @@ public class Order {
     private int Volume;
     private double OpenPrice;
     private double ClosePrice;
-    private double SI;
+    private double Sl;
     private double Tp;
     private double ConversionRateOpen;
     private double ConversionRateClose;
@@ -103,12 +103,12 @@ public class Order {
         ClosePrice = closePrice;
     }
 
-    public double getSI() {
-        return SI;
+    public double getSl() {
+        return Sl;
     }
 
-    public void setSI(double SI) {
-        this.SI = SI;
+    public void setSl(double Sl) {
+        this.Sl = Sl;
     }
 
     public double getTp() {

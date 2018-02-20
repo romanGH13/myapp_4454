@@ -70,25 +70,33 @@ public class MessagesAdapter  extends BaseAdapter {
 
     public Message getMessageById(int id)
     {
-        for(Message m: messages){
-            if(m.getId() == id){
-                return m;
+        if(messages != null) {
+            for (Message m : messages) {
+                if (m.getId() == id) {
+                    return m;
+                }
             }
         }
         return null;
     }
     @Override
     public int getCount() {
+        if(messages == null)
+            return 0;
         return messages.size();
     }
 
     @Override
     public Message getItem(int position) {
+        if(messages == null)
+            return null;
         return messages.get(position);
     }
 
     @Override
     public long getItemId(int position) {
+        if(messages == null)
+            return 0;
         return messages.get(position).getId();
     }
 
@@ -102,7 +110,10 @@ public class MessagesAdapter  extends BaseAdapter {
         Bitmap bitmap = null;
         byte[] avatar = null;
         User user = null;
-
+        if(message == null)
+        {
+            return null;
+        }
         if(message.getUser().getId() == Api.user.getId()) {
             convertView = lInflater.inflate(R.layout.chat_message_right_item, null);
         }

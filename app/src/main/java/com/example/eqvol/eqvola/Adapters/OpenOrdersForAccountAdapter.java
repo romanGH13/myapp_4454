@@ -1,13 +1,11 @@
 package com.example.eqvol.eqvola.Adapters;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.eqvol.eqvola.Classes.Api;
@@ -21,29 +19,28 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by eqvol on 27.12.2017.
  */
 
-public class OpenOrdersAdapter extends RecyclerView.Adapter<OpenOrdersAdapter.OpenOrdersViewHolder> implements Comparator<Order> {
+public class OpenOrdersForAccountAdapter extends RecyclerView.Adapter<OpenOrdersForAccountAdapter.OpenOrdersViewHolder> implements Comparator<Order> {
 
     Context ctx;
     LayoutInflater lInflater;
     //List<Order> orders;
 
-    private OpenOrdersAdapter.OnItemClickListener mOnItemClickListener;
+    private OpenOrdersForAccountAdapter.OnItemClickListener mOnItemClickListener;
 
     public interface OnItemClickListener {
         public void onItemClick(View view, int position);
     }
 
-    public void setOnCLickListener(OpenOrdersAdapter.OnItemClickListener onItemClickListener) {
+    public void setOnCLickListener(OpenOrdersForAccountAdapter.OnItemClickListener onItemClickListener) {
         this.mOnItemClickListener = onItemClickListener;
     }
 
-    public OpenOrdersAdapter(@NonNull Context context) {
+    public OpenOrdersForAccountAdapter(@NonNull Context context) {
         this.ctx = context;
         //this.orders = orders;
         Collections.sort(Api.account.openOrders, this);
@@ -54,6 +51,7 @@ public class OpenOrdersAdapter extends RecyclerView.Adapter<OpenOrdersAdapter.Op
     public static class OpenOrdersViewHolder extends RecyclerView.ViewHolder {
         RecyclerView rv;
         TextView mOrderView;
+        TextView mOrderTypeView;
         TextView mCurrencyPairView;
         TextView mOpenPriceView;
         TextView mCurrentPriceView;
@@ -66,6 +64,7 @@ public class OpenOrdersAdapter extends RecyclerView.Adapter<OpenOrdersAdapter.Op
             container = itemView;
             rv = (RecyclerView) itemView.findViewById(R.id.open_orders_list);
             mOrderView = ((TextView) itemView.findViewById(R.id.order));
+            mOrderTypeView = ((TextView) itemView.findViewById(R.id.orderType));
             mCurrencyPairView = ((TextView) itemView.findViewById(R.id.currencyPair));
             mOpenPriceView = ((TextView) itemView.findViewById(R.id.openPrice));
             mCurrentPriceView = ((TextView) itemView.findViewById(R.id.currentPrice));
@@ -90,14 +89,18 @@ public class OpenOrdersAdapter extends RecyclerView.Adapter<OpenOrdersAdapter.Op
     }
 
     @Override
-    public void onBindViewHolder(OpenOrdersAdapter.OpenOrdersViewHolder holder, final int position) {
+    public void onBindViewHolder(OpenOrdersForAccountAdapter.OpenOrdersViewHolder holder, final int position) {
 
-        double openPrice = Api.account.openOrders.get(position).getOpenPrice();
-        double currentPrice = Api.account.openOrders.get(position).getClosePrice();
-        double profit = Api.account.openOrders.get(position).getProfit();
+        Order order = Api.account.openOrders.get(position);
 
-        holder.mOrderView.setText("Order #" + Integer.toString(Api.account.openOrders.get(position).getOrder()));
-        holder.mCurrencyPairView.setText(Api.account.openOrders.get(position).getSymbol());
+        double openPrice =order.getOpenPrice();
+        double currentPrice = order.getClosePrice();
+        double profit = order.getProfit();
+        String type = order.getCmd();
+
+        holder.mOrderView.setText("Order #" + Integer.toString(order.getOrder()));
+        holder.mOrderTypeView.setText(type);
+        holder.mCurrencyPairView.setText(order.getSymbol());
         holder.mOpenPriceView.setText(Double.toString(openPrice));
         holder.mCurrentPriceView.setText(Double.toString(currentPrice));
         holder.mProfitView.setText(Double.toString(profit));

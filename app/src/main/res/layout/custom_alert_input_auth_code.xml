@@ -58,7 +58,7 @@
         style="?android:textAppearanceSmall"
         android:background="@drawable/rectangle"
         android:fontFamily="Roboto"
-        android:text="Approve"
+        android:text="Login"
         android:textColor="@color/colorWhite"
         android:textSize="@dimen/text_size"
         android:textStyle="bold"

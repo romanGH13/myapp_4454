@@ -112,7 +112,17 @@ public class SupportChat extends Fragment {
     {
         try {
             for (Ticket t : tickets) {
-                User u = t.getMessage().getUser();
+                Message message = t.getMessage();
+                User u = null;
+                if(message == null)
+                {
+                    u = t.getUser();
+                }
+                else
+                {
+                    u = t.getMessage().getUser();
+                }
+
                 if (!isUserContains(u.getId())) {
                     users.add(u);
                 }
@@ -195,8 +205,15 @@ public class SupportChat extends Fragment {
                 Ticket ticket = adapter.getTicketById(adapter.getItemId(position));
                 currentTicketId = ticket.getId();
                 title = ticket.getTitle();
-                currentTicketLastMessageId = ticket.getMessage().getId();
+
                 Api.ticket = ticket;
+
+                if(ticket.getMessage() == null)
+                {
+                    Api.currentChatMessages = null;
+                    goToChatActivity();
+                    return;
+                }
 
                 Gson gson = new GsonBuilder().create();
                 HashMap<String, Object> mapUserId = new HashMap<String, Object>();
@@ -226,11 +243,16 @@ public class SupportChat extends Fragment {
         try {
             int last_message_id = 0;
 
-            for (Ticket t : tickets) {
-                int message_id = t.getMessage().getId();
-                if (message_id > last_message_id) {
-                    last_message_id = message_id;
+            try {
+                for (Ticket t : tickets) {
+                    int message_id = t.getMessage().getId();
+                    if (message_id > last_message_id) {
+                        last_message_id = message_id;
+                    }
                 }
+            } catch(Exception ex)
+            {
+
             }
             return last_message_id;
         }
@@ -306,7 +328,15 @@ public class SupportChat extends Fragment {
             ((TicketsAdapter) (mRecyclerView.getAdapter())).notifyDataSetChanged();
             if(ChatActivity.isActive){
                 if(ChatActivity.ticket_id == newMessages.get(0).getTicket().getId()){
-                    ChatActivity.addNewMessages(newMessages);
+                    if(newMessages != null) {
+                        for (Message m : newMessages) {
+                            if (ChatActivity.isMessageContains(m)) {
+                                newMessages.remove(m);
+                            }
+
+                        }
+                        ChatActivity.addNewMessages(newMessages);
+                    }
                 }
             }
         }
@@ -329,7 +359,7 @@ public class SupportChat extends Fragment {
         Intent intent = new Intent(mView.getContext(), ChatActivity.class);
         intent.putExtra("ticket_id", currentTicketId);
         intent.putExtra("title", title);
-        intent.putExtra("last_message_id", currentTicketLastMessageId);
+        //intent.putExtra("last_message_id", currentTicketLastMessageId);
         mView.getContext().startActivity(intent);
     }
 

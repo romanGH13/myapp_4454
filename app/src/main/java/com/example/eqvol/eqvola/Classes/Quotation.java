@@ -11,7 +11,9 @@ public class Quotation {
     private double Ask;
     private String Direction;
     private double Spread;
-    private int digits;
+    private int Digits;
+
+
 
     public String getSymbol() {
         return Symbol;
@@ -54,10 +56,10 @@ public class Quotation {
     }
 
     public int getDigits() {
-        return digits;
+        return Digits;
     }
 
     public void setDigits(int digits) {
-        this.digits = digits;
+        this.Digits = digits;
     }
 }

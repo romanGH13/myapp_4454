@@ -10,9 +10,10 @@
     <!---->
 
     <color name="colorMenuBackground">#202334</color>
+    <color name="colorNavHeaderBackground">#46747474</color>
 
     <color name="colorMain">#00B2F0</color>
-    <color name="colorRed">#ff0000</color>
+    <color name="colorRed">#801c1c</color>
     <color name="colorPrev">#1c61ae</color>
     <color name="colorNext">#00bfbf</color>
     <color name="colorRegister">#f78f00</color>

@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import com.example.eqvol.eqvola.Adapters.OpenOrdersAdapter;
+import com.example.eqvol.eqvola.Adapters.OpenOrdersForAccountAdapter;
 import com.example.eqvol.eqvola.Classes.Api;
 import com.example.eqvol.eqvola.Classes.AsyncHttpTask;
 import com.example.eqvol.eqvola.Classes.AsyncMethodNames;
@@ -27,21 +28,20 @@ import java.util.HashMap;
 import java.util.List;
 
 
-public class OpenOrdersForAccountFragment extends Fragment {
+public class OpenOrdersFragment extends Fragment {
 
     public static boolean isNeedUpdate;
     private static View mView;
     private static RecyclerView list;
-    public static int accountId;
     private static SwipeRefreshLayout swipeRefreshLayout;
 
     private HashMap<String, Object> params;
 
-    public OpenOrdersForAccountFragment() {
+    public OpenOrdersFragment() {
     }
 
-    public static OpenOrdersForAccountFragment newInstance() {
-        OpenOrdersForAccountFragment fragment = new OpenOrdersForAccountFragment();
+    public static OpenOrdersFragment newInstance() {
+        OpenOrdersFragment fragment = new OpenOrdersFragment();
 
         return fragment;
     }
@@ -63,10 +63,7 @@ public class OpenOrdersForAccountFragment extends Fragment {
 
         setList();
 
-        accountId = Api.account.getLogin();
-
         HashMap<String, Object> where = new HashMap<String, Object>();
-        where.put("Login", accountId);
         where.put("CloseTime", "1970-01-01 00:00:00");
 
         Gson gson = new GsonBuilder().create();
@@ -76,6 +73,7 @@ public class OpenOrdersForAccountFragment extends Fragment {
         params.put("where", gson.toJson(where));
 
         AsyncHttpTask getOrdersTask = new AsyncHttpTask(params, AsyncMethodNames.UPDATE_ACCOUNT_ORDERS, (Activity) mView.getContext());
+        getOrdersTask.target = OpenOrdersFragment.class.toString();
         getOrdersTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
         swipeRefreshLayout = (SwipeRefreshLayout)mView.findViewById(R.id.open_orders_swipe_refresh);
@@ -83,7 +81,6 @@ public class OpenOrdersForAccountFragment extends Fragment {
             @Override
             public void onRefresh() {
             HashMap<String, Object> where = new HashMap<String, Object>();
-            where.put("Login", accountId);
             where.put("CloseTime", "1970-01-01 00:00:00");
 
             Gson gson = new GsonBuilder().create();
@@ -93,7 +90,7 @@ public class OpenOrdersForAccountFragment extends Fragment {
             params.put("where", gson.toJson(where));
 
             AsyncHttpTask getOrdersTask = new AsyncHttpTask(params, AsyncMethodNames.GET_ACCOUNT_ORDERS, (Activity) mView.getContext());
-            getOrdersTask.target = OpenOrdersForAccountFragment.class.toString();
+            getOrdersTask.target = OpenOrdersFragment.class.toString();
             getOrdersTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             }
         });

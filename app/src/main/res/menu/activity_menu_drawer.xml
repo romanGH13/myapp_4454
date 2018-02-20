@@ -5,26 +5,30 @@
         <item
             android:id="@+id/navigation_my_accounts"
             android:icon="@drawable/ic_menu_archive"
-            android:title="My accounts" />
+            android:title="@string/navigation_my_accounts" />
         <item
             android:id="@+id/navigation_create_account"
             android:icon="@drawable/ic_menu_add_account"
-            android:title="Create account" />
+            android:title="@string/create_account" />
         <item
             android:id="@+id/navigation_finance_history"
             android:icon="@drawable/ic_menu_wallet"
-            android:title="Finance history" />
+            android:title="@string/navigation_finance_history" />
         <item
             android:id="@+id/navigation_transfers"
-            android:icon="@drawable/ic_menu_share"
-            android:title="Transfers" />
+            android:icon="@drawable/ic_transfers"
+            android:title="@string/navigation_transfers" />
+        <item
+            android:id="@+id/navigation_trader"
+            android:icon="@drawable/ic_trader"
+            android:title="@string/navigation_trader" />
         <item
             android:id="@+id/navigation_support"
             android:icon="@drawable/ic_menu_help"
-            android:title="Support" />
+            android:title="@string/navigation_support" />
         <item
             android:id="@+id/nav_logout"
             android:icon="@drawable/ic_menu_logout"
-            android:title="Logout" />
+            android:title="@string/nav_logout" />
     </group>
 </menu>

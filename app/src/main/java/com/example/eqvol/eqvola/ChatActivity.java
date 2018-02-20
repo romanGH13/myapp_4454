@@ -2,6 +2,7 @@ package com.example.eqvol.eqvola;
 
 import android.app.Activity;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -41,9 +42,10 @@ import java.util.List;
 
 public class ChatActivity extends AppCompatActivity {
 
+    private static Activity activity;
     private static EditText input = null;
     public static int ticket_id;
-    public int last_message_id;
+    //public int last_message_id;
     public String title;
     public static Ticket ticket;
     public static List<Message> messages;
@@ -60,18 +62,17 @@ public class ChatActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
         input = (EditText)findViewById(R.id.chat_message_text);
-
+        activity = this;
         Intent intent = getIntent();
         ticket_id = intent.getIntExtra("ticket_id", 0);
         title = intent.getStringExtra("title");
-        last_message_id = intent.getIntExtra("last_message_id", 0);
+        //last_message_id = intent.getIntExtra("last_message_id", 0);
         ticket = Api.ticket;
 
         SupportChat.images = new HashMap<Integer, Bitmap>();
         messages = Api.currentChatMessages;
-        setTitle(messages.get(0).getTicket().getTitle());
+        setTitle(title);
 
-        if(ticket_id == -1 || last_message_id == -1) finish();
 
         checkUsersAvatar();
 
@@ -102,6 +103,12 @@ public class ChatActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    public static void load()
+    {
+        messages = Api.currentChatMessages;
+        checkUsersAvatar();
     }
 
     private void closeTicket()
@@ -149,25 +156,39 @@ public class ChatActivity extends AppCompatActivity {
         return true;
     }
 
-    public void checkUsersAvatar()
+    public static void checkUsersAvatar()
     {
-        for(Message m: messages){
-            if(!isUserContains(m.getUser().getId())){
-                User user = m.getUser();
+        if(messages == null)
+        {
+            User user = ticket.getUser();
+            if(!isUserContains(user.getId())) {
                 SupportChat.users.add(user);
-
                 HashMap<String, Object> parametrs = new HashMap<String, Object>();
                 parametrs.put("user", user);
 
-                AsyncHttpTask getUserTask = new AsyncHttpTask(parametrs, AsyncMethodNames.GET_USER_AVATAR, this);
+                AsyncHttpTask getUserTask = new AsyncHttpTask(parametrs, AsyncMethodNames.GET_USER_AVATAR, activity);
                 getUserTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             }
         }
-        AsyncHttpTask getUserTask = new AsyncHttpTask(null, AsyncMethodNames.WAIT_AVATAR_LOADING, this);
+        else {
+            for (Message m : messages) {
+                if (!isUserContains(m.getUser().getId())) {
+                    User user = m.getUser();
+                    SupportChat.users.add(user);
+
+                    HashMap<String, Object> parametrs = new HashMap<String, Object>();
+                    parametrs.put("user", user);
+
+                    AsyncHttpTask getUserTask = new AsyncHttpTask(parametrs, AsyncMethodNames.GET_USER_AVATAR, activity);
+                    getUserTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                }
+            }
+        }
+        AsyncHttpTask getUserTask = new AsyncHttpTask(null, AsyncMethodNames.WAIT_AVATAR_LOADING, activity);
         getUserTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
-    private boolean isUserContains(int id){
+    private static boolean isUserContains(int id){
         for(User u: SupportChat.users){
             if(u.getId() == id)
             {
@@ -196,6 +217,20 @@ public class ChatActivity extends AppCompatActivity {
         lvMessages.setAdapter(adapter);
         isActive = true;
         lvMessages.setSelection(lvMessages.getCount()-1);
+    }
+
+    public static boolean isMessageContains(Message message)
+    {
+        if(messages == null)
+            return false;
+        for(Message m: messages)
+        {
+            if(m.getId() == message.getId())
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     public static void addNewMessages(List<Message> newMessages)

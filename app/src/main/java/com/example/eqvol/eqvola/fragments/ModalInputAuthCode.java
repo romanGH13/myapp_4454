@@ -15,7 +15,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.eqvol.eqvola.LoginActivity;
@@ -23,10 +22,9 @@ import com.example.eqvol.eqvola.R;
 import com.example.eqvol.eqvola.RegistrationActivity;
 
 import java.util.Timer;
-import java.util.TimerTask;
 
 
-public class ModalApproveEmail extends DialogFragment implements DialogInterface.OnDismissListener {
+public class ModalInputAuthCode extends DialogFragment implements DialogInterface.OnDismissListener {
 
     private Dialog dialog;
     private View mView = null;
@@ -43,15 +41,15 @@ public class ModalApproveEmail extends DialogFragment implements DialogInterface
         this.activity = null;
     }*/
 
-    public ModalApproveEmail(String descripton, Activity activity) {
+    public ModalInputAuthCode(String descripton, Activity activity) {
         this.description = descripton;
         this.activity = activity;
     }
 
 
 
-    public static ModalApproveEmail newInstance(String descripton, Activity activity) {
-        ModalApproveEmail fragment = new ModalApproveEmail(descripton, activity);
+    public static ModalInputAuthCode newInstance(String descripton, Activity activity) {
+        ModalInputAuthCode fragment = new ModalInputAuthCode(descripton, activity);
 
         return fragment;
     }
@@ -62,7 +60,7 @@ public class ModalApproveEmail extends DialogFragment implements DialogInterface
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = getActivity().getLayoutInflater();
-        mView = inflater.inflate(R.layout.custom_alert_approve_email, null);
+        mView = inflater.inflate(R.layout.custom_alert_input_auth_code, null);
         TextView text = (TextView)mView.findViewById(R.id.alertText);
         final EditText code = (EditText)mView.findViewById(R.id.code);
         Button btn = (Button)mView.findViewById(R.id.alertBtn);
@@ -73,12 +71,9 @@ public class ModalApproveEmail extends DialogFragment implements DialogInterface
             @Override
             public void onClick(View v) {
             if(activity != null) {
-                if (activity.getClass() == RegistrationActivity.class) {
-                    ((RegistrationActivity)activity).approveEmail(code.getText().toString());
-                }
-                else if(activity.getClass() == LoginActivity.class)
+                if(activity.getClass() == LoginActivity.class)
                 {
-                    ((LoginActivity)activity).approveEmail(code.getText().toString());
+                    ((LoginActivity)activity).attemptLoginWithAuthCode(code.getText().toString());
                 }
             }
             }
@@ -90,11 +85,8 @@ public class ModalApproveEmail extends DialogFragment implements DialogInterface
         btnClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(activity.getClass() == RegistrationActivity.class) {
-                    ((RegistrationActivity) activity).goToLogin();
-                    dialog.dismiss();
-                }
-                else if(activity.getClass() == LoginActivity.class)
+
+                if(activity.getClass() == LoginActivity.class)
                 {
                     dialog.dismiss();
                 }

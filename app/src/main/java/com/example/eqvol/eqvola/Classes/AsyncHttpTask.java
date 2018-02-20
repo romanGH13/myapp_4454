@@ -1,18 +1,13 @@
 package com.example.eqvol.eqvola.Classes;
 
 import android.app.Activity;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
-import android.view.View;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.eqvol.eqvola.Adapters.MessagesAdapter;
 import com.example.eqvol.eqvola.ChatActivity;
 import com.example.eqvol.eqvola.ForgotPasswordActivity;
 import com.example.eqvol.eqvola.JsonResponse.JsonResponceCountries;
-import com.example.eqvol.eqvola.JsonResponse.JsonResponse;
 import com.example.eqvol.eqvola.JsonResponse.JsonResponseAccounts;
 import com.example.eqvol.eqvola.JsonResponse.JsonResponseCategories;
 import com.example.eqvol.eqvola.JsonResponse.JsonResponseGroups;
@@ -28,11 +23,16 @@ import com.example.eqvol.eqvola.R;
 import com.example.eqvol.eqvola.RegistrationActivity;
 import com.example.eqvol.eqvola.fragments.AccountOrdersFragment;
 import com.example.eqvol.eqvola.fragments.CreateAccount;
+import com.example.eqvol.eqvola.fragments.CreateOrderFragment;
 import com.example.eqvol.eqvola.fragments.DepositsRecyclerFragment;
 import com.example.eqvol.eqvola.fragments.FinanceHistoryFragment;
 import com.example.eqvol.eqvola.fragments.MenuFragment;
+import com.example.eqvol.eqvola.fragments.MobileTraderFragment;
+import com.example.eqvol.eqvola.fragments.ModalInput;
 import com.example.eqvol.eqvola.fragments.MyAccounts;
+import com.example.eqvol.eqvola.fragments.OpenOrdersForAccountFragment;
 import com.example.eqvol.eqvola.fragments.OpenOrdersFragment;
+import com.example.eqvol.eqvola.fragments.OrderFragment;
 import com.example.eqvol.eqvola.fragments.RequestTransferFragment;
 import com.example.eqvol.eqvola.fragments.Support;
 import com.example.eqvol.eqvola.fragments.SupportChat;
@@ -45,13 +45,13 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.internal.LinkedTreeMap;
 
+
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
 /**
  * Created by eqvol on 18.10.2017.
@@ -77,7 +77,7 @@ public class AsyncHttpTask extends AsyncTask<Void, Void, String> {
         String response = null;
 
         if(methodName == AsyncMethodNames.USER_LOGIN){
-            String email = "";
+            /*String email = "";
             String password = "";
             for (Map.Entry<String, Object> entry : parametrs.entrySet()) {
                 if (entry.getKey().contentEquals("email"))
@@ -89,7 +89,9 @@ public class AsyncHttpTask extends AsyncTask<Void, Void, String> {
                 response = Api.login(email, password);
             } catch (IOException e) {
 
-            }
+            }*/
+            response = Api.login(parametrs);
+
         }
         else if(methodName == AsyncMethodNames.USER_REGISTRATION){
             response = Api.registration(parametrs);
@@ -103,7 +105,10 @@ public class AsyncHttpTask extends AsyncTask<Void, Void, String> {
         else if(methodName == AsyncMethodNames.USER_RESEND_BEFORE_REGISTRATION) {
             response = Api.resendBeforeRegistration(parametrs);
         }
-
+        else if(methodName == AsyncMethodNames.APPROVE_EMAIL)
+        {
+            response = Api.approveEmail(parametrs);
+        }
         else if (methodName == AsyncMethodNames.SET_USER_AVATAR) {
             response = Api.setUserAvatar(parametrs);
         }
@@ -194,7 +199,9 @@ public class AsyncHttpTask extends AsyncTask<Void, Void, String> {
         }
         else if (methodName == AsyncMethodNames.GET_TICKET_MESSAGES)
         {
+            //SupportChat.goToChatActivity();
             response = Api.getTicketMessages(parametrs);
+
         }
         else if (methodName == AsyncMethodNames.GET_NEW_MESSAGE)
         {
@@ -236,6 +243,14 @@ public class AsyncHttpTask extends AsyncTask<Void, Void, String> {
             }
             response = Api.getAccountOrders(parametrs);
         }
+        else if (methodName == AsyncMethodNames.GET_ORDER_UPDATE) {
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            response = Api.getOrderUpdate(parametrs);
+        }
         else if (methodName == AsyncMethodNames.GET_PAYMENTS) {
             response = Api.getPayments(parametrs);
         }
@@ -261,6 +276,26 @@ public class AsyncHttpTask extends AsyncTask<Void, Void, String> {
         else if (methodName == AsyncMethodNames.FORGOT_PASSWORD)
         {
             response = Api.forgotPassword(parametrs);
+        }
+        else if (methodName == AsyncMethodNames.OPEN_ORDER)
+        {
+            response = Api.openOrder(parametrs);
+        }
+        else if (methodName == AsyncMethodNames.GET_TRADE_PAIRS)
+        {
+            response = Api.getTradePairs(parametrs);
+        }
+        else if (methodName == AsyncMethodNames.CLOSE_ORDER)
+        {
+            response = Api.closeOrder(parametrs);
+        }
+        else if (methodName == AsyncMethodNames.UPDATE_ORDER)
+        {
+            response = Api.updateOrder(parametrs);
+        }
+        else if (methodName == AsyncMethodNames.DELETE_ORDER)
+        {
+            response = Api.deleteOrder(parametrs);
         }
         return response;
     }
@@ -291,8 +326,7 @@ public class AsyncHttpTask extends AsyncTask<Void, Void, String> {
             for (Map.Entry<String, Object> response : map.entrySet()) {
                 if (response.getKey().contentEquals("status")) {
                     if(response.getValue().toString().contentEquals("success")){
-                        //((RegistrationActivity)act).goToLogin();
-                        ((RegistrationActivity)act).showDialog(true, act.getString(R.string.account_register_info));
+                        ((RegistrationActivity)act).inputCodeDialog(act.getString(R.string.account_register_info));
                     }
 
                 }
@@ -377,6 +411,36 @@ public class AsyncHttpTask extends AsyncTask<Void, Void, String> {
             String str = "";
             ((RegistrationActivity)act).startTimer();
 
+        }
+        else if(methodName == AsyncMethodNames.APPROVE_EMAIL)
+        {
+            Map<String, Object> map = Api.jsonToMap(success);
+            for (Map.Entry<String, Object> response : map.entrySet()) {
+
+                if (response.getKey().toString().contentEquals("status")) {
+
+                    if (response.getValue().toString().contentEquals("success")) {
+                        if(act.getClass() == RegistrationActivity.class)
+                        {
+                            ((RegistrationActivity) act).emailApproved();
+                        }
+                        else if(act.getClass() == LoginActivity.class) {
+                            ((LoginActivity) act).emailApproved();
+                        }
+                    }
+                    else
+                    {
+                        if(act.getClass() == RegistrationActivity.class)
+                        {
+                            ((RegistrationActivity) act).wrongApproveCode();
+                        }
+                        else if(act.getClass() == LoginActivity.class) {
+                            ((LoginActivity) act).wrongApproveCode();
+                        }
+
+                    }
+                }
+            }
         }
         else if (methodName == AsyncMethodNames.CHECK_TOKEN) {
             Map<String, Object> map = Api.jsonToMap(success);
@@ -513,6 +577,21 @@ public class AsyncHttpTask extends AsyncTask<Void, Void, String> {
                 AsyncHttpTask ckeckTokenTask = new AsyncHttpTask(parametrs, AsyncMethodNames.CHECK_TOKEN, act);
                 ckeckTokenTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             }
+            else if(errorCode == 3 && errorDescription.contains("Email approve does not exist!"))
+            {
+                ((LoginActivity) act).showProgress(false);
+                ((LoginActivity) act).inputCodeDialog(act.getString(R.string.account_login_email_not_approved));
+            }
+            else if(errorDescription.contains("Verification code does not exist"))
+            {
+                ((LoginActivity) act).showProgress(false);
+                ((LoginActivity) act).twoStepDialog(act.getString(R.string.account_two_step_auth));
+            }
+            else if(errorDescription.contains("Verification code is incorrect"))
+            {
+                ((LoginActivity) act).showProgress(false);
+                ((LoginActivity) act).wrongTwoStepCode();
+            }
             else if(errorCode != -1 && errorDescription != null){
                 ((LoginActivity) act).showProgress(false);
                 ((LoginActivity) act).showDialog(false, errorDescription);
@@ -605,6 +684,7 @@ public class AsyncHttpTask extends AsyncTask<Void, Void, String> {
         }
         else if (methodName == AsyncMethodNames.GET_ACCOUNTS)
         {
+            Map<String, Object> map = Api.jsonToMap(success);
             Api.user.accounts = JsonResponseAccounts.getAccounts(success);
             if(MainActivity.currentLoader.fragment.getClass() == MyAccounts.class) {
                 if(target.contentEquals(MyAccounts.class.toString())) {
@@ -614,8 +694,15 @@ public class AsyncHttpTask extends AsyncTask<Void, Void, String> {
                     MyAccounts.updateAccounts(Api.user.accounts);
                 }
             }
-            if(MainActivity.currentLoader.fragment.getClass() == TransfersFragment.class) {
+            else if(MainActivity.currentLoader.fragment.getClass() == TransfersFragment.class) {
                 MainActivity.currentLoader.endLoading();
+            }
+            else if(MainActivity.currentLoader.fragment.getClass() == MobileTraderFragment.class)
+            {
+                MobileTraderFragment.isAccountsLoaded = true;
+                if(MobileTraderFragment.isOrderLoaded && MobileTraderFragment.isAccountsLoaded) {
+                    MainActivity.currentLoader.endLoading();
+                }
             }
 
         }
@@ -774,9 +861,24 @@ public class AsyncHttpTask extends AsyncTask<Void, Void, String> {
             getUserTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
         else if (methodName == AsyncMethodNames.GET_TICKET_MESSAGES) {
-            Api.currentChatMessages = JsonResponseTicketMessages.getMessages(success);
             Map<String, Object> map = Api.jsonToMap(success);
-            SupportChat.goToChatActivity();
+            for (Map.Entry<String, Object> response : map.entrySet()) {
+                if (response.getKey().contentEquals("status")) {
+                    if (response.getValue().toString().contentEquals("success")) {
+                        Api.currentChatMessages = JsonResponseTicketMessages.getMessages(success);
+                        //ChatActivity.load();
+                        SupportChat.goToChatActivity();
+                    }
+                    else
+                    {
+                        Api.currentChatMessages = null;
+
+                    }
+                }
+            }
+            /*Api.currentChatMessages = JsonResponseTicketMessages.getMessages(success);
+
+            SupportChat.goToChatActivity();*/
         }
 
         else if (methodName == AsyncMethodNames.GET_NEW_MESSAGE) {
@@ -834,39 +936,40 @@ public class AsyncHttpTask extends AsyncTask<Void, Void, String> {
         else if (methodName == AsyncMethodNames.GET_ACCOUNT_ORDERS) {
             List<Order> orders = JsonResponseOrders.getOrders(success);
 
+            Api.openOrders = new ArrayList<Order>();
+
             if (MainActivity.currentLoader.fragment.getClass() == AccountOrdersFragment.class) {
                 if(target.contentEquals(TransfersHistoryFragment.class.toString()))
                 {
-
                     Api.account.closeOrders = new ArrayList<Order>();
                     for(Order o: orders)
                     {
-                        if (o.getCmd().contentEquals("Sell") || o.getCmd().contentEquals("Buy")) {
+                        if (o.getCmd().contains("Sell") || o.getCmd().contains("Buy")) {
                             if (!o.getCloseTime().contentEquals("1970-01-01 00:00:00"))
                                 Api.account.closeOrders.add(o);
                         }
                     }
                     TradingHistoryFragment.updateList(Api.account.closeOrders);
                 }
-                else if(target.contentEquals(OpenOrdersFragment.class.toString()))
+                else if(target.contentEquals(OpenOrdersForAccountFragment.class.toString()))
                 {
 
                     Api.account.openOrders = new ArrayList<Order>();
                     for(Order o: orders)
                     {
-                        if (o.getCmd().contentEquals("Sell") || o.getCmd().contentEquals("Buy")) {
+                        if (o.getCmd().contains("Sell") || o.getCmd().contains("Buy")) {
                             if (o.getCloseTime().contentEquals("1970-01-01 00:00:00"))
                                 Api.account.openOrders.add(o);
                         }
                     }
-                    OpenOrdersFragment.updateOrders(Api.account.openOrders);
+                    OpenOrdersForAccountFragment.updateOrders(Api.account.openOrders);
                 }
                 else {
                     Api.account.openOrders = new ArrayList<Order>();
                     Api.account.closeOrders = new ArrayList<Order>();
                     for(Order o: orders)
                     {
-                        if (o.getCmd().contentEquals("Sell") || o.getCmd().contentEquals("Buy")) {
+                        if (o.getCmd().contains("Sell") || o.getCmd().contains("Buy")) {
                             if (o.getCloseTime().contentEquals("1970-01-01 00:00:00"))
                                 Api.account.openOrders.add(o);
                             else
@@ -876,18 +979,80 @@ public class AsyncHttpTask extends AsyncTask<Void, Void, String> {
                     MainActivity.currentLoader.endLoading();
                 }
             }
+            else if (MainActivity.currentLoader.fragment.getClass() == MobileTraderFragment.class)
+            {
+                if(target.contentEquals(MobileTraderFragment.class.toString())) {
+                    Api.openOrders = new ArrayList<Order>();
+                    for (Order o : orders) {
+                        if (o.getCmd().contains("Sell") || o.getCmd().contains("Buy")) {
+                            if (o.getCloseTime().contentEquals("1970-01-01 00:00:00"))
+                                Api.openOrders.add(o);
+                        }
+                    }
+                    MobileTraderFragment.isOrderLoaded = true;
+                    if(MobileTraderFragment.isOrderLoaded && MobileTraderFragment.isAccountsLoaded) {
+                        MainActivity.currentLoader.endLoading();
+                    }
+                }
+                else if(target.contentEquals(OpenOrdersFragment.class.toString()))
+                {
+                    Api.openOrders = new ArrayList<Order>();
+                    for(Order o: orders)
+                    {
+                        if (o.getCmd().contains("Sell") || o.getCmd().contains("Buy")) {
+                            if (o.getCloseTime().contentEquals("1970-01-01 00:00:00"))
+                                Api.openOrders.add(o);
+                        }
+                    }
+                    OpenOrdersFragment.updateOrders(Api.openOrders);
+                }
+            }
 
         }
         else if (methodName == AsyncMethodNames.UPDATE_ACCOUNT_ORDERS) {
-            OpenOrdersFragment.updateOrders(JsonResponseOrders.getOrders(success));
-            if(act.getClass().toString().contentEquals(MainActivity.class.toString())) {
-                if (OpenOrdersFragment.isNeedUpdate) {
-                    AsyncHttpTask updateOrders = new AsyncHttpTask(parametrs, AsyncMethodNames.UPDATE_ACCOUNT_ORDERS, act);
-                    updateOrders.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            if(target.contentEquals(OpenOrdersForAccountFragment.class.toString())) {
+                OpenOrdersForAccountFragment.updateOrders(JsonResponseOrders.getOrders(success));
+                if (act.getClass().toString().contentEquals(MainActivity.class.toString())) {
+                    if (OpenOrdersForAccountFragment.isNeedUpdate) {
+                        AsyncHttpTask updateOrders = new AsyncHttpTask(parametrs, AsyncMethodNames.UPDATE_ACCOUNT_ORDERS, act);
+                        updateOrders.target = target;
+                        updateOrders.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                    }
+                }
+            }
+            else if(target.contentEquals(OpenOrdersFragment.class.toString()))
+            {
+                OpenOrdersFragment.updateOrders(JsonResponseOrders.getOrders(success));
+                if (act.getClass().toString().contentEquals(MainActivity.class.toString())) {
+                    if (OpenOrdersFragment.isNeedUpdate) {
+                        AsyncHttpTask updateOrders = new AsyncHttpTask(parametrs, AsyncMethodNames.UPDATE_ACCOUNT_ORDERS, act);
+                        updateOrders.target = target;
+                        updateOrders.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                    }
                 }
             }
         }
+        else if (methodName == AsyncMethodNames.GET_ORDER_UPDATE) {
+            List<Order> orders = JsonResponseOrders.getOrders(success);
+            if(OrderFragment.isNeedUpdate)
+            {
+                int order = OrderFragment.order.getOrder();
+                for(Order o: orders) {
+                    if(o.getOrder() == order) {
 
+                        OrderFragment.order = o;
+                        OrderFragment.updateData();
+                        break;
+                    }
+                }
+            }
+
+            if(OrderFragment.isNeedUpdate) {
+                AsyncHttpTask updateOrders = new AsyncHttpTask(parametrs, AsyncMethodNames.GET_ORDER_UPDATE, act);
+                updateOrders.target = target;
+                updateOrders.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            }
+        }
         else if (methodName == AsyncMethodNames.GET_WITHDRAWAL)
         {
             Map<String, Object> map = Api.jsonToMap(success);
@@ -996,6 +1161,156 @@ public class AsyncHttpTask extends AsyncTask<Void, Void, String> {
                                 if(act.getClass() == ForgotPasswordActivity.class) {
                                     ForgotPasswordActivity activity = (ForgotPasswordActivity) act;
                                     activity.showDialog(false, description, act);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        else if (methodName == AsyncMethodNames.USER_LOGOUT)
+        {
+            String str = "";
+        }
+        else if (methodName == AsyncMethodNames.OPEN_ORDER)
+        {
+            //Map<String, Object> map = Api.jsonToMap(success);
+            Map<String, Object> map = null;
+            try {
+                map = Api.jsonToMap(success);
+            }
+            catch(Exception ex)
+            {
+                if(act.getClass() == MainActivity.class) {
+                    ((MainActivity) act).showDialog(false, "Something went wrong. Please write to support.");
+                    return;
+                }
+            }
+            for (Map.Entry<String, Object> response : map.entrySet()) {
+                if (response.getKey().contentEquals("status")) {
+                    if(response.getValue().toString().contentEquals("success"))
+                    {
+
+                        ((MainActivity)act).showDialog(true, "Order has been created.");
+                    }
+                }
+                if (response.getKey().contentEquals("errors")) {
+                    Object tmp = response.getValue();
+                    ArrayList<Object> errorList = (ArrayList<Object>)response.getValue();
+                    for(Object error: errorList) {
+                        Map<String, Object> tmpMap = (Map<String, Object>) error;
+                        for (Map.Entry<String, Object> dataEntry : tmpMap.entrySet()) {
+                            if (dataEntry.getKey().contentEquals("description")) {
+                                String description = (String) dataEntry.getValue();
+                                if(act.getClass() == MainActivity.class) {
+                                    ((MainActivity) act).showDialog(false, description);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        else if (methodName == AsyncMethodNames.GET_TRADE_PAIRS)
+        {
+
+            Map<String, Object> map = Api.jsonToMap(success);
+            String str = "";
+            for (Map.Entry<String, Object> response : map.entrySet()) {
+                if (response.getKey().contentEquals("data")) {
+                    List<String> pairList = (List<String>)response.getValue();
+                    CreateOrderFragment.updateSpinnerQuotations(pairList);
+                }
+
+            }
+        }
+        else if (methodName == AsyncMethodNames.CLOSE_ORDER)
+        {
+            Map<String, Object> map = Api.jsonToMap(success);
+            for (Map.Entry<String, Object> response : map.entrySet()) {
+                if (response.getKey().contentEquals("status")) {
+                    if(response.getValue().toString().contentEquals("success"))
+                    {
+                        if(act.getClass() == MainActivity.class) {
+                            MainActivity activity = (MainActivity) act;
+                            activity.showDialog(true, "Order has been closed.", act, "close_order");
+                        }
+                    }
+                }
+                if (response.getKey().contentEquals("errors")) {
+                    ArrayList<Object> errorList = (ArrayList<Object>)response.getValue();
+                    for(Object error: errorList) {
+                        Map<String, Object> tmpMap = (Map<String, Object>) error;
+                        for (Map.Entry<String, Object> dataEntry : tmpMap.entrySet()) {
+                            if (dataEntry.getKey().contentEquals("description")) {
+                                String description = (String) dataEntry.getValue();
+
+                                if(act.getClass() == MainActivity.class) {
+                                    MainActivity activity = (MainActivity) act;
+                                    activity.showDialog(false, description);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        else if (methodName == AsyncMethodNames.UPDATE_ORDER)
+        {
+
+            Map<String, Object> map = Api.jsonToMap(success);
+            for (Map.Entry<String, Object> response : map.entrySet()) {
+                if (response.getKey().contentEquals("status")) {
+                    if(response.getValue().toString().contentEquals("success"))
+                    {
+                        if(act.getClass() == MainActivity.class) {
+                            MainActivity activity = (MainActivity) act;
+                            activity.showDialog(true, "Order has been updated.");
+                        }
+                    }
+                }
+                if (response.getKey().contentEquals("errors")) {
+                    ArrayList<Object> errorList = (ArrayList<Object>)response.getValue();
+                    for(Object error: errorList) {
+                        Map<String, Object> tmpMap = (Map<String, Object>) error;
+                        for (Map.Entry<String, Object> dataEntry : tmpMap.entrySet()) {
+                            if (dataEntry.getKey().contentEquals("description")) {
+                                String description = (String) dataEntry.getValue();
+
+                                if(act.getClass() == MainActivity.class) {
+                                    MainActivity activity = (MainActivity) act;
+                                    activity.showDialog(false, description);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        else if (methodName == AsyncMethodNames.DELETE_ORDER)
+        {
+            Map<String, Object> map = Api.jsonToMap(success);
+            for (Map.Entry<String, Object> response : map.entrySet()) {
+                if (response.getKey().contentEquals("status")) {
+                    if(response.getValue().toString().contentEquals("success"))
+                    {
+                        if(act.getClass() == MainActivity.class) {
+                            MainActivity activity = (MainActivity) act;
+                            activity.showDialog(true, "Order has been deleted.", act, "delete_order");
+                        }
+                    }
+                }
+                if (response.getKey().contentEquals("errors")) {
+                    ArrayList<Object> errorList = (ArrayList<Object>)response.getValue();
+                    for(Object error: errorList) {
+                        Map<String, Object> tmpMap = (Map<String, Object>) error;
+                        for (Map.Entry<String, Object> dataEntry : tmpMap.entrySet()) {
+                            if (dataEntry.getKey().contentEquals("description")) {
+                                String description = (String) dataEntry.getValue();
+
+                                if(act.getClass() == MainActivity.class) {
+                                    MainActivity activity = (MainActivity) act;
+                                    activity.showDialog(false, description);
                                 }
                             }
                         }

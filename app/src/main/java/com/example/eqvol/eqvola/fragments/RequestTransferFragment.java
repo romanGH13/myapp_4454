@@ -82,15 +82,7 @@ public class RequestTransferFragment extends Fragment implements TextView.OnEdit
         mAccountHolderName = (TextView) mView.findViewById(R.id.request_transfer_account_holder_name);
 
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
-        try {
-            backgroundDrawable = ContextCompat.getDrawable(mView.getContext(), R.drawable.my_text_border);
-        }
-        catch(Exception ex)
-        {
-            Toast toast = Toast.makeText(mView.getContext(),
-                    ex.toString(), Toast.LENGTH_SHORT);
-            toast.show();
-        }
+        backgroundDrawable = ContextCompat.getDrawable(mView.getContext(), R.drawable.my_text_border);
 
         ((LinearLayout)mView.findViewById(R.id.linearSpinGroup)).setBackground(backgroundDrawable);
         mBalance.setBackground(backgroundDrawable);

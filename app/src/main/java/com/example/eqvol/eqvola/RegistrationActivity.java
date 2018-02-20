@@ -41,6 +41,7 @@ import com.example.eqvol.eqvola.Classes.AsyncMethodNames;
 import com.example.eqvol.eqvola.Classes.Country;
 import com.example.eqvol.eqvola.Classes.MyDateFormat;
 import com.example.eqvol.eqvola.fragments.ModalAlert;
+import com.example.eqvol.eqvola.fragments.ModalApproveEmail;
 import com.example.eqvol.eqvola.fragments.ModalInput;
 import com.example.eqvol.eqvola.fragments.Registration.FirstStepFragment;
 import com.example.eqvol.eqvola.fragments.Registration.FourthStepFragment;
@@ -89,6 +90,8 @@ public class RegistrationActivity extends AppCompatActivity implements TextView.
     private ModalInput myDialogFragment;
     private String register_id;
     private String register_code;
+
+    private ModalApproveEmail modalApproveEmail;
 
     public RegistrationActivity() {
 
@@ -236,10 +239,11 @@ public class RegistrationActivity extends AppCompatActivity implements TextView.
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         if (requestCode == MY_LOCATION_REQUEST_CODE) {
             if (permissions.length == 1 &&
-                    permissions[0] == ACCESS_COARSE_LOCATION &&
-                    grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // mMap.setMyLocationEnabled(true);
-
+                    permissions[0].contentEquals(ACCESS_COARSE_LOCATION.toString()) &&
+                    grantResults[0] == PackageManager.PERMISSION_GRANTED)
+            {
+                        country = getCountry(getApplicationContext());
+                        step2.setSelectionCountry(country);
 
             } else {
                 // Permission was denied. Display an error message.
@@ -441,6 +445,35 @@ public class RegistrationActivity extends AppCompatActivity implements TextView.
         isClickNext = false;
     }
 
+    public void inputCodeDialog(String description)
+    {
+        modalApproveEmail = new ModalApproveEmail(description, this);
+        FragmentManager manager = getSupportFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+        modalApproveEmail.setCancelable(false);
+        modalApproveEmail.show(transaction, "dialog");
+    }
+
+    public void emailApproved()
+    {
+        modalApproveEmail.closeDialog();
+        showDialog(true, "Your email has been approved!");
+
+    }
+
+    public void wrongApproveCode()
+    {
+        modalApproveEmail.showError("WrongCode");
+
+    }
+
+    public void approveEmail(String code)
+    {
+        Map<String, Object> parametrs = new HashMap<String, Object>();
+        parametrs.put("email_code", code);
+        AsyncHttpTask userLoginTask = new AsyncHttpTask(parametrs, AsyncMethodNames.APPROVE_EMAIL, this);
+        userLoginTask.execute();
+    }
 
     public void showDialog(boolean status, String description)
     {

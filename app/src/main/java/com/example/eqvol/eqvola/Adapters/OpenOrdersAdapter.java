@@ -10,6 +10,8 @@ import android.widget.TextView;
 
 import com.example.eqvol.eqvola.Classes.Api;
 import com.example.eqvol.eqvola.Classes.Order;
+import com.example.eqvol.eqvola.Classes.Withdrawal;
+import com.example.eqvol.eqvola.MainActivity;
 import com.example.eqvol.eqvola.R;
 
 import java.text.DateFormat;
@@ -24,34 +26,27 @@ import java.util.List;
  * Created by eqvol on 27.12.2017.
  */
 
-public class OpenOrdersForAccountAdapter extends RecyclerView.Adapter<OpenOrdersForAccountAdapter.OpenOrdersViewHolder> implements Comparator<Order> {
+public class OpenOrdersAdapter extends RecyclerView.Adapter<OpenOrdersAdapter.OpenOrdersViewHolder> implements Comparator<Order> {
 
     Context ctx;
     LayoutInflater lInflater;
     //List<Order> orders;
 
-    private OpenOrdersForAccountAdapter.OnItemClickListener mOnItemClickListener;
 
-    public interface OnItemClickListener {
-        public void onItemClick(View view, int position);
-    }
 
-    public void setOnCLickListener(OpenOrdersForAccountAdapter.OnItemClickListener onItemClickListener) {
-        this.mOnItemClickListener = onItemClickListener;
-    }
-
-    public OpenOrdersForAccountAdapter(@NonNull Context context) {
+    public OpenOrdersAdapter(@NonNull Context context) {
         this.ctx = context;
         //this.orders = orders;
-        Collections.sort(Api.account.openOrders, this);
+        Collections.sort(Api.openOrders, this);
         this.lInflater = LayoutInflater.from(this.ctx);
     }
 
 
-    public static class OpenOrdersViewHolder extends RecyclerView.ViewHolder {
+    public static class OpenOrdersViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         RecyclerView rv;
         TextView mOrderView;
         TextView mCurrencyPairView;
+        TextView mOrderTypeView;
         TextView mOpenPriceView;
         TextView mCurrentPriceView;
         TextView mProfitView;
@@ -64,9 +59,20 @@ public class OpenOrdersForAccountAdapter extends RecyclerView.Adapter<OpenOrders
             rv = (RecyclerView) itemView.findViewById(R.id.open_orders_list);
             mOrderView = ((TextView) itemView.findViewById(R.id.order));
             mCurrencyPairView = ((TextView) itemView.findViewById(R.id.currencyPair));
+            mOrderTypeView = ((TextView) itemView.findViewById(R.id.orderType));
             mOpenPriceView = ((TextView) itemView.findViewById(R.id.openPrice));
             mCurrentPriceView = ((TextView) itemView.findViewById(R.id.currentPrice));
             mProfitView = ((TextView) itemView.findViewById(R.id.profit));
+            itemView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            int position = getLayoutPosition();
+
+            Order order = Api.openOrders.get(getLayoutPosition());
+            MainActivity main = (MainActivity)container.getContext();
+            main.openOrderInfo(order);
         }
 
     }
@@ -87,14 +93,17 @@ public class OpenOrdersForAccountAdapter extends RecyclerView.Adapter<OpenOrders
     }
 
     @Override
-    public void onBindViewHolder(OpenOrdersForAccountAdapter.OpenOrdersViewHolder holder, final int position) {
+    public void onBindViewHolder(OpenOrdersAdapter.OpenOrdersViewHolder holder, final int position) {
 
-        double openPrice = Api.account.openOrders.get(position).getOpenPrice();
-        double currentPrice = Api.account.openOrders.get(position).getClosePrice();
-        double profit = Api.account.openOrders.get(position).getProfit();
+        Order order = Api.openOrders.get(position);
+        double openPrice = order.getOpenPrice();
+        double currentPrice = order.getClosePrice();
+        double profit = order.getProfit();
+        String type = order.getCmd();
 
-        holder.mOrderView.setText("Order #" + Integer.toString(Api.account.openOrders.get(position).getOrder()));
-        holder.mCurrencyPairView.setText(Api.account.openOrders.get(position).getSymbol());
+        holder.mOrderView.setText("Order #" + Integer.toString(order.getOrder()));
+        holder.mCurrencyPairView.setText(Api.openOrders.get(position).getSymbol());
+        holder.mOrderTypeView.setText(type);
         holder.mOpenPriceView.setText(Double.toString(openPrice));
         holder.mCurrentPriceView.setText(Double.toString(currentPrice));
         holder.mProfitView.setText(Double.toString(profit));
@@ -108,12 +117,12 @@ public class OpenOrdersForAccountAdapter extends RecyclerView.Adapter<OpenOrders
 
     @Override
     public long getItemId(int position) {
-        return Api.account.openOrders.get(position).getOrder();
+        return Api.openOrders.get(position).getOrder();
     }
 
     @Override
     public int getItemCount() {
-        return Api.account.openOrders.size();
+        return Api.openOrders.size();
     }
 
     @Override
@@ -130,15 +139,15 @@ public class OpenOrdersForAccountAdapter extends RecyclerView.Adapter<OpenOrders
     }
 
     public void UpdateOrderById(Order order) {
-        for (Order o : Api.account.openOrders) {
+        for (Order o : Api.openOrders) {
             if (o.getOrder() == order.getOrder())
                 o = order;
         }
-        Collections.sort(Api.account.openOrders, this);
+        Collections.sort(Api.openOrders, this);
     }
 
     public Order getOrderById(long id) {
-        for (Order o : Api.account.openOrders) {
+        for (Order o : Api.openOrders) {
             if (o.getOrder() == id)
                 return o;
         }
@@ -148,8 +157,8 @@ public class OpenOrdersForAccountAdapter extends RecyclerView.Adapter<OpenOrders
     public void UpdateOrders(List<Order> orders)
     {
         try {
-            Api.account.openOrders = orders;
-            Collections.sort(Api.account.openOrders, this);
+            Api.openOrders = orders;
+            Collections.sort(Api.openOrders, this);
         } catch(Exception ex) {
             String str = ex.getMessage();
         }

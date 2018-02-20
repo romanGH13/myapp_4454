@@ -46,6 +46,8 @@ public class SecondStepFragment extends Fragment implements TextView.OnEditorAct
 
     private MyDateFormat mdt = new MyDateFormat();
 
+    public Spinner spinner;
+
     public SecondStepFragment() {
     }
 
@@ -91,6 +93,8 @@ public class SecondStepFragment extends Fragment implements TextView.OnEditorAct
 
         return mView;
     }
+
+
 
 
     @Override
@@ -174,7 +178,7 @@ public class SecondStepFragment extends Fragment implements TextView.OnEditorAct
         ArrayAdapter<Country> adapter = new CountryAdapter(getActivity(), Api.countries);
         adapter.setDropDownViewResource(R.layout.drop_down_item);
 
-        Spinner spinner = (Spinner) mView.findViewById(R.id.spinnerCountries);
+        spinner = (Spinner) mView.findViewById(R.id.spinnerCountries);
         spinner.setAdapter(adapter);
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
@@ -190,17 +194,25 @@ public class SecondStepFragment extends Fragment implements TextView.OnEditorAct
 
             }
         });
-        if(!country.contentEquals(""))
-        {
-            for(Country c: Api.countries)
-            {
-                if(c.getCode().toLowerCase().contentEquals(country.toLowerCase()))
-                {
-                    int countryPosition = adapter.getPosition(c);
-                    spinner.setSelection(countryPosition);
-                    break;
+        setSelectionCountry(country);
+    }
+
+    public void setSelectionCountry(String country)
+    {
+        try {
+            CountryAdapter adapter = (CountryAdapter) spinner.getAdapter();
+            if (!country.contentEquals("")) {
+                for (Country c : Api.countries) {
+                    if (c.getCode().toLowerCase().contentEquals(country.toLowerCase())) {
+                        int countryPosition = adapter.getPosition(c);
+                        spinner.setSelection(countryPosition);
+                        break;
+                    }
                 }
             }
+        } catch(Exception ex)
+        {
+
         }
     }
 

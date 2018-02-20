@@ -1,13 +1,363 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
     tools:context="com.example.eqvol.eqvola.fragments.CreateOrderFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <ScrollView
+        android:id="@+id/scrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-</FrameLayout>
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:id="@+id/layoutSpinnerAccount"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/my_text_border"
+                app:layout_constraintEnd_toStartOf="@id/account_balance"
+                app:layout_constraintHorizontal_weight="3"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <Spinner
+                    android:id="@+id/spinner_accounts"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_margin="4dp"
+                    android:spinnerMode="dropdown"/>
+
+            </LinearLayout>
+
+            <EditText
+                android:id="@+id/account_balance"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="20dp"
+                android:background="@drawable/my_text_border"
+                android:cursorVisible="false"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:hint="@string/create_order_balance"
+                android:inputType="number"
+                android:longClickable="false"
+                android:padding="6dp"
+                android:textAppearance="@style/MyTextAppearance"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_weight="1"
+                app:layout_constraintStart_toEndOf="@id/layoutSpinnerAccount"
+                app:layout_constraintTop_toTopOf="@id/layoutSpinnerAccount" />
+
+            <LinearLayout
+                android:id="@+id/layoutSpinnerSymbol"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/my_text_border"
+                app:layout_constraintEnd_toStartOf="@id/order_volume"
+                app:layout_constraintHorizontal_weight="3"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/layoutSpinnerAccount">
+
+                <Spinner
+                    android:id="@+id/spinner_symbol"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_margin="4dp"
+                    android:spinnerMode="dropdown"/>
+            </LinearLayout>
+
+            <EditText
+                android:id="@+id/order_volume"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="20dp"
+                android:background="@drawable/my_text_border"
+                android:hint="@string/create_order_volume"
+                android:inputType="number"
+                android:maxLines="1"
+                android:padding="6dp"
+                android:textAppearance="@style/MyTextAppearance"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_weight="1"
+                app:layout_constraintStart_toEndOf="@id/layoutSpinnerSymbol"
+                app:layout_constraintTop_toTopOf="@id/layoutSpinnerSymbol" />
+
+            <EditText
+                android:id="@+id/bid"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/my_text_border"
+                android:hint="@string/create_order_bid"
+                android:inputType="numberDecimal"
+                android:maxLines="1"
+                android:padding="6dp"
+                app:layout_constraintEnd_toStartOf="@id/ask"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/layoutSpinnerSymbol" />
+
+            <EditText
+                android:id="@+id/ask"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="20dp"
+                android:layout_marginStart="10dp"
+                android:background="@drawable/my_text_border"
+                android:hint="@string/create_order_ask"
+                android:inputType="numberDecimal"
+                android:maxLines="1"
+                android:padding="6dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/bid"
+                app:layout_constraintTop_toTopOf="@id/bid" />
+
+            <EditText
+                android:id="@+id/stop_loss"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/my_text_border"
+                android:hint="@string/create_order_stop_loss"
+                android:inputType="numberDecimal"
+                android:maxLines="1"
+                android:padding="6dp"
+                app:layout_constraintEnd_toStartOf="@id/take_profit"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/bid" />
+
+            <EditText
+                android:id="@+id/take_profit"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="20dp"
+                android:layout_marginStart="10dp"
+                android:background="@drawable/my_text_border"
+                android:hint="@string/create_order_take_profit"
+                android:inputType="numberDecimal"
+                android:maxLines="1"
+                android:padding="6dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/stop_loss"
+                app:layout_constraintTop_toTopOf="@id/stop_loss" />
+
+            <EditText
+                android:id="@+id/comment"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="20dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/my_text_border"
+                android:hint="@string/create_order_comment"
+                android:inputType="text"
+                android:maxLines="1"
+                android:padding="6dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/stop_loss" />
+
+            <LinearLayout
+                android:id="@+id/layoutType"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="20dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/my_text_border"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_weight="3"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/comment">
+
+                <RadioGroup
+                    android:id="@+id/radioGroup"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <RadioButton
+                        android:id="@+id/radioMarketExecution"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="20dp"
+                        android:layout_weight="1"
+                        android:checked="true"
+                        android:tag="Option_1"
+                        android:text="@string/create_order_marke_execution" />
+
+                    <RadioButton
+                        android:id="@+id/radioDeferredOrder"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="20dp"
+                        android:layout_weight="1"
+                        android:tag="Option_2"
+                        android:text="@string/create_order_deferred_order" />
+
+                </RadioGroup>
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btnSell"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/rectangle"
+                android:fontFamily="Roboto"
+                android:padding="10dp"
+                android:text="@string/create_order_sell"
+                android:textAppearance="@style/MyTextAppearance"
+                android:textColor="@color/colorWhite"
+                android:textSize="@dimen/text_size"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toStartOf="@id/btnBuy"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/layoutType" />
+
+            <Button
+                android:id="@+id/btnBuy"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="20dp"
+                android:layout_marginStart="10dp"
+                android:background="@drawable/rectangle"
+                android:fontFamily="Roboto"
+                android:padding="10dp"
+                android:text="@string/create_order_buy"
+                android:textAppearance="@style/MyTextAppearance"
+                android:textColor="@color/colorWhite"
+                android:textSize="@dimen/text_size"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/btnSell"
+                app:layout_constraintTop_toTopOf="@id/btnSell" />
+
+            <LinearLayout
+                android:id="@+id/layoutSpinnerType"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/my_text_border"
+                app:layout_constraintEnd_toStartOf="@id/order_price"
+                app:layout_constraintHorizontal_weight="3"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/layoutType">
+
+                <Spinner
+                    android:id="@+id/spinner_type"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_margin="4dp"
+                    android:spinnerMode="dropdown" />
+            </LinearLayout>
+
+            <EditText
+                android:id="@+id/order_price"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="20dp"
+                android:background="@drawable/my_text_border"
+                android:hint="@string/create_order_price"
+                android:inputType="numberDecimal"
+                android:maxLines="1"
+                android:padding="6dp"
+                android:textAppearance="@style/MyTextAppearance"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_weight="1"
+                app:layout_constraintStart_toEndOf="@id/layoutSpinnerType"
+                app:layout_constraintTop_toTopOf="@id/layoutSpinnerType" />
+
+
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/layoutExpiration"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginStart="20dp"
+                android:background="@drawable/my_text_border"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_weight="1"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/layoutSpinnerType">
+                <CheckBox
+                    android:id="@+id/expiration"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="10dp"
+                    android:text="@string/create_order_expiration"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"/>
+
+                <TextView
+                    android:id="@+id/expirationDateAndTime"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_marginStart="10dp"
+                    android:gravity="center"
+                    android:enabled="false"
+                    app:layout_constraintStart_toEndOf="@+id/expiration"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintBottom_toBottomOf="@+id/expiration"
+                    app:layout_constraintTop_toTopOf="parent"/>
+            </android.support.constraint.ConstraintLayout>
+
+            <Button
+                android:id="@+id/btnSetAnOrder"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/rectangle"
+                android:fontFamily="Roboto"
+                android:padding="10dp"
+                android:text="@string/create_order_set_an_order"
+                android:textAppearance="@style/MyTextAppearance"
+                android:textColor="@color/colorWhite"
+                android:textSize="@dimen/text_size"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/layoutExpiration" />
+
+            <android.support.constraint.Group
+                android:id="@+id/buttonsGroup"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:visibility="visible"
+                app:constraint_referenced_ids="btnSell, btnBuy" />
+
+            <android.support.constraint.Group
+                android:id="@+id/deferredOrderGroup"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:visibility="gone"
+                app:constraint_referenced_ids="layoutSpinnerType, order_price, layoutExpiration, btnSetAnOrder" />
+
+        </android.support.constraint.ConstraintLayout>
+    </ScrollView>
+</android.support.constraint.ConstraintLayout>

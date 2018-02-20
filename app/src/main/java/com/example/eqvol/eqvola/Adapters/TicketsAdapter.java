@@ -118,14 +118,22 @@ public class TicketsAdapter extends RecyclerView.Adapter<TicketsAdapter.TicketsV
         //set message
         if(ticket.getStatus()==0)
         {
-            String message = ticket.getMessage().getMessage();
-            if (message.contentEquals("")) {
-                holder.tvMessage.setText("Attachment...");
-                holder.tvMessage.setTextColor(Color.BLUE);
-            } else {
-                holder.tvMessage.setText(message);
-                holder.tvMessage.setTextColor(Color.BLACK);
+            String message = "";
+            if(ticket.getMessage() != null)
+            {
+                message = ticket.getMessage().getMessage();
+
+                if (message.contentEquals("")) {
+                    holder.tvMessage.setText("Attachment...");
+                    holder.tvMessage.setTextColor(Color.BLUE);
+                } else {
+                    holder.tvMessage.setText(message);
+                    holder.tvMessage.setTextColor(Color.BLACK);
+                }
             }
+
+
+
         }
         else if(ticket.getStatus() == 1)
         {
@@ -137,8 +145,12 @@ public class TicketsAdapter extends RecyclerView.Adapter<TicketsAdapter.TicketsV
         SimpleDateFormat formatter = new SimpleDateFormat(ctx.getString(R.string.date_format));
         Date date = null;
         DateFormat dateFormat = null;
+        Message message = ticket.getMessage();
         try {
-            date = formatter.parse(ticket.getMessage().getDate());
+            if(message == null)
+                date = formatter.parse(ticket.getDate());
+            else
+                date = formatter.parse(message.getDate());
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -159,8 +171,17 @@ public class TicketsAdapter extends RecyclerView.Adapter<TicketsAdapter.TicketsV
         Bitmap bmp = null;
         for(Map.Entry<Integer, Bitmap> entry: SupportChat.images.entrySet())
         {
-            if(entry.getKey().equals(ticket.getMessage().getUser().getId())){
-                bmp = entry.getValue();
+            Message msg = ticket.getMessage();
+            if(msg != null){
+                if(entry.getKey().equals(ticket.getMessage().getUser().getId())){
+                    bmp = entry.getValue();
+                }
+            }
+            else
+            {
+                if(entry.getKey().equals(ticket.getUser().getId())){
+                    bmp = entry.getValue();
+                }
             }
         }
         holder.img.setImageBitmap(bmp);
@@ -188,8 +209,20 @@ public class TicketsAdapter extends RecyclerView.Adapter<TicketsAdapter.TicketsV
     public int compare(Ticket o1, Ticket o2) {
         DateFormat format = new SimpleDateFormat(ctx.getString(R.string.date_format));
         try {
-            Date date1 = format.parse(o1.getMessage().getDate());
-            Date date2 = format.parse(o2.getMessage().getDate());
+            Message message1 = o1.getMessage();
+            Message message2 = o2.getMessage();
+            Date date1;
+            Date date2;
+            if(message1 == null)
+                date1 = format.parse(o1.getDate());
+            else {
+                date1 = format.parse(message1.getDate());
+            }
+            if(message2 == null)
+                date2 = format.parse(o2.getDate());
+            else {
+                date2 = format.parse(message2.getDate());
+            }
             return date1.compareTo(date2)*(-1);
         } catch (ParseException e) {
             e.printStackTrace();

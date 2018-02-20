@@ -1,7 +1,9 @@
 package com.example.eqvol.eqvola;
 
+import android.app.Activity;
 import android.app.ActivityManager;
-import android.content.ClipData;
+import android.app.Fragment;
+import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -12,7 +14,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
-import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,13 +25,18 @@ import com.example.eqvol.eqvola.fragments.CreateAccount;
 import com.example.eqvol.eqvola.fragments.FinanceHistoryFragment;
 import com.example.eqvol.eqvola.fragments.FinanceOperationFragment;
 import com.example.eqvol.eqvola.fragments.MenuFragment;
+import com.example.eqvol.eqvola.fragments.MobileTraderFragment;
 import com.example.eqvol.eqvola.fragments.ModalAlert;
 import com.example.eqvol.eqvola.fragments.MyAccounts;
+import com.example.eqvol.eqvola.fragments.OrderFragment;
 import com.example.eqvol.eqvola.fragments.Support;
 import com.example.eqvol.eqvola.fragments.TransfersFragment;
 import com.example.eqvol.eqvola.fragments.UserPageFragment;
 
+
 import java.io.File;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity {
@@ -40,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
     public static FragmentLoader currentLoader = null;
     private static long back_pressed;
     private Intent intentMyIntentService;
+    private MyService myService;
 
     public BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -59,6 +66,7 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 case R.id.navigation_support:
                     fragmentClass = Support.class;
+
                     break;
                 case R.id.navigation_create_account:
                     fragmentClass = CreateAccount.class;
@@ -68,6 +76,9 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 case R.id.navigation_transfers:
                     fragmentClass = TransfersFragment.class;
+                    break;
+                case R.id.navigation_trader:
+                    fragmentClass = MobileTraderFragment.class;
                     break;
                 case R.id.nav_logout:
 
@@ -83,7 +94,11 @@ public class MainActivity extends AppCompatActivity {
                     Api.user = null;
                     Api.countries = null;
 
-                    stopService(intentMyIntentService);
+                    try {
+                        myService.stopSelf();
+                    } catch (Exception ex) {
+
+                    }
                     goToLoginActivity();
 
                     break;
@@ -95,8 +110,6 @@ public class MainActivity extends AppCompatActivity {
                     FragmentLoader fl = new FragmentLoader(fragmentClass, getSupportFragmentManager(), R.id.container, false);
                     fl.startLoading();
                     currentLoader = fl;
-                    /*if(item.getItemId() == R.id.navigation_transfers)
-                        fl.endLoading();*/
 
                     return true;
                 }
@@ -107,6 +120,8 @@ public class MainActivity extends AppCompatActivity {
             return false;
         }
     };
+
+
 
     public void openMyAccounts()
     {
@@ -130,6 +145,14 @@ public class MainActivity extends AppCompatActivity {
         fl.endLoading();
     }
 
+    public void openOrderInfo(Order order)
+    {
+        Api.currentOrder = order;
+        FragmentLoader fl = new FragmentLoader(OrderFragment.class, getSupportFragmentManager(), R.id.container, false);
+        fl.startLoading();
+        fl.endLoading();
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -146,13 +169,17 @@ public class MainActivity extends AppCompatActivity {
         navigation.setSelectedItemId(R.id.navigation_my_accounts);
 
         if(!isMyServiceRunning(MyService.class)) {
-            intentMyIntentService = new Intent(this, MyService.class);
+            myService = new MyService();
+            intentMyIntentService = new Intent(this, myService.getClass());
             intentMyIntentService.putExtra("user_id", Api.user.getId());
             intentMyIntentService.putExtra("token", Api.getToken());
             startService(intentMyIntentService);
 
         }
+
     }
+
+
 
     @Override
     protected void onNewIntent(Intent intent) {
@@ -161,7 +188,12 @@ public class MainActivity extends AppCompatActivity {
         setIntent(intent);
         if(Api.user == null)
         {
-            goToLoginActivity();
+            try {
+                goToLoginActivity();
+            } catch (Exception ex)
+            {
+
+            }
         }
     }
 
@@ -175,8 +207,6 @@ public class MainActivity extends AppCompatActivity {
         }
         return false;
     }
-
-
 
     public void deleteFileToken()
     {
@@ -199,6 +229,15 @@ public class MainActivity extends AppCompatActivity {
         myDialogFragment.show(transaction, "dialog");
     }
 
+    public void showDialog(boolean status, String description, Activity activity, String target)
+    {
+        ModalAlert myDialogFragment = new ModalAlert(status, description, activity, target);
+        FragmentManager manager = getSupportFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+        myDialogFragment.setCancelable(false);
+        myDialogFragment.show(transaction, "dialog");
+    }
+
     @Override
     public void onBackPressed() {
 
@@ -207,11 +246,13 @@ public class MainActivity extends AppCompatActivity {
             FragmentLoader fl = new FragmentLoader(MyAccounts.class, getSupportFragmentManager(), R.id.container, false);
             fl.startLoading();
             currentLoader = fl;
+            currentItem = Integer.toString(R.id.navigation_my_accounts);
         }
         else if (MainActivity.currentItem.contentEquals(UserPageFragment.class.toString())) {
             FragmentLoader fl = new FragmentLoader(MenuFragment.class, getSupportFragmentManager(), R.id.container, false);
             fl.startLoading();
             currentLoader = fl;
+            currentItem = Integer.toString(R.id.navigation_menu);
         }
         else {
             if (back_pressed + 2000 > System.currentTimeMillis())
@@ -222,5 +263,4 @@ public class MainActivity extends AppCompatActivity {
             back_pressed = System.currentTimeMillis();
         }
     }
-
 }

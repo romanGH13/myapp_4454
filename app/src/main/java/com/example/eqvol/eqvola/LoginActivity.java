@@ -28,11 +28,14 @@ import com.example.eqvol.eqvola.Classes.Api;
 import com.example.eqvol.eqvola.Classes.AsyncHttpTask;
 import com.example.eqvol.eqvola.Classes.AsyncMethodNames;
 import com.example.eqvol.eqvola.fragments.ModalAlert;
+import com.example.eqvol.eqvola.fragments.ModalApproveEmail;
+import com.example.eqvol.eqvola.fragments.ModalInputAuthCode;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -51,6 +54,9 @@ public class LoginActivity extends AppCompatActivity implements TextView.OnEdito
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
+
+    private ModalApproveEmail modalApproveEmail;
+    private ModalInputAuthCode modalInputAuthCode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -238,6 +244,22 @@ public class LoginActivity extends AppCompatActivity implements TextView.OnEdito
         }
     }
 
+    public void attemptLoginWithAuthCode(String code) {
+
+        String email = mEmailView.getText().toString();
+        String password = mPasswordView.getText().toString();
+
+        showProgress(true);
+        HashMap<String, Object> parametrs = new HashMap<String, Object>();
+        parametrs.put("email", email);
+        parametrs.put("password", password);
+        parametrs.put("code", code);
+
+        AsyncHttpTask userLoginWithAuthTask = new AsyncHttpTask(parametrs, AsyncMethodNames.USER_LOGIN, this);
+        userLoginWithAuthTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+
+    }
+
     //метод для перехода на экран регистрации
     public void toRegistr(View view) {
         Intent SecAct = new Intent(getApplicationContext(), RegistrationActivity.class);
@@ -416,6 +438,50 @@ public class LoginActivity extends AppCompatActivity implements TextView.OnEdito
         int ADDRESS = 0;
         int IS_PRIMARY = 1;
     }*/
+
+    public void inputCodeDialog(String description)
+    {
+        modalApproveEmail = new ModalApproveEmail(description, this);
+        FragmentManager manager = getSupportFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+        modalApproveEmail.setCancelable(false);
+        modalApproveEmail.show(transaction, "dialog");
+    }
+
+    public void twoStepDialog(String description)
+    {
+        modalInputAuthCode = new ModalInputAuthCode(description, this);
+        FragmentManager manager = getSupportFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+        modalInputAuthCode.setCancelable(false);
+        modalInputAuthCode.show(transaction, "dialog");
+    }
+
+    public void emailApproved()
+    {
+        modalApproveEmail.closeDialog();
+        showDialog(true, "Your email has been approved!");
+
+    }
+
+    public void wrongApproveCode()
+    {
+        modalApproveEmail.showError("Wrong code");
+
+    }
+
+    public void wrongTwoStepCode()
+    {
+        modalInputAuthCode.showError("Wrong code");
+    }
+
+    public void approveEmail(String code)
+    {
+        Map<String, Object> parametrs = new HashMap<String, Object>();
+        parametrs.put("email_code", code);
+        AsyncHttpTask userLoginTask = new AsyncHttpTask(parametrs, AsyncMethodNames.APPROVE_EMAIL, this);
+        userLoginTask.execute();
+    }
 
     public void showDialog(boolean status, String description)
     {

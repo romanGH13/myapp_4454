@@ -2,108 +2,100 @@ package com.example.eqvol.eqvola.fragments;
 
 import android.content.Context;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.view.ViewPager;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.eqvol.eqvola.Adapters.MyPagerAdapter;
+import com.example.eqvol.eqvola.Classes.Api;
+import com.example.eqvol.eqvola.Classes.AsyncHttpTask;
+import com.example.eqvol.eqvola.Classes.AsyncMethodNames;
 import com.example.eqvol.eqvola.R;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link MobileTraderFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link MobileTraderFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+
 public class MobileTraderFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private View mView;
+    private ViewPager mViewPager;
 
-    private OnFragmentInteractionListener mListener;
+    public static boolean isOrderLoaded;
+    public static boolean isAccountsLoaded;
 
     public MobileTraderFragment() {
-        // Required empty public constructor
+
+        isOrderLoaded = false;
+        isAccountsLoaded = false;
+
+        Gson gson = new GsonBuilder().create();
+        HashMap<String, Object> where = new HashMap<String, Object>();
+        where.put("CloseTime", "1970-01-01 00:00:00");
+
+        HashMap<String, Object> params = new HashMap<String, Object>();
+        params.put("token", Api.getToken());
+        params.put("where", gson.toJson(where));
+
+
+        AsyncHttpTask getDepositsTask = new AsyncHttpTask(params, AsyncMethodNames.GET_ACCOUNT_ORDERS, getActivity());
+        getDepositsTask.target = MobileTraderFragment.class.toString();
+        getDepositsTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+
+
+        HashMap<String, Object> mapUserId = new HashMap<String, Object>();
+        mapUserId.put("email", Api.user.getEmail());
+        String json = gson.toJson(mapUserId);
+        HashMap<String, Object> parametr = new HashMap<String, Object>();
+        parametr.put("token", Api.getToken());
+        parametr.put("where", json);
+
+        AsyncHttpTask userLoginTask = new AsyncHttpTask(parametr, AsyncMethodNames.GET_ACCOUNTS, getActivity());
+        userLoginTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment MobileTraderFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static MobileTraderFragment newInstance(String param1, String param2) {
+
+    public static MobileTraderFragment newInstance() {
         MobileTraderFragment fragment = new MobileTraderFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
         return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_mobile_trader, container, false);
+
+        mView = inflater.inflate(R.layout.fragment_mobile_trader, container, false);
+
+        FragmentManager f1 = ((AppCompatActivity)getContext()).getSupportFragmentManager();
+
+        List<Fragment> fragments = new ArrayList<Fragment>();
+        fragments.add(OpenOrdersFragment.newInstance());
+        fragments.add(QuotationsFragment.newInstance());
+        fragments.add(CreateOrderFragment.newInstance());
+
+        mViewPager = (ViewPager) mView.findViewById(R.id.mobile_trader_pager);
+
+        MyPagerAdapter pagerAdapter = new MyPagerAdapter(getChildFragmentManager(), fragments);
+        mViewPager.setAdapter(pagerAdapter);
+
+        ((TabLayout)mView.findViewById(R.id.sliding_tabs)).setupWithViewPager(mViewPager);
+
+        return mView;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
-    }
 }

@@ -1,6 +1,7 @@
 package com.example.eqvol.eqvola.fragments;
 
 import android.app.Activity;
+import android.content.ClipData;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -13,6 +14,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -96,63 +98,32 @@ public class MenuFragment extends Fragment implements NavigationView.OnNavigatio
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
-        int id = item.getItemId();
         MainActivity activity = (MainActivity)getActivity();
         activity.mOnNavigationItemSelectedListener.onNavigationItemSelected(item);
         BottomNavigationView navigation = (BottomNavigationView) activity.findViewById(R.id.navigation);
         navigation.setSelectedItemId(item.getItemId());
-        Class fragmentClass = null;
-
-        /*if (id == R.id.nav_create_account) {
-
-            fragmentClass = CreateAccount.class;
-        } else if (id == R.id.nav_my_accounts) {
-            fragmentClass = MyAccounts.class;
-        } else if (id == R.id.nav_finance_history) {
-            fragmentClass = FinanceHistoryFragment.class;
-        } else if (id == R.id.nav_support) {
-            fragmentClass = Support.class;
-        } else if (id == R.id.nav_logout) {
-            HashMap<String, Object> params = new HashMap<String, Object>();
-            params.put("token", Api.getToken());
-
-            AsyncHttpTask userLoginTask = new AsyncHttpTask(params, AsyncMethodNames.USER_LOGOUT, getActivity());
-            userLoginTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-            activity.deleteFileToken();
-
-            Api.setToken(null);
-            Api.user = null;
-            Api.countries = null;
-            activity.goToLoginActivity();
-        }
-
-        try {
-            if(fragmentClass != null) {
-                FragmentLoader fl = new FragmentLoader(fragmentClass, activity.getSupportFragmentManager(), R.id.container, false);
-                fl.startLoading();
-                MainActivity.currentLoader = fl;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        /*DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);*/
         return true;
+    }
+
+    public MenuItem getItemByName(String name)
+    {
+        NavigationView navigationView = (NavigationView) mView.findViewById(R.id.nav_view);
+        int itemCount = navigationView.getChildCount();
+        Menu menu = navigationView.getMenu();
+        for(int i = 0; i < itemCount; i++)
+        {
+            MenuItem item = menu.getItem(i);
+            String title = item.getTitle().toString();
+            String str = "";
+        }
+        return null;
     }
 
     public void onEditProfileClick(View view)
     {
-        /*if(currentLoader != null)
-        {
-            //currentLoader.
-        }*/
-        //setTitle("Edit profile");
         FragmentLoader fl = new FragmentLoader(UserPageFragment.class, ((MainActivity)(mView.getContext())).getSupportFragmentManager(), R.id.container, false);
         fl.startLoading();
         MainActivity.currentLoader = fl;
-        /*DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);*/
     }
 
 }

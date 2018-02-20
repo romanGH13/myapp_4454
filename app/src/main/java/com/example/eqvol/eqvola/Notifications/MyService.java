@@ -6,6 +6,7 @@ import android.app.Service;
 import android.content.Intent;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.provider.Settings;
@@ -13,15 +14,23 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.example.eqvol.eqvola.Classes.Api;
+import com.example.eqvol.eqvola.Classes.AsyncHttpTask;
+import com.example.eqvol.eqvola.Classes.AsyncMethodNames;
 import com.example.eqvol.eqvola.Classes.Notification;
+import com.example.eqvol.eqvola.Classes.Ticket;
+import com.example.eqvol.eqvola.ForgotPasswordActivity;
 import com.example.eqvol.eqvola.MainActivity;
 import com.example.eqvol.eqvola.R;
+import com.example.eqvol.eqvola.fragments.SupportChat;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.stream.JsonReader;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -30,6 +39,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,54 +48,162 @@ import javax.net.ssl.HttpsURLConnection;
 
 public class MyService extends Service {
 
-    private static final String siteUrl = "http://api.eqvola.net/";
+    private static final String siteUrl = "http://api.cabinet.eqvola.info/";
+    private static final String FILENAMEFORDATA = "userDataForNotification";
+    private static final String FILENAMEFORCOUNTER = "userCounterForNotification";
     final String LOG_TAG = "myLogs";
-    private int counter;
+    private static int counter;
+    private static String token;
+    private static int user_id;
+    private boolean isStopped;
 
     public MyService() {
         Log.d(LOG_TAG, "MyService");
         counter = 0;
+        isStopped = false;
     }
 
     public void onCreate() {
         super.onCreate();
     }
 
-    public int onStartCommand(final Intent intent, int flags, int startId) {
+
+
+    public int onStartCommand(final Intent intent,final int flags, int startId) {
+        super.onStartCommand(intent, flags, startId);
         new Thread(new Runnable() {
             public void run() {
-                while (true) {
-                    //someTask();
-                    Bundle b = intent.getExtras();
+                if(intent != null) {
 
+                    Bundle b = intent.getExtras();
+                    token = b.getString("token");
+                    user_id = b.getInt("user_id");
+                    saveDataInFile();
+                }
+                else
+                {
+                    getDataFromFile();
+                }
+                getCounterFromFile();
+                while (!isStopped) {
                     try {
-                        b = getNotification(b);
+
+                        getNotification();
                     } catch (Exception ex) {
-                        showNotification(ex.getMessage(), 0);
                     }
-                    intent.putExtras(b);
                 }
             }
         }).start();
-        super.onStartCommand(intent, flags, startId);
-        return Service.START_REDELIVER_INTENT;
-    }
 
-    public void onDestroy() {
-        super.onDestroy();
+        return Service.START_STICKY;
     }
 
     public IBinder onBind(Intent intent) {
         return null;
     }
 
-    private Bundle getNotification(Bundle b) {
+    //функция для сохранения токена при авторизации
+    public void saveDataInFile(){
+
+        FileOutputStream fos = null;
+        try {
+            fos = openFileOutput(FILENAMEFORDATA, MODE_PRIVATE);
+            String str = "token:" + token + "\n\r user_id:" + user_id;
+            fos.write(str.getBytes());
+        }
+        catch(IOException ex) { }
+        finally{
+            try{
+                if(fos!=null)
+                    fos.close();
+            }
+            catch(IOException ex){ }
+        }
+    }
+
+    public void getCounterFromFile(){
+
+        FileInputStream fin = null;
+        String fileContent = null;
+        try {
+            fin = openFileInput(FILENAMEFORCOUNTER);
+            byte[] bytes = new byte[fin.available()];
+            fin.read(bytes);
+            fileContent = new String (bytes);
+        }
+        catch(IOException ex) {
+        }
+        finally{
+            try{
+                if(fin!=null)
+                    fin.close();
+            }
+            catch(IOException ex){
+            }
+        }
+        int id = 0;
+        if(fileContent != null) {
+            String[] var = fileContent.split(":");
+            if(var[0].contentEquals("counter"))
+                id = Integer.parseInt(var[1]);
+        }
+        counter = id;
+    }
+
+    //функция для сохранения токена при авторизации
+    public void saveCounterInFile(){
+
+        FileOutputStream fos = null;
+        try {
+            fos = openFileOutput(FILENAMEFORCOUNTER, MODE_PRIVATE);
+            String str = "counter:" + counter;
+            fos.write(str.getBytes());
+        }
+        catch(IOException ex) { }
+        finally{
+            try{
+                if(fos!=null)
+                    fos.close();
+            }
+            catch(IOException ex){ }
+        }
+    }
+
+    public void getDataFromFile(){
+
+        FileInputStream fin = null;
+        String fileContent = null;
+        try {
+            fin = openFileInput(FILENAMEFORDATA);
+            byte[] bytes = new byte[fin.available()];
+            fin.read(bytes);
+            fileContent = new String (bytes);
+        }
+        catch(IOException ex) {
+        }
+        finally{
+            try{
+                if(fin!=null)
+                    fin.close();
+            }
+            catch(IOException ex){
+            }
+        }
+        if(fileContent != null) {
+            String[] arrayData = fileContent.split("\n\r");
+            for(String str: arrayData)
+            {
+                String[] var = str.split(":");
+                if(var[0].contentEquals("token"))
+                    token = var[1];
+                if(var[0].contentEquals("user_id"))
+                    user_id = Integer.parseInt(var[1]);
+            }
+        }
+    }
 
 
-        //получаем данные из намерения
-        String token = b.getString("token");
-        int user_id = b.getInt("user_id");
-
+    private void getNotification() {
         //формирование данных для запроса
         HashMap<String, Object> where = new HashMap<String, Object>();
         where.put("user_id", user_id);
@@ -100,7 +218,29 @@ public class MyService extends Service {
         try {
             resp = performPostCall(params, siteUrl + "notification/get");
             if (resp.contentEquals("Error with connection to Api")) {
-                return b;
+                return;
+            }
+
+            Map<String, Object> map = Api.jsonToMap(resp);
+            for (Map.Entry<String, Object> response : map.entrySet()) {
+                if (response.getKey().contentEquals("errors")) {
+                    ArrayList<Object> errorList = (ArrayList<Object>)response.getValue();
+                    for(Object error: errorList) {
+                        Map<String, Object> tmpMap = (Map<String, Object>) error;
+                        for (Map.Entry<String, Object> dataEntry : tmpMap.entrySet()) {
+                            if (dataEntry.getKey().contentEquals("description")) {
+                                String description = (String) dataEntry.getValue();
+
+                                if(description.contentEquals("Token does not exist!"))
+                                {
+                                    isStopped = true;
+                                    stopSelf();
+                                    return;
+                                }
+                            }
+                        }
+                    }
+                }
             }
         } catch (Exception ex)
         {
@@ -124,8 +264,11 @@ public class MyService extends Service {
             if (notifications != null) {
                 for (Notification n : notifications) {
                     counter = showNotification(n.getDescription(), counter);
+                    saveCounterInFile();
                 }
             }
+
+
         }
 
         if(notifications != null)
@@ -133,11 +276,10 @@ public class MyService extends Service {
             //делаем все полученные уведомления прочитаными
             HashMap<String, Object> parametrForClear = new HashMap<String, Object>();
             parametrForClear.put("token", token);
-            String str = performPostCall(params, siteUrl+"notification/clear");;//Api.clearNotifications(parametrForClear);
+            performPostCall(params, siteUrl+"notification/clear");
         }
-
-        b.putInt("counter", counter);
-        return b;
+        saveDataInFile();
+        return;
     }
 
 
@@ -179,8 +321,8 @@ public class MyService extends Service {
         try {
             URL url = new URL(strUrl);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setReadTimeout(30000);
-            conn.setConnectTimeout(30000);
+            conn.setReadTimeout(20000);
+            conn.setConnectTimeout(20000);
             conn.setRequestMethod("POST");
 
             conn.setDoInput(true);
@@ -205,7 +347,6 @@ public class MyService extends Service {
                 }
             } else {
                 response = "";
-
             }
         } catch (Exception e) {
             //e.printStackTrace();

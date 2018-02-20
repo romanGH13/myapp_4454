@@ -14,7 +14,6 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import com.example.eqvol.eqvola.Adapters.CloseOrdersAdapter;
-import com.example.eqvol.eqvola.Adapters.OpenOrdersAdapter;
 import com.example.eqvol.eqvola.Classes.Api;
 import com.example.eqvol.eqvola.Classes.AsyncHttpTask;
 import com.example.eqvol.eqvola.Classes.AsyncMethodNames;
@@ -24,7 +23,6 @@ import com.example.eqvol.eqvola.R;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -54,7 +52,7 @@ public class TradingHistoryFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        mView = inflater.inflate(R.layout.fragment_open_orders, container, false);
+        mView = inflater.inflate(R.layout.fragment_open_orders_for_account, container, false);
         swipeRefreshLayout = (SwipeRefreshLayout)mView.findViewById(R.id.open_orders_swipe_refresh);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override

@@ -1,11 +1,8 @@
 package com.example.eqvol.eqvola.Adapters;
 
-import android.app.Activity;
 import android.content.Context;
-import android.os.AsyncTask;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
-import android.support.constraint.ConstraintLayout;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,40 +10,27 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.example.eqvol.eqvola.Classes.Account;
-import com.example.eqvol.eqvola.Classes.Api;
-import com.example.eqvol.eqvola.Classes.AsyncHttpTask;
-import com.example.eqvol.eqvola.Classes.AsyncMethodNames;
-import com.example.eqvol.eqvola.Classes.FragmentLoader;
-import com.example.eqvol.eqvola.Classes.Transfer;
-import com.example.eqvol.eqvola.MainActivity;
+import com.example.eqvol.eqvola.Classes.Quotation;
 import com.example.eqvol.eqvola.R;
-import com.example.eqvol.eqvola.fragments.AccountOrdersFragment;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
 /**
  * Created by eqvol on 27.12.2017.
  */
 
-public class MyAccountsAdapter extends RecyclerView.Adapter<MyAccountsAdapter.MyAccountsViewHolder> implements Comparator<Account> {
+public class QuotationsAdapter extends RecyclerView.Adapter<QuotationsAdapter.QuotationViewHolder> implements Comparator<Quotation> {
 
     Context ctx;
     LayoutInflater lInflater;
     public EditText mSearchStringView;
-    private List<Account> accounts;
+    private List<Quotation> quotations;
 
-    private MyAccountsAdapter.OnItemClickListener mOnItemClickListener;
+    private QuotationsAdapter.OnItemClickListener mOnItemClickListener;
 
     public interface OnItemClickListener {
         public void onItemClick(View view, int position);
@@ -56,172 +40,122 @@ public class MyAccountsAdapter extends RecyclerView.Adapter<MyAccountsAdapter.My
         this.mOnItemClickListener = onItemClickListener;
     }
 
-    public MyAccountsAdapter(@NonNull Context context, EditText mSearchStringView) {
+    public QuotationsAdapter(@NonNull Context context, EditText mSearchStringView, List<Quotation> quotations) {
         this.ctx = context;
-        this.accounts = Api.user.accounts;
-        Collections.sort(accounts, this);
+        this.quotations = quotations;
+        //searchStringChanged(quotations);
+        Collections.sort(this.quotations, this);
         this.lInflater = LayoutInflater.from(this.ctx);
         this.mSearchStringView = mSearchStringView;
     }
 
+    public static class QuotationViewHolder extends RecyclerView.ViewHolder {
+        TextView symbolView;
+        TextView bidView;
+        TextView askView;
 
-    public static class MyAccountsViewHolder extends RecyclerView.ViewHolder {
-        TextView accountView;
-        TextView balanceView;
-        TextView accountTypeView;
-        TextView leverageView;
-        TextView registrationDateView;
-
-        TextView labelBalanceView;
-        TextView labelAccountTypeView;
-        TextView labelLeverageView;
-        TextView labelRegistrationDateView;
-
-        ConstraintLayout layoutDetail;
-
-        MyAccountsViewHolder(View itemView) {
+        QuotationViewHolder(View itemView) {
             super(itemView);
-            //container = itemView;
-            accountView = (TextView) itemView.findViewById(R.id.account);
-            balanceView = (TextView) itemView.findViewById(R.id.balance);
-            accountTypeView = (TextView) itemView.findViewById(R.id.accountType);
-            leverageView = (TextView) itemView.findViewById(R.id.leverage);
-            registrationDateView = (TextView) itemView.findViewById(R.id.registrationDate);
 
-            labelBalanceView = (TextView) itemView.findViewById(R.id.labelBalance);
-            labelAccountTypeView = (TextView) itemView.findViewById(R.id.labelAccountType);
-            labelLeverageView = (TextView) itemView.findViewById(R.id.labelLeverage);
-            labelRegistrationDateView = (TextView) itemView.findViewById(R.id.labelRegistrationDate);
-
-            layoutDetail = (ConstraintLayout) itemView.findViewById(R.id.layoutAccount);
+            symbolView = (TextView) itemView.findViewById(R.id.symbol);
+            bidView = (TextView) itemView.findViewById(R.id.bid);
+            askView = (TextView) itemView.findViewById(R.id.ask);
         }
-
     }
 
     @Override
-    public MyAccountsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.table_row, parent, false);
-        MyAccountsViewHolder pvh = new MyAccountsViewHolder(v);
+    public QuotationViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.quotation_item, parent, false);
+        QuotationViewHolder pvh = new QuotationViewHolder(v);
         return pvh;
     }
 
     @Override
-    public void onBindViewHolder(final MyAccountsViewHolder holder, final int position) {
+    public void onBindViewHolder(final QuotationViewHolder holder, final int position) {
 
-        final Account account = accounts.get(position);
+        Quotation quotation = this.quotations.get(position);
 
-        if(account.getLogin() != 0) {
-            holder.layoutDetail.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    FragmentManager fragmentManager = ((MainActivity) holder.itemView.getContext()).getSupportFragmentManager();
+        holder.symbolView.setText(quotation.getSymbol());
 
-                    FragmentLoader fl = new FragmentLoader(AccountOrdersFragment.class, fragmentManager, R.id.container, false);
-                    fl.startLoading();
-                    MainActivity.currentLoader = fl;
-
-                    HashMap<String, Object> where = new HashMap<String, Object>();
-                    where.put("Login", account.getLogin());
-
-                    Gson gson = new GsonBuilder().create();
-
-                    HashMap<String, Object> params = new HashMap<String, Object>();
-                    params.put("token", Api.getToken());
-                    params.put("where", gson.toJson(where));
-
-                    Api.account = account;
-
-                    AsyncHttpTask getOrdersTask = new AsyncHttpTask(params, AsyncMethodNames.GET_ACCOUNT_ORDERS, (Activity) holder.itemView.getContext());
-                    getOrdersTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-                }
-            });
+        int digits = quotation.getDigits();
+        String mask = "0.";
+        for(int i = 0; i < digits; i++)
+        {
+            mask += "0";
         }
 
+        DecimalFormat myFormatter = new DecimalFormat(mask);
 
-        if(account.getLogin() == 0) {
-            holder.accountView.setText("Local wallet");
-            holder.balanceView.setText(account.getBalance());
-            holder.accountTypeView.setVisibility(View.GONE);
-            holder.leverageView.setVisibility(View.GONE);
-            holder.registrationDateView.setVisibility(View.GONE);
+        String bid = myFormatter.format(quotation.getBid());
+        String ask = myFormatter.format(quotation.getAsk());
 
-            holder.labelAccountTypeView.setVisibility(View.GONE);
-            holder.labelLeverageView.setVisibility(View.GONE);
-            holder.labelRegistrationDateView.setVisibility(View.GONE);
+        holder.bidView.setText(bid);
+        holder.askView.setText(ask);
+
+        if(quotation.getDirection().contains("Up"))
+        {
+            holder.bidView.setTextColor(ctx.getResources().getColor(R.color.colorGreenBalance));
+            holder.askView.setTextColor(ctx.getResources().getColor(R.color.colorGreenBalance));
         }
-        else if(account.getLogin() != 0) {
-            holder.accountView.setText("Account " + Integer.toString(account.getLogin()));
-            holder.balanceView.setText(account.getBalance());
-            holder.accountTypeView.setText(account.getGroup().getName());
-            holder.leverageView.setText("1:" + Integer.toString(account.getLeverage()));
-            holder.registrationDateView.setText(account.getRegisterDate());
-
-            holder.accountTypeView.setVisibility(View.VISIBLE);
-            holder.leverageView.setVisibility(View.VISIBLE);
-            holder.registrationDateView.setVisibility(View.VISIBLE);
-            holder.labelAccountTypeView.setVisibility(View.VISIBLE);
-            holder.labelLeverageView.setVisibility(View.VISIBLE);
-            holder.labelRegistrationDateView.setVisibility(View.VISIBLE);
+        else
+        {
+            holder.bidView.setTextColor(ctx.getResources().getColor(R.color.colorOrangeLeverage));
+            holder.askView.setTextColor(ctx.getResources().getColor(R.color.colorOrangeLeverage));
         }
+
     }
 
     @Override
     public long getItemId(int position) {
-        return accounts.get(position).getLogin();
+        return position;
     }
 
     @Override
     public int getItemCount() {
-        return accounts.size();
+        return quotations.size();
     }
 
     @Override
-    public int compare(Account t1, Account t2) {
-        if(t1.getRegisterDate() == null)
-            return -100;
-        if(t2.getRegisterDate() == null)
-            return 100;
+    public int compare(Quotation t1, Quotation t2) {
 
-        DateFormat format = new SimpleDateFormat(ctx.getString(R.string.date_format));
-        try {
-            Date date1 = format.parse(t1.getRegisterDate());
-            Date date2 = format.parse(t2.getRegisterDate());
-            return date1.compareTo(date2) * (-1);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return 0;
+        return t1.getSymbol().compareTo(t2.getSymbol());
     }
 
-    public void searchStringChanged()
+    public void searchStringChanged(List<Quotation> quotations)
     {
-        accounts = new ArrayList<Account>();
+        this.quotations = new ArrayList<Quotation>();
 
-        for(Account a: Api.user.accounts)
+        for(Quotation q: quotations)
         {
-            if(Integer.toString(a.getLogin()).startsWith(mSearchStringView.getText().toString()))
+            if(q.getSymbol().contains(mSearchStringView.getText().toString().toUpperCase()))
             {
-                accounts.add(a);
+                if(!q.getSymbol().contains("."))
+                    this.quotations.add(q);
             }
         }
-        Collections.sort(accounts, this);
+
+        Collections.sort(this.quotations, this);
     }
 
-    public void UpdateTransferById(Account account) {
-        for (Account a : accounts) {
-            if (a.getLogin() == account.getLogin())
-                a = account;
-        }
-        Collections.sort(accounts, this);
-    }
-
-    public void UpdateAccounts()
+    public void UpdateQuotations(List<Quotation> quotations)
     {
-        accounts = Api.user.accounts;
-        searchStringChanged();
-        Collections.sort(accounts, this);
+        this.quotations = quotations;
+        searchStringChanged(this.quotations);
+        Collections.sort(this.quotations, this);
     }
 
-
+    public void UpdateQuotationBySymbol(Quotation quotation)
+    {
+        for(int i = 0; i < quotations.size(); i++)
+        {
+            if(quotations.get(i).getSymbol().contains("."))
+                quotations.remove(i);
+            else if(quotations.get(i).getSymbol().contentEquals(quotation.getSymbol()))
+            {
+                quotations.set(i, quotation);
+                return;
+            }
+        }
+    }
 
 }

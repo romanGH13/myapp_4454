@@ -99,6 +99,9 @@ public class SupportCreateTicket extends Fragment {
                 params.put("data", json);
                 AsyncHttpTask userLoginTask = new AsyncHttpTask(params, AsyncMethodNames.CREATE_TICKET, getActivity());
                 userLoginTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+
+                etSubject.setText("");
+                etMessage.setText("");
             }
         });
 

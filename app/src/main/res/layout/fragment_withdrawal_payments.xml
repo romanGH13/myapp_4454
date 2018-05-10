@@ -1,13 +1,29 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.present.eqvol.eqvola.fragments.WithdrawalPaymentsFragment">
+    android:orientation="vertical"
+    tools:context="com.example.eqvol.eqvola.fragments.WithdrawalPaymentsFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorMenuBackground">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorWhite"
+            android:textAppearance="@style/MyTextAppearance"
+            android:text="Withdrawal"
+            android:layout_margin="15dp"
+            android:layout_centerHorizontal="true"/>
+    </RelativeLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/withdrawal_payments_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:background="@color/colorGray">
+    </android.support.v7.widget.RecyclerView>
 
-</FrameLayout>
+</LinearLayout>

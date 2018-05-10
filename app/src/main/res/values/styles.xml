@@ -22,7 +22,7 @@
     </style>
 
     <style name="AppTheme.ProgressBar">
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorAccent">@color/colorMenuBackground</item>
     </style>
 
     <style name="testStyle" >

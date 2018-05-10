@@ -28,7 +28,7 @@
                 android:layout_marginTop="16dp"
                 android:background="@drawable/my_text_border"
                 app:layout_constraintEnd_toStartOf="@id/account_balance"
-                app:layout_constraintHorizontal_weight="3"
+                app:layout_constraintHorizontal_weight="7"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
@@ -56,7 +56,7 @@
                 android:padding="6dp"
                 android:textAppearance="@style/MyTextAppearance"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_weight="1"
+                app:layout_constraintHorizontal_weight="4"
                 app:layout_constraintStart_toEndOf="@id/layoutSpinnerAccount"
                 app:layout_constraintTop_toTopOf="@id/layoutSpinnerAccount" />
 
@@ -69,7 +69,7 @@
                 android:layout_marginTop="16dp"
                 android:background="@drawable/my_text_border"
                 app:layout_constraintEnd_toStartOf="@id/order_volume"
-                app:layout_constraintHorizontal_weight="3"
+                app:layout_constraintHorizontal_weight="7"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/layoutSpinnerAccount">
 
@@ -93,7 +93,7 @@
                 android:padding="6dp"
                 android:textAppearance="@style/MyTextAppearance"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_weight="1"
+                app:layout_constraintHorizontal_weight="4"
                 app:layout_constraintStart_toEndOf="@id/layoutSpinnerSymbol"
                 app:layout_constraintTop_toTopOf="@id/layoutSpinnerSymbol" />
 
@@ -170,6 +170,7 @@
                 android:hint="@string/create_order_comment"
                 android:inputType="text"
                 android:maxLines="1"
+                android:maxLength="32"
                 android:padding="6dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -184,7 +185,7 @@
                 android:layout_marginTop="16dp"
                 android:background="@drawable/my_text_border"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_weight="3"
+                app:layout_constraintHorizontal_weight="4"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/comment">
 
@@ -262,7 +263,7 @@
                 android:layout_marginTop="20dp"
                 android:background="@drawable/my_text_border"
                 app:layout_constraintEnd_toStartOf="@id/order_price"
-                app:layout_constraintHorizontal_weight="3"
+                app:layout_constraintHorizontal_weight="7"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/layoutType">
 
@@ -286,7 +287,7 @@
                 android:padding="6dp"
                 android:textAppearance="@style/MyTextAppearance"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_weight="1"
+                app:layout_constraintHorizontal_weight="4"
                 app:layout_constraintStart_toEndOf="@id/layoutSpinnerType"
                 app:layout_constraintTop_toTopOf="@id/layoutSpinnerType" />
 

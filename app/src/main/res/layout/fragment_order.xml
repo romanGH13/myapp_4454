@@ -229,6 +229,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="4dp"
                 android:padding="2dp"
+                android:maxLength="32"
                 android:background="#FFF"
                 android:textAppearance="@style/ThemeAccountDetailDark"
                 android:hint="Comment" />

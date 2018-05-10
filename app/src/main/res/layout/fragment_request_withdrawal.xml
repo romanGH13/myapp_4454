@@ -1,13 +1,145 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.present.eqvol.eqvola.fragments.RequestWithdrawalFragment">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context="com.example.eqvol.eqvola.fragments.RequestWithdrawalFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <RelativeLayout
+        android:id="@+id/header"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="wrap_content"
+        android:background="@color/colorMenuBackground"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorWhite"
+            android:textAppearance="@style/MyTextAppearance"
+            android:text="Request withdrawal"
+            android:layout_margin="15dp"
+            android:layout_centerHorizontal="true"/>
+    </RelativeLayout>
 
-</FrameLayout>
+    <LinearLayout
+        android:id="@+id/linearSpinAccount"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:orientation="horizontal"
+        android:background="@drawable/my_text_border"
+        app:layout_constraintTop_toBottomOf="@+id/header"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+        <Spinner
+            android:id="@+id/spinner_accounts"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="4"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp">
+
+        </Spinner>
+
+        <EditText
+            android:id="@+id/request_withdrawal_balance"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="9"
+            android:cursorVisible="false"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:hint="Balance"
+            android:inputType="text"
+            android:longClickable="false"/>
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/linearSpinAmount"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:orientation="horizontal"
+        android:background="@drawable/my_text_border"
+        app:layout_constraintTop_toBottomOf="@+id/linearSpinAccount"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <EditText
+            android:id="@+id/request_withdrawal_amount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:inputType="numberDecimal"
+            android:hint="Amount"
+            android:textAppearance="@style/MyTextAppearance" />
+
+        <EditText
+            android:id="@+id/request_withdrawal_currency"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
+            android:layout_gravity="center_vertical"
+            android:cursorVisible="false"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:hint="Currency"
+            android:inputType="text"
+            android:text="USD"
+            android:longClickable="false"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linearPurseNumber"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:orientation="horizontal"
+        android:background="@drawable/my_text_border"
+        app:layout_constraintTop_toBottomOf="@+id/linearSpinAmount"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <EditText
+            android:id="@+id/request_withdrawal_purse_number"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
+            android:layout_marginStart="10dp"
+            android:hint="Purse number"
+            android:inputType="number"
+            android:textAppearance="@style/MyTextAppearance"/>
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btnSubmit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:padding="10dp"
+        android:fontFamily="Roboto"
+        android:text="Submit"
+        android:textAppearance="@style/MyTextAppearance"
+        android:textColor="@color/colorWhite"
+        android:textSize="@dimen/text_size"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearPurseNumber" />
+</android.support.constraint.ConstraintLayout>

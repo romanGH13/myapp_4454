@@ -11,8 +11,12 @@
             android:icon="@drawable/ic_menu_add_account"
             android:title="@string/create_account" />
         <item
+            android:id="@+id/navigation_withdrawal"
+            android:icon="@drawable/ic_withdrawal"
+            android:title="@string/navigation_withdrawal" />
+        <item
             android:id="@+id/navigation_finance_history"
-            android:icon="@drawable/ic_menu_wallet"
+            android:icon="@drawable/ic_menu_archive"
             android:title="@string/navigation_finance_history" />
         <item
             android:id="@+id/navigation_transfers"

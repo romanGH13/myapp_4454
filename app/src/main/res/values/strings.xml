@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Eqvola</string>
+    <string name="app_name">Eqvola Present</string>
 
     <!-- Strings related to login -->
     <string name="prompt_name">Name</string>
@@ -28,6 +28,7 @@
 
     <string name="navigation_my_accounts">My accounts</string>
     <string name="navigation_create_account">Create account</string>
+    <string name="navigation_withdrawal">Withdrawal</string>
     <string name="navigation_finance_history">Finance history</string>
     <string name="navigation_transfers">My Transfers</string>
     <string name="navigation_trader">Mobile trader</string>
